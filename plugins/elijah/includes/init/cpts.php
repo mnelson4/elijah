@@ -3,7 +3,7 @@
 //registers custom post types
 
 function elijah_register_cpts() {
-	
+
 	//taxonomies
 	register_taxonomy('birthyear', array(
 		0 => 'research-objective',
@@ -86,7 +86,7 @@ function elijah_register_cpts() {
 	register_taxonomy('childrens-birthyears', array(
 		0 => 'research-objective',
 		1 => 'research-strategies',
-			), array('hierarchical' => true, 'label' => 'Children\'s Birhtyears', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birhtyear',
+			), array('hierarchical' => true, 'label' => 'Children\'s Birthyears', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birhtyear',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_childrens-birthyears',
 					'edit_terms'=>'edit_childrens-birthyears',
@@ -94,8 +94,8 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_childrens-birthyears',
 				)));
 
-	
-	
+
+
 	register_post_type('research-objectives', array(
 		'label' => 'Research Objectives',
 		'description' => 'A specific thing about a specific person you want to research. E.g.: great-uncle Tim\\\\\\\\\\\\\\\'s birthplace; great-great-grandmother Susan\\\\\\\\\\\\\\\'s parent\\\\\\\\\\\\\\\'s names and birthplaces; great-aunt Gertrude\\\\\\\\\\\\\\\'s death-place and date',
@@ -111,7 +111,7 @@ function elijah_register_cpts() {
 		'exclude_from_search' => false,
 		'menu_position' => 2,
 		'supports' => array('title', 'editor', 'excerpt', 'comments', 'revisions', 'thumbnail', 'author',),
-		'taxonomies' => array('birthyear', 'birthplace', 'death-place', 'marriage-year', 'individual-details', 'death-year', 'marriage-place',),
+		'taxonomies' => array('birthyear', 'birthplace', 'death-place', 'marriage-year', 'individual-details', 'death-year', 'marriage-place', 'childrens-birthplaces', 'childrens-birthyears'),
 		'labels' => array(
 			'name' => 'Research Objectives',
 			'singular_name' => 'Research Objective',
@@ -131,7 +131,7 @@ function elijah_register_cpts() {
 	register_research_status('enqueued',array('title'=>  __("Enqueued for Research", "event_espresso")));
 	register_research_status('in-progress',array('title'=>  __("In Progress", "event_espresso")));
 	register_research_status('resolved',array('title'=> __("Resolved", "event_espresso")));
-	
+
 	register_post_type('research-strategies', array(
 		'label' => 'Research Strategies',
 		'description' => 'A generic task that can be done to complete a research objective. Eg: to find an individual\\\\\\\\\\\\\\\'s birthplace and year, search their name in New Family Search to find duplicates; to find an individual\\\\\\\\\\\\\\\'s parents, search for their birth record at local parishes; or even to find a granparent\\\\\\\\\\\\\\\'s birthplace, ask the oldest relative you know, etc.',
@@ -147,7 +147,7 @@ function elijah_register_cpts() {
 		'exclude_from_search' => false,
 		'menu_position' => 2,
 		'supports' => array('title', 'editor', 'comments', 'thumbnail', 'author',),
-		'taxonomies' => array('birthyear', 'birthplace', 'death-place', 'marriage-year', 'individual-details', 'death-year', 'marriage-place',),
+		'taxonomies' => array('birthyear', 'birthplace', 'death-place', 'marriage-year', 'individual-details', 'death-year', 'marriage-place', 'childrens-birthplaces', 'childrens-birthyears'),
 		'labels' => array(
 			'name' => 'Research Strategies',
 			'singular_name' => 'Research Strategy',
@@ -164,13 +164,13 @@ function elijah_register_cpts() {
 			'not_found_in_trash' => 'No Research Strategies Found in Trash',
 			'parent' => 'Parent Research Strategy',
 		),));
-		
+
 	}
 
 add_action('init', 'elijah_register_cpts', 100);
 
 /**
- * Registers a 'research status', and adds it to a new global array 
+ * Registers a 'research status', and adds it to a new global array
  * called '$elijah_research_statuses'.
  * Options you can provide are:
  * -title (i18n-ized name)
@@ -183,12 +183,12 @@ function register_research_status($status,$options=array()){
 	if( ! $elijah_research_statuses ){
 		$elijah_research_statuses = array();
 	}
-	
+
 	$options = array_merge(array(
 		'title'=>$status,
 		'other_option-x'=>'monkey'
 	),$options);
-	
+
 	$elijah_research_statuses[$status] = $options;
 }
 
@@ -208,7 +208,7 @@ function elijah_get_research_status_title($status){
 }
 
 /**
- * Gets the research title for the post with id $post_id. If none is set, 
+ * Gets the research title for the post with id $post_id. If none is set,
  * sets it
  * @param int $post_id
  * @return string
