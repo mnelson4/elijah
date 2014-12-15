@@ -25,7 +25,7 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 			</nav><!-- #nav-single -->
 
 				<?php get_template_part('content-single', get_post_format()); ?>
-			<div><h2><?php the_title()?></h2></div>
+			<div><h2><?php the_title()?> <?php edit_post_link( __( 'Edit', 'twentytwelve' ), '<span class="edit-link">', '</span>' ); ?></h2></div>
 			<div id='research-objectives-sidebar' style='float:right'>
 				<?php
 				$connected = new WP_Query( array(
@@ -132,6 +132,7 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 				}
 				?>
 			</ul>
+
 			<?php comments_template('', true); ?>
 
 <?php endwhile; // end of the loop.  ?>
