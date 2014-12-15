@@ -6,7 +6,7 @@ function elijah_register_cpts() {
 
 	//taxonomies
 	register_taxonomy('birthyear', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 			), array('hierarchical' => true, 'label' => 'Birth Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Birthyear',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_birthyears',
@@ -15,7 +15,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_birthyears',
 				)));
 	register_taxonomy('birthplace', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 			), array('hierarchical' => true, 'label' => 'Birthplace of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Birthplace',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_birthplaces',
@@ -24,7 +24,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_birthplaces',
 				)));
 	register_taxonomy('death-place', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 		1 => 'research-strategies',
 			), array('hierarchical' => true, 'label' => 'Death Place of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Place',
 				'capabilities'=>array(
@@ -34,7 +34,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_death-places',
 				)));
 	register_taxonomy('marriage-year', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 		1 => 'research-strategies',
 			), array('hierarchical' => true, 'label' => 'Marriage Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Marriage Year',
 				'capabilities'=>array(
@@ -44,7 +44,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_marriage-years',
 				)));
 	register_taxonomy('individual-details', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 		1 => 'research-strategies',
 			), array('hierarchical' => true, 'label' => 'Details Being Researched', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Details being Researched',
 				'capabilities'=>array(
@@ -54,7 +54,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_individual-details',
 				)));
 	register_taxonomy('death-year', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 		1 => 'research-strategies',
 			), array('hierarchical' => true, 'label' => 'Death Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Year',
 				'capabilities'=>array(
@@ -64,7 +64,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_death-years',
 				)));
 	register_taxonomy('marriage-place', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 		1 => 'research-strategies',
 			), array('hierarchical' => true, 'label' => 'Marriage Place of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Marriage Place',
 				'capabilities'=>array(
@@ -74,7 +74,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_marriage-places',
 				)));
 	register_taxonomy('childrens-birthplaces', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 		1 => 'research-strategies',
 			), array('hierarchical' => true, 'label' => 'Children\'s Birthplaces', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birthplace',
 				'capabilities'=>array(
@@ -84,7 +84,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_childrens-birthplaces',
 				)));
 	register_taxonomy('childrens-birthyears', array(
-		0 => 'research-objective',
+		0 => 'research-objectives',
 		1 => 'research-strategies',
 			), array('hierarchical' => true, 'label' => 'Children\'s Birthyears', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birhtyear',
 				'capabilities'=>array(
@@ -93,8 +93,14 @@ function elijah_register_cpts() {
 					'delete_terms'=>'delete_childrens-birthyears',
 					'assign_terms'=>'assign_childrens-birthyears',
 				)));
+	$year_research_taxonomies = array('birthyear', 'marriage-year', 'death-year', 'childrens-birthyears' );
+	$place_research_taxonomies = array( 'birthplace', 'death-place', 'marriage-place', 'childrens-birthplaces' );
+	$other_research_taxonomies = array( 'individual-details' );
+	$all_research_taxonomies = array_merge( $year_research_taxonomies, $place_research_taxonomies, $other_research_taxonomies );
 
-
+	foreach( $year_research_taxonomies as $taxonomy ) {
+		elijah_make_term_for_decades_after( 1600, $taxonomy );
+	}
 
 	register_post_type('research-objectives', array(
 		'label' => 'Research Objectives',
@@ -111,7 +117,7 @@ function elijah_register_cpts() {
 		'exclude_from_search' => false,
 		'menu_position' => 2,
 		'supports' => array('title', 'editor', 'excerpt', 'comments', 'revisions', 'thumbnail', 'author',),
-		'taxonomies' => array('birthyear', 'birthplace', 'death-place', 'marriage-year', 'individual-details', 'death-year', 'marriage-place', 'childrens-birthplaces', 'childrens-birthyears'),
+		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
 			'name' => 'Research Objectives',
 			'singular_name' => 'Research Objective',
@@ -147,7 +153,7 @@ function elijah_register_cpts() {
 		'exclude_from_search' => false,
 		'menu_position' => 2,
 		'supports' => array('title', 'editor', 'comments', 'thumbnail', 'author',),
-		'taxonomies' => array('birthyear', 'birthplace', 'death-place', 'marriage-year', 'individual-details', 'death-year', 'marriage-place', 'childrens-birthplaces', 'childrens-birthyears'),
+		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
 			'name' => 'Research Strategies',
 			'singular_name' => 'Research Strategy',
@@ -220,4 +226,15 @@ function elijah_get_research_status_title_for_post($post_id){
 		update_post_meta($post_id,'research_status',$status);
 	}
 	return elijah_get_research_status_title( $status  );
+}
+
+function elijah_make_term_for_decades_after( $year, $taxonomy ){
+	$current_year = date("Y");
+	for( ; $year < $current_year; $year += 10 ) {
+		$term = round( $year, -1 ) . "s";
+		if( ! term_exists( $term, $taxonomy ) ) {
+			echo "<br>would insert $term";
+			wp_insert_term( $term, $taxonomy );
+		}
+	}
 }

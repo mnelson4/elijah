@@ -1,7 +1,9 @@
 <?php
 function elijah_add_research_status(){
 	$post_id = $_GET['post'];
-
+	if( 'research-objectives' != get_post_type( $post_id ) ){
+		return;
+	}
 	?>
 <div class='misc-pub-section'>
 	<?php _e("Research Status: ", "event_espresso");?>
