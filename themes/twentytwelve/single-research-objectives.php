@@ -83,7 +83,7 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 					<h2><?php			_e("Work Todos", "event_espresso")?></h2>
 					<div class="work-todo-items">
 						<?php foreach($results as $strategy_suggested){
-							echo "id: " . $strategy_suggested->ID;
+
 							echo elijah_suggested_research_strategy($strategy_suggested, $post );
 							} ?>
 					</div>
