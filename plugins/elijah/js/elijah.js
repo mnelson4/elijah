@@ -43,6 +43,6 @@ function elijah_send_update(action,info_to_send){
 	// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
 	jQuery.post(elijah.ajaxurl, data, function(response) {
 
-		alert('Sent update. Got this from the server: ' + response);
+//		alert('Sent update. Got this from the server: ' + response);
 	});
 }
