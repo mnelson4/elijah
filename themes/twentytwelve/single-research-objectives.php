@@ -59,24 +59,21 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 				$results = $yarpp->get_related(get_the_ID(),
 							array(
 								'post_type'=>array('research-strategies'),
-									'wp_query_args' => array(
-										'post__not_in' => $strategies_applied_ids,
-										'post_type'=>array('research-strategies')
-									),
-									'threshold'=>1,
+								'post__not_in' => $strategies_applied_ids,
+								'threshold'=>1,
 //									'exclude'=>implode(",",$strategies_applied_ids),
-									'weight'=>array(
-										//'body'=>1,
-										'tax'=>array(
-											'birthyear'=>1,
-											'birthplace'=>1,
-											'marriage-year'=>1,
-											'marriage-place'=>1,
-											'death-year'=>1,
-											'death-place'=>1,
-											'individual-details'=>5,
+								'weight'=>array(
+									//'body'=>1,
+									'tax'=>array(
+										'birthyear'=>1,
+										'birthplace'=>1,
+										'marriage-year'=>1,
+										'marriage-place'=>1,
+										'death-year'=>1,
+										'death-place'=>1,
+										'individual-details'=>5,
 
-										)
+									)
 									)));
 				?>
 				<div class='work-todo'>
