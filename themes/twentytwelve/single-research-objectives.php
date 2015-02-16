@@ -31,6 +31,8 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 				$connected = new WP_Query( array(
 								'connected_type' => 'strategies_applied',
 								'connected_items' => get_queried_object(),
+								'connected_orderby' => 'last_updated',
+								'connected_order' => 'asc',
 								'nopaging' => true,
 							  ) );
 				$strategies_applied = $connected->posts;

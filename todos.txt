@@ -25,3 +25,8 @@ elijah todos:
 -item currently being researched
 -suggestions for current research objective, and what's already been done
 -create searching page
+
+
+
+handy info:
+-posts-ot-posts documentation: https://github.com/scribu/wp-posts-to-posts/wiki
