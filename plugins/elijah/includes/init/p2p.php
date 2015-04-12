@@ -50,28 +50,15 @@ function elijah_connection_types(){
 				'title'=>__('Usefulness','my-textdomain'),
 				'type'=>'select',
 				'values'=>$strategy_usefulness_mapping
-					
+
 			),
 			'comments'=>array(
 				'title'=>  __("Comments", "event_espresso"),
 				'type'=>'textarea'
 			),
-			'author_id'=>array(
-				'type'=>'hidden',
-				'default_cb'=>'elijah_default_author_on_strategies_applied'
-			),
-			'started'=>array(
-				'type'=>'hidden',
-				'default'=>current_time('mysql'),
-			),
-			'last_updated'=>array(
-				'title'=>  __("Last Updated", "event_espresso"),
-				'type'=>'text',
-				'default'=>current_time('mysql'),
-			),
 			'finished'=>array(
 				'type'=>'hidden'
-			)
+			),
 		)
     ) );
 }
