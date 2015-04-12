@@ -8,10 +8,10 @@ elijah todos:
 ---fix bug where work done appears as if it wasn't done
 +++fix UI: if RS skipped, don't show the summary
 ---submit patches:
-----YARPP_Core:1200 adds 'wp_query_args' for direct addition
-----core I think, that allows to use 'not_in' and 'in' at same time
+----YARPP_Core: see commit 2c5a889c32a7433d6de4
 +++handle ajax,
 +++to update strategy applied
+-fix bug where work done appears twice (probably an issue with posts-2-posts)
 --when clicking on a research strategy, keep window of previous research objective, and a mini window for entering details and checkboxing it. When
   done, return to research objective
 
@@ -19,6 +19,7 @@ elijah todos:
 --mark items as resolved automatically according ot work done
 --resolved research objectives
 -admin view for different users:
+--possibly require defining meta-caps?
 --researchers
 --research gurus or whatever
 --research reviewer
