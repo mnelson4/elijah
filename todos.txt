@@ -11,9 +11,8 @@ elijah todos:
 ----YARPP_Core: see commit 2c5a889c32a7433d6de4
 +++handle ajax,
 +++to update strategy applied
--fix bug where work done appears twice (probably an issue with posts-2-posts)
---when clicking on a research strategy, keep window of previous research objective, and a mini window for entering details and checkboxing it. When
-  done, return to research objective
++fix bug where work done appears twice (probably an issue with posts-2-posts)
+--when clicking on a research strategy, keep window of previous research objective, and a mini window for entering details and checkboxing it. When done, return to research objective
 
 ++manually mark items as resolved from admin (use elijah_research_status_dropdown)
 --mark items as resolved automatically according ot work done
