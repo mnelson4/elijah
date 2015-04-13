@@ -17,11 +17,11 @@ elijah todos:
 ++manually mark items as resolved from admin (use elijah_research_status_dropdown)
 --mark items as resolved automatically according ot work done
 --resolved research objectives
--admin view for different users:
---possibly require defining meta-caps?
---researchers
---research gurus or whatever
---research reviewer
++admin view for different users:
+++researchers - can create research objectives and apply research strategies to them; can create research strategies but not publish them
+++research reviewers - can add their own research strategies
+++research gurus/reviewers - can approve others research strategies and edit others, and manage caps
+++almost admins - can administrate the site, except technical-website-aspects
 -item currently being researched
 -suggestions for current research objective, and what's already been done
 -create searching page
