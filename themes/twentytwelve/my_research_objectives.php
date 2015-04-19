@@ -10,6 +10,9 @@ get_header();
 
 
 		<h2><?php _e("My Research Objectives", "event_espresso") ?></h2>
+		<?php if (current_user_can( 'edit_research-objectives' ) ) {?>
+		<a href="<?php echo get_permalink(179);?>"><button class="button button-primary"><?php _e( 'Add Research Objective', 'event_espresso' );?></button></a>
+		<?php } ?>
 		<div class='my-research-objectives-list'>
 			<?php
 			if (get_current_user_id()) {
@@ -31,7 +34,7 @@ get_header();
 							</div>
 						</article>
 						<?php } ?>
-					
+
 				<?php } else {
 					?>
 					<h2><?php printf(__('You have no current research objectives. Please %1$s create one %2$s', "event_espresso"), "<a href='" . admin_url("post-new.php?post_type=research-objectives") . "'>", "</a>");
@@ -49,5 +52,6 @@ get_header();
 		</div>
 	</div>
 </div>
+<?php do_action('[wpuf_edit]');?>
 <?php get_sidebar(); ?>
 <?php get_footer(); ?>

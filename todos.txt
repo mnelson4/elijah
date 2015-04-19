@@ -25,6 +25,7 @@ elijah todos:
 -item currently being researched
 -suggestions for current research objective, and what's already been done
 -create searching page
+-buy wp user frontend pro
 
 
 

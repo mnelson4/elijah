@@ -86,6 +86,10 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 							echo elijah_suggested_research_strategy($strategy_suggested, $post );
 							} ?>
 					</div>
+					<h2><?php _e( 'Do something else', 'event_espresso' );?></h2>
+					<?php if( current_user_can( 'edit_research-strategys' ) ){?>
+		<a href="<?php echo get_permalink(185);?>"><button class="button button-primary"><?php _e( 'Add Research Strategy', 'event_espresso' );?></button></a>
+		<?php } ?>
 				</div>
 				<?php
 
