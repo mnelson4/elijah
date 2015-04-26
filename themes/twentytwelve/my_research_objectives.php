@@ -11,7 +11,7 @@ get_header();
 
 		<h2><?php _e("My Research Objectives", "event_espresso") ?></h2>
 		<?php if (current_user_can( 'edit_research-objectives' ) ) {?>
-		<a href="<?php echo get_permalink(179);?>"><button class="button button-primary"><?php _e( 'Add Research Objective', 'event_espresso' );?></button></a>
+		<a href="<?php echo get_permalink( elijah_edit_research_objectives_page_id );?>"><button class="button button-primary"><?php _e( 'Add Research Objective', 'event_espresso' );?></button></a>
 		<?php } ?>
 		<div class='my-research-objectives-list'>
 			<?php

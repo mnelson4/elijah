@@ -12,7 +12,7 @@ define('elijah_main_file',__FILE__);
 
 
 //do definitions
-
+define( 'elijah_edit_research_objectives_page_id', 179 );
 //general init
 require_once(elijah_root.'/includes/init/cpts.php');
 require_once(elijah_root.'/includes/init/p2p.php');
@@ -31,6 +31,7 @@ if(is_admin()){
 //frontned-init
 else{
 	require_once(elijah_root.'/includes/shortcodes.php');
+	require_once( elijah_root.'/includes/frontend/menu.php');
 }
 
 

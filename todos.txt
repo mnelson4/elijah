@@ -23,9 +23,9 @@ elijah todos:
 ++research gurus/reviewers - can approve others research strategies and edit others, and manage caps
 ++almost admins - can administrate the site, except technical-website-aspects
 -item currently being researched
--suggestions for current research objective, and what's already been done
+-restyle current-research-objective
+-user registration form
 -create searching page
--buy wp user frontend pro
 
 
 
