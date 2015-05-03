@@ -1,31 +1,27 @@
 elijah todos:
+-countries-and-states-category-importer plugin: works but horrible UI.
+--add shortcode for add-research-objective page
+--add template
+--for each piece of info's year and birth, have a checkbox saying "I have an estimate (or exact date/place)"
+--when checked, years: have two inputs for a date-range;
+--places: input with suggestion dropdown (suggest countries like "Canada (province/state unknown)", states like "Alberta, Canada")
+--when they select a place or press enter, add it as a hidden input AND a small div
+--receive the form submission, and redirect to the new research strategy.
+--the two together
 -record work done:
--when updating research strategy applied:
-+++detect when to send ajax ,
-+++use debounce to detect change to comments
-+++detec tchange in usefulness dropdown
-+++fix bug where applied research strategies appeared again
----fix bug where work done appears as if it wasn't done
-+++fix UI: if RS skipped, don't show the summary
----submit patches:
-----YARPP_Core: see commit 2c5a889c32a7433d6de4
-+++handle ajax,
-+++to update strategy applied
-+fix bug where work done appears twice (probably an issue with posts-2-posts)
---when clicking on a research strategy, keep window of previous research objective, and a mini window for entering details and checkboxing it. When done, return to research objective
-
-++manually mark items as resolved from admin (use elijah_research_status_dropdown)
 --mark items as resolved automatically according ot work done
 --resolved research objectives
-+admin view for different users:
-++researchers - can create research objectives and apply research strategies to them; can create research strategies but not publish them
-++research reviewers - can add their own research strategies
-++research gurus/reviewers - can approve others research strategies and edit others, and manage caps
-++almost admins - can administrate the site, except technical-website-aspects
 -item currently being researched
 -restyle current-research-objective
 -user registration form
 -create searching page
+-welcome page
+
+---submit patches:
+----YARPP_Core: see commit 2c5a889c32a7433d6de4
+--when clicking on a research strategy, keep window of previous research objective, and a mini window for entering details and checkboxing it. When done, return to research objective
+
+
 
 
 

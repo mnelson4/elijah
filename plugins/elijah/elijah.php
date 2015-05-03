@@ -1,5 +1,5 @@
 <?php
-/*WebDevStudios.com
+/*
 Plugin Name: Elijah
 Plugin URI: http://google.com
 Description: Elijah-specific features
