@@ -5,6 +5,16 @@
 function elijah_register_cpts() {
 
 	//taxonomies
+	register_taxonomy('individual-details', array(
+		0 => 'research-objectives',
+		1 => 'research-strategies',
+			), array('hierarchical' => true, 'label' => 'Details Being Researched', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Details being Researched',
+				'capabilities'=>array(
+					'manage_terms'=>'manage_individual-details',
+					'edit_terms'=>'edit_individual-details',
+					'delete_terms'=>'delete_individual-details',
+					'assign_terms'=>'assign_individual-details',
+				)));
 	register_taxonomy('birthyear', array(
 		0 => 'research-objectives',
 			), array('hierarchical' => true, 'label' => 'Birth Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Birthyear',
@@ -23,16 +33,6 @@ function elijah_register_cpts() {
 					'delete_terms'=>'delete_birthplaces',
 					'assign_terms'=>'assign_birthplaces',
 				)));
-	register_taxonomy('death-place', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
-			), array('hierarchical' => true, 'label' => 'Death Place of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Place',
-				'capabilities'=>array(
-					'manage_terms'=>'manage_death-places',
-					'edit_terms'=>'edit_death-places',
-					'delete_terms'=>'delete_death-places',
-					'assign_terms'=>'assign_death-places',
-				)));
 	register_taxonomy('marriage-year', array(
 		0 => 'research-objectives',
 		1 => 'research-strategies',
@@ -42,26 +42,6 @@ function elijah_register_cpts() {
 					'edit_terms'=>'edit_marriage-years',
 					'delete_terms'=>'delete_marriage-years',
 					'assign_terms'=>'assign_marriage-years',
-				)));
-	register_taxonomy('individual-details', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
-			), array('hierarchical' => true, 'label' => 'Details Being Researched', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Details being Researched',
-				'capabilities'=>array(
-					'manage_terms'=>'manage_individual-details',
-					'edit_terms'=>'edit_individual-details',
-					'delete_terms'=>'delete_individual-details',
-					'assign_terms'=>'assign_individual-details',
-				)));
-	register_taxonomy('death-year', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
-			), array('hierarchical' => true, 'label' => 'Death Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Year',
-				'capabilities'=>array(
-					'manage_terms'=>'manage_death-years',
-					'edit_terms'=>'edit_death-years',
-					'delete_terms'=>'delete_death-years',
-					'assign_terms'=>'assign_death-years',
 				)));
 	register_taxonomy('marriage-place', array(
 		0 => 'research-objectives',
@@ -73,15 +53,25 @@ function elijah_register_cpts() {
 					'delete_terms'=>'delete_marriage-places',
 					'assign_terms'=>'assign_marriage-places',
 				)));
-	register_taxonomy('childrens-birthplaces', array(
+	register_taxonomy('death-year', array(
 		0 => 'research-objectives',
 		1 => 'research-strategies',
-			), array('hierarchical' => true, 'label' => 'Children\'s Birthplaces', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birthplace',
+			), array('hierarchical' => true, 'label' => 'Death Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Year',
 				'capabilities'=>array(
-					'manage_terms'=>'manage_childrens-birthplaces',
-					'edit_terms'=>'edit_childrens-birthplaces',
-					'delete_terms'=>'delete_childrens-birthplaces',
-					'assign_terms'=>'assign_childrens-birthplaces',
+					'manage_terms'=>'manage_death-years',
+					'edit_terms'=>'edit_death-years',
+					'delete_terms'=>'delete_death-years',
+					'assign_terms'=>'assign_death-years',
+				)));
+	register_taxonomy('death-place', array(
+		0 => 'research-objectives',
+		1 => 'research-strategies',
+			), array('hierarchical' => true, 'label' => 'Death Place of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Place',
+				'capabilities'=>array(
+					'manage_terms'=>'manage_death-places',
+					'edit_terms'=>'edit_death-places',
+					'delete_terms'=>'delete_death-places',
+					'assign_terms'=>'assign_death-places',
 				)));
 	register_taxonomy('childrens-birthyears', array(
 		0 => 'research-objectives',
@@ -93,6 +83,16 @@ function elijah_register_cpts() {
 					'delete_terms'=>'delete_childrens-birthyears',
 					'assign_terms'=>'assign_childrens-birthyears',
 				)));
+	register_taxonomy('childrens-birthplaces', array(
+		0 => 'research-objectives',
+		1 => 'research-strategies',
+			), array('hierarchical' => true, 'label' => 'Children\'s Birthplaces', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birthplace',
+				'capabilities'=>array(
+					'manage_terms'=>'manage_childrens-birthplaces',
+					'edit_terms'=>'edit_childrens-birthplaces',
+					'delete_terms'=>'delete_childrens-birthplaces',
+					'assign_terms'=>'assign_childrens-birthplaces',
+				)));
 	$year_research_taxonomies = array('birthyear', 'marriage-year', 'death-year', 'childrens-birthyears' );
 	$place_research_taxonomies = array( 'birthplace', 'death-place', 'marriage-place', 'childrens-birthplaces' );
 	$other_research_taxonomies = array( 'individual-details' );
@@ -101,14 +101,14 @@ function elijah_register_cpts() {
 	foreach( $year_research_taxonomies as $taxonomy ) {
 		elijah_make_term_for_decades_after( 1600, $taxonomy );
 	}
-
+	//@todo: this should really be named "research_objective" (singular, with underscore)
 	register_post_type('research-objectives', array(
 		'label' => 'Research Objectives',
 		'description' => 'A specific thing about a specific person you want to research. E.g.: great-uncle Tim\\\\\\\\\\\\\\\'s birthplace; great-great-grandmother Susan\\\\\\\\\\\\\\\'s parent\\\\\\\\\\\\\\\'s names and birthplaces; great-aunt Gertrude\\\\\\\\\\\\\\\'s death-place and date',
 		'public' => true,
 		'show_ui' => true,
 		'show_in_menu' => true,
-		'capability_type' => 'research-objective',
+		'capability_type' => 'research-objective',//@todo: this hsould be research_objective
 		'map_meta_cap' => true,
 		'hierarchical' => false,
 		'rewrite' => array('slug' => ''),
@@ -119,6 +119,7 @@ function elijah_register_cpts() {
 		'supports' => array('title', 'editor', 'excerpt', 'comments', 'revisions', 'thumbnail', 'author',),
 		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
+			//@todo: i18n please!
 			'name' => 'Research Objectives',
 			'singular_name' => 'Research Objective',
 			'menu_name' => 'Research Objectives',

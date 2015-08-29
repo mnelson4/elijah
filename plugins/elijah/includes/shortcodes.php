@@ -7,7 +7,7 @@ function my_research_objectives_shortcode_datatables($atts){
 //	), $atts ) );
 	wp_register_script('dataTables','http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js',array('jquery'));
 	wp_enqueue_script('dataTables');
-	
+
 	$code = <<<HEREDOC
 	<script>
 		jQuery(document).ready(function() {
@@ -22,7 +22,7 @@ function my_research_objectives_shortcode_datatables($atts){
 } );
 
 	</script>
-	
+
 <table id='my_research_objectives_table'>
 <thead>
 <tr>
@@ -37,8 +37,17 @@ function my_research_objectives_shortcode_datatables($atts){
 </tbody>
 
 </table>
-	
+
 HEREDOC;
 	return $code;
 }
 add_shortcode('my_research_objectives','my_research_objectives_shortcode');
+
+function elijah_add_research_strategy_shortcode( $atts ) {
+	$individual_details_terms = get_terms( 'individual-details' );
+	$post_id = isset( $_GET[ 'research_strategy' ] ) ? intval( $_GET[ 'research_strategy' ] ) : 0;
+	ob_start();
+	include( elijah_root . '/includes/templates/add-research-strategy.php' );
+	return ob_get_clean();
+}
+add_shortcode( 'elijah_add_research_strategy', 'elijah_add_research_strategy_shortcode' );

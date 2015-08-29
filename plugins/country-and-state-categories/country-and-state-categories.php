@@ -35,23 +35,23 @@ function casc_handle_add_countries_and_states_form() {
 add_action( 'init', 'casc_handle_add_countries_and_states_form', 110 );
 
 function casc_import_countries_and_states_as_taxonomies_for( $taxonomy ) {
-//	$countries = simplexml_load_file(CASC_DIR . 'countries.xml');
-//	foreach($countries as $country_element) {
-//		$result = wp_insert_term(
-//				$country_element['name'],
-//				$taxonomy,
-//				array( 'slug' => $country_element['alpha-2'] ) );
-//	}
-//	$countries = simplexml_load_file(CASC_DIR . 'states.xml');
-//	$count = 0;
-//	foreach($countries as $country_element) {
-//		foreach($country_element->iso_3166_subset as $state_type_element ) {
-//			$country_term = get_term_by('slug', $country_element['code'], $taxonomy);
-//			foreach($state_type_element->iso_3166_2_entry as $state_element ) {
-//				$result = wp_insert_term( $state_element['name'],$taxonomy, array( 'slug' => $state_element['code'], 'parent' => intval( $country_term->term_id ) ) );
-//			}
-//		}
-//	}
+	$countries = simplexml_load_file(CASC_DIR . 'countries.xml');
+	foreach($countries as $country_element) {
+		$result = wp_insert_term(
+				$country_element['name'],
+				$taxonomy,
+				array( 'slug' => $country_element['alpha-2'] ) );
+	}
+	$countries = simplexml_load_file(CASC_DIR . 'states.xml');
+	$count = 0;
+	foreach($countries as $country_element) {
+		foreach($country_element->iso_3166_subset as $state_type_element ) {
+			$country_term = get_term_by('slug', $country_element['code'], $taxonomy);
+			foreach($state_type_element->iso_3166_2_entry as $state_element ) {
+				$result = wp_insert_term( $state_element['name'],$taxonomy, array( 'slug' => $state_element['code'], 'parent' => intval( $country_term->term_id ) ) );
+			}
+		}
+	}
 	update_option( 'casc_success_notice', true );
 
 }

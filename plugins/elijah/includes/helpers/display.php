@@ -120,3 +120,79 @@ function get_permalink_append_post_id($strategy_id, $referer_id=null, $referer_a
 	}
 	return add_query_arg($referer_arg_name,$referer_id,get_permalink($strategy_id));
 }
+
+/**
+ * Shows HTML for form elements relating to the post's taxonomies terms, assuming
+ * this taxonomy is a place-related one
+ * @param stdClass $taxonomy like one of the items returned by `get_object_taxonomies( $taxonomy, 'objects' );`
+ * @param int $post
+ */
+function elijah_places_input( $taxonomy, $post_id) {
+	$country_terms = get_terms(
+			$taxonomy->name,
+			array(
+				'parent' => 0,
+				'fields' => 'id=>name',
+				'hide_empty' => false,
+				'hierarchical' => false,
+		) );
+	$state_terms = get_terms(
+			$taxonomy->name,
+			array(
+				'exclude' => array_keys( $elijah_country_terms),
+				'fields' => 'id=>name',
+				'hide_empty' => false,
+				'hierarchical' => false,
+				) );
+	$selected_terms = wp_get_object_terms( $post_id, $taxonomy->name, array( 'fields' => 'ids' ) );
+	include( elijah_templates_dir . '/places-taxonomy-input.php');
+}
+
+function elijah_years_input( $taxonomy, $post_id ) {
+	$year_terms = get_terms(
+			$taxonomy->name,
+			array(
+				'fields' => 'id=>name',
+				'hide_empty' => false,
+				'hierarchical' => false,
+			));
+	$selected_terms = wp_get_object_terms( $post_id, $taxonomy->name, array( 'fields' => 'ids' ) );
+	include( elijah_templates_dir . '/years-taxonomy-input.php' );
+}
+
+/**
+ *
+ * @param string $name for the html select option
+ * @param array $select_options keys html "value" attributes, and values are the names for display. Can be an array of terms, and the term_id will be used for the html "value" tag
+ *		and the term's name will be used for display
+ * @param array $selected values are options selected
+ * @param array $html_attributes key 'select' is all the html tags for the 'select' attribute
+ */
+function elijah_select( $name, $select_options, $selected = false, $html_attributes = array() ) {
+	ob_start();
+	$html_attributes_string = '';
+	$html_attributes['name'] = $name;
+	foreach( $html_attributes as $attr_name => $attr_value ) {
+		$html_attributes_string .= "$attr_name='" . esc_attr( $attr_value ) . "' ";
+	}
+	if( $first_item instanceof stdClass &&
+			property_exists(  $first_item, 'term_id' ) &&
+			property_exists( $first_item, 'name' ) ) {
+		$normalized_select_options = array();
+		foreach( $select_options as $term ) {
+			$normalized_select_options[ $term->term_id ] = $term->name;
+		}
+	} else {
+		$normalized_select_options = $select_options;
+	}
+	?>
+	<select name="<?php echo $html_attributes_string;?>"  >
+		<?php
+		foreach ( $normalized_select_options as $key => $array_value) { ?>
+			<option class="level-0" value="<?php echo $key; ?>" <?php echo in_array( $key, $selected ) ? 'selected="selected"' : ''?>><?php echo $array_value; ?></option>
+		<?php } ?>
+	</select>
+
+	<?php
+	return ob_get_clean();
+}
