@@ -18,6 +18,11 @@ jQuery(document).ready(function(){
 	//updating started research strategies
 	jQuery('.elijah-research-strategy-usefulness').change(jQuery.debounce(send_strategy_application_form,500));
 	jQuery('.strategy-comments-area').keyup(jQuery.debounce(send_strategy_application_form,500));
+        jQuery('.elijah-reveal').click(function() {
+            var section_id = this.id;
+            var section_id_to_reveal = section_id.replace('elijah-reveal-', '' );
+            jQuery('#' + section_id_to_reveal ).toggle('fast');
+        })
 });
 
 function send_strategy_application_form(){

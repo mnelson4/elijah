@@ -43,11 +43,17 @@ HEREDOC;
 }
 add_shortcode('my_research_objectives','my_research_objectives_shortcode');
 
-function elijah_add_research_strategy_shortcode( $atts ) {
+/**
+ * Shortcode taht renders a form for creating or editing research strategies.
+ * The actual logic of handling the form submission is ocntained in elijah/includes/class.front-controller.php
+ * @param array $atts
+ * @return string
+ */
+function elijah_edit_research_strategy_shortcode( $atts ) {
 	$individual_details_terms = get_terms( 'individual-details' );
 	$post_id = isset( $_GET[ 'research_strategy' ] ) ? intval( $_GET[ 'research_strategy' ] ) : 0;
 	ob_start();
-	include( elijah_root . '/includes/templates/add-research-strategy.php' );
+	include( elijah_root . '/includes/templates/edit-research-strategy.php' );
 	return ob_get_clean();
 }
-add_shortcode( 'elijah_add_research_strategy', 'elijah_add_research_strategy_shortcode' );
+add_shortcode( 'elijah_edit_research_strategy', 'elijah_edit_research_strategy_shortcode' );
