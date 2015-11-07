@@ -9,7 +9,7 @@
  */
 function add_description_to_menu($item_output, $item, $depth, $args) {
 	if( in_array( $item->attr_title, array( 'my-research-objectives', 'research-goal-editor' ) ) &&
-			! current_user_can( 'edit_research-strategys' ) ) {
+			! current_user_can( 'edit_research-strategies' ) ) {
 		$item_output = '';
 	}
     return $item_output;

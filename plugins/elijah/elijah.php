@@ -9,7 +9,7 @@ Version: 0.0.1
 define('elijah_version','0.0.1.dev');
 define('elijah_root',dirname(__FILE__));
 define('elijah_main_file',__FILE__);
-define( 'elijah_templates_dir', elijah_root . '/includes/templates' );
+define( 'elijah_templates_dir', elijah_root . '/includes/templates/' );
 
 
 //do definitions

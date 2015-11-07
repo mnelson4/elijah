@@ -57,3 +57,18 @@ function elijah_edit_research_strategy_shortcode( $atts ) {
 	return ob_get_clean();
 }
 add_shortcode( 'elijah_edit_research_strategy', 'elijah_edit_research_strategy_shortcode' );
+
+/**
+ * Shortcode taht renders a form for creating or editing research objectives.
+ * The actual logic of handling the form submission is ocntained in elijah/includes/class.front-controller.php
+ * @param array $atts
+ * @return string
+ */
+function elijah_edit_research_objective_shortcode( $atts ) {
+	$individual_details_terms = get_terms( 'individual-details' );
+	$post_id = isset( $_GET[ 'research_objective' ] ) ? intval( $_GET[ 'research_objective' ] ) : 0;
+	ob_start();
+	include( elijah_root . '/includes/templates/edit-research-objective.php' );
+	return ob_get_clean();
+}
+add_shortcode( 'elijah_edit_research_objective', 'elijah_edit_research_objective_shortcode' );

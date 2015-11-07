@@ -4,7 +4,7 @@
 
 		<li class="wpuf-el post_title">
 			<div class="wpuf-label">
-				<label for="wpuf-post_title"><?php _e( 'Strategy Title', 'event_espresso' );?><span class="required">*</span></label>
+				<label for="wpuf-post_title"><?php _e( 'Individual Being Researched', 'event_espresso' );?><span class="required">*</span></label>
 			</div>
 
 			<div class="wpuf-fields">
@@ -14,24 +14,10 @@
 			</div>
 
         </li>
-		<li class="wpuf-el post_content">
-			<div class="wpuf-label">
-				<label for="wpuf-post_content"><?php _e( 'Description', 'event_espresso' );?></label>
-			</div>
-
-			<div class="wpuf-fields">
-				<?php wp_editor( ( $post_id ? get_post_field( 'post_content', $post_id )  : '' ), 'post_content' ); ?>
-			</div>
-
-        </li>
-		<li class="wpuf-el ">
-			<div class="wpuf-fields">
-				<p class="wpuf-help"><?php _e( 'What kind of ancestral information can this help you find?', 'event_espresso' );?></p>
-			</div>
-        </li>
+		
 		<li class="wpuf-el individual-details">
 			<div class="wpuf-label">
-				<label for="wpuf-individual-details"><?php _e( 'Research Objective', 'event_espresso' );?><span class="required">*</span></label>
+				<label for="wpuf-individual-details"><?php _e( 'Individual\'s Details you Want to Find', 'event_espresso' );?><span class="required">*</span></label>
 			</div>
 
 			<div class="wpuf-fields">
@@ -49,7 +35,7 @@
         </li>
 		<li class="wpuf-el ">
 			<div class="wpuf-fields">
-				<p class="wpuf-help">When could this research strategy be helpful? (Eg, when research ancestors from what place and time?)</p>
+				<p class="wpuf-help"><?php _e( 'Known Individual Details', 'event_espresso');?></p>
 			</div>
         </li>
 			<?php
@@ -88,13 +74,23 @@
 			<?php
 			}
 			?>
+		<li class="wpuf-el post_content">
+			<div class="wpuf-label">
+				<label for="wpuf-post_content"><?php _e( 'Extra Information', 'event_espresso' );?></label>
+			</div>
+
+			<div class="wpuf-fields">
+				<?php wp_editor( ( $post_id ? get_post_field( 'post_content', $post_id )  : '' ), 'post_content' ); ?>
+			</div>
+
+        </li>
 		<li class="wpuf-submit">
 
-            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-strategy' )?>">
-            <input type="hidden" name="elijah_request" value="research_strategy_submit">
+            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-objective' )?>">
+            <input type="hidden" name="elijah_request" value="research_objective_submit">
 			<input type="hidden" name="post_id" value="<?php echo $post_id;?>">
 			<input type="submit" name="submit" value="<?php echo elijah_save_and_continue_editing_button_name;?>">
-			<input type="submit" name="submit" value="<?php echo elijah_save_and_view_button_name;?>">
+			<input type="submit" name="submit" value="<?php echo elijah_save_and_research_button_name;?>">
 		</li>
 
 	</ul>

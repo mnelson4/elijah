@@ -22,28 +22,36 @@ class Elijah_Front_Controller {
 			}
 		}
 	}
-
+	
+	/**
+	 * Takes care fo ahndling request sto create or update a research objective,
+	 * and does a redirect afterwards.
+	 */
+	function handle_research_objective_submit() {
+		$this->_handle_research_thing_submitted( 'objective', 'objectives' );
+	}
 	/**
 	 * Takes care of handling requests to create or update a research strategy. Also takes
 	 * care of performing redirect
 	 */
 	function handle_research_strategy_submit() {
-//		echo "handle research strategy submit";
-		if( ! wp_verify_nonce( $_REQUEST[ '_wpnonce'], 'add-research-strategy' ) ) {
+		$this->_handle_research_thing_submitted( 'strategy', 'strategies' );
+	}
+	
+	protected function _handle_research_thing_submitted( $type_singular, $type_plural ) {
+		if( ! wp_verify_nonce( $_REQUEST[ '_wpnonce'], 'add-research-' . $type_singular ) ) {
 			wp_die( __( 'Cheatin\' huh?', 'event_espresso' ) );
 		}
-		$post_id = $_REQUEST[ 'post_id' ];
-
 		$post = null;
 		if( $post_id ) {
-			if( ! current_user_can(  'edit_research-strategy', $post_id ) ) {
+			if( ! current_user_can(  'edit_research-' . $type_singular, $post_id ) ) {
 				wp_die( __( 'You don\'t have permission to edit this!', 'event_espresso' ));
 			}
 			//is there a post ID?
 //			echo "post id $post_id";
 			$post = get_post( $post_id );
 //			echo "post:";var_dump($post);
-			if( $post instanceof WP_Post && $post->post_type == 'research-strategies') {
+			if( $post instanceof WP_Post && $post->post_type == 'research-' . $type_plural) {
 				//and it's a real research strategy?
 //				//if so update it
 //				echo "update post!!";
@@ -57,13 +65,13 @@ class Elijah_Front_Controller {
 			}
 
 		}
-		if ( ! $post instanceof WP_Post || $post->post_type != 'research-strategies' ) {
-			if( ! current_user_can(  'edit_research-strategys' ) ) {
+		if ( ! $post instanceof WP_Post || $post->post_type != 'research-' . $type_plural ) {
+			if( ! current_user_can(  'edit_research-' . $type_plural ) ) {
 				wp_die( __( 'You don\'t have permission to insert this!', 'event_espresso' ));
 			}
 			//if no post ID, create one
 //inserting post
-			if( current_user_can( 'publish_research-strategys' ) ) {
+			if( current_user_can( 'publish_research-' . $type_plural ) ) {
 				$post_status = 'publish';
 			} else {
 				$post_status = 'draft';
@@ -72,7 +80,7 @@ class Elijah_Front_Controller {
 					array(
 						'post_title' => sanitize_post_field( 'post_title', $_REQUEST[ 'post_title'], $post_id ),
 						'post_content' => sanitize_post_field( 'post_content', $_REQUEST[ 'post_content'], $post_id ),
-						'post_type' => 'research-strategies',
+						'post_type' => 'research-' . $type_plural,
 						'post_status' => $post_status
 					));
 			$post = get_post( $post_id );

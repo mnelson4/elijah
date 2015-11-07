@@ -146,6 +146,12 @@ function elijah_register_cpts() {
 		'show_ui' => true,
 		'show_in_menu' => true,
 		'capability_type' => 'research-strategy',
+		'capabilities' => array(
+			'edit_posts' => 'edit_research-strategies',
+			'edit_others_posts' => 'edit_others_research-strategies',
+			'publish_posts' => 'publish_research-strategies', 
+			'read_private_posts' => 'read_private_research-strategies',
+		),
 		'map_meta_cap' => true,
 		'hierarchical' => true,
 		'rewrite' => array('slug' => 'research-strategies'),
