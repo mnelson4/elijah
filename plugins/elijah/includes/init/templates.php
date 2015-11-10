@@ -16,6 +16,12 @@ class ElijahPageTemplater {
          * The array of templates that this plugin tracks.
          */
         protected $templates;
+		
+		/**
+		 *
+		 * @var array keys are custom post type names, values are their single post template files
+		 */
+		protected $single_cpt_templates;
 
 
         /**
@@ -41,6 +47,11 @@ class ElijahPageTemplater {
                         elijah_templates_dir . 'my-research-objectives.php'     => 'My Research Objectives',
 						elijah_templates_dir . 'my-research-strategies.php'     => 'My Research Strategies',
                 );
+				
+				$this->single_cpt_templates = array(
+					'research-strategies' => elijah_templates_dir . 'single-research-strategy.php',
+					'research-objectives' => elijah_templates_dir . 'single-research-objective.php',
+				);
 
 
                 // Add a filter to the attributes metabox to inject template into the cache.
@@ -63,11 +74,31 @@ class ElijahPageTemplater {
 					'template_include', 
 					array( $this, 'view_project_template') 
 				);
+				
+				add_filter( 
+						'single_template', 
+						array( $this, 'get_single_file_template' ) 
+				);
 
 
                 
 				
         } 
+		
+		/**
+		 * Changes the custom post type's single template
+		 * @global type $post
+		 * @param type $single_template
+		 * @return type
+		 */
+		public function get_single_file_template( $single_template ){
+			global $post;
+
+			if ( isset( $this->single_cpt_templates[ $post->post_type ] ) ) {
+				 $single_template = $this->single_cpt_templates[ $post->post_type ];
+			}
+			return $single_template;
+		}
 
 
         /**

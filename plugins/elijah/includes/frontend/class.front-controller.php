@@ -42,7 +42,8 @@ class Elijah_Front_Controller {
 		if( ! wp_verify_nonce( $_REQUEST[ '_wpnonce'], 'add-research-' . $type_singular ) ) {
 			wp_die( __( 'Cheatin\' huh?', 'event_espresso' ) );
 		}
-		$post = null;
+		$post_id = isset( $_REQUEST[ 'research_' . $type_singular ] ) ? intval( $_REQUEST[ 'research_' . $type_singular ] ): null;
+		
 		if( $post_id ) {
 			if( ! current_user_can(  'edit_research-' . $type_singular, $post_id ) ) {
 				wp_die( __( 'You don\'t have permission to edit this!', 'event_espresso' ));
@@ -107,9 +108,24 @@ class Elijah_Front_Controller {
 			}
 
 			if( strpos( $taxonomy, 'year' ) !== false ) {
-				$results = wp_set_object_terms( $post_id, array_map('intval', $_REQUEST[ $taxonomy . '-years' ] ), $taxonomy );
-//				echo "results:";
-//				var_dump($results);
+				$begin_input_name = elijah_year_input_name( $taxonomy, true );
+				$end_input_name = elijah_year_input_name( $taxonomy, false );
+				$begin_year = max( 
+								intval( $_REQUEST[ $begin_input_name ] ), 
+								0 );
+				$success = update_post_meta( $post_id, $begin_input_name, $begin_year );
+				$begin_range = 
+						round( $begin_year, -1 );
+				$end_year = $_REQUEST[ $end_input_name ] ? 
+								intval( $_REQUEST[ $end_input_name ] ) :
+									intval( date('Y') );
+				update_post_meta( $post_id, $end_input_name, $end_year );
+				$end_range = 
+						round( $end_year, -1 );
+				$vals = array_map( 
+						function( $input) { return strval( $input ) . 's'; }, 
+						range( $begin_range, $end_range, 10 ) );
+				$results = wp_set_object_terms( $post_id, $vals, $taxonomy );
 			}elseif( strpos( $taxonomy, 'place' ) !== false ) {
 
 				$results = wp_set_object_terms(

@@ -149,15 +149,26 @@ function elijah_places_input( $taxonomy, $post_id) {
 }
 
 function elijah_years_input( $taxonomy, $post_id ) {
-	$year_terms = get_terms(
-			$taxonomy->name,
-			array(
-				'fields' => 'id=>name',
-				'hide_empty' => false,
-				'hierarchical' => false,
-			));
-	$selected_terms = wp_get_object_terms( $post_id, $taxonomy->name, array( 'fields' => 'ids' ) );
+//	$year_terms = get_terms(
+//			$taxonomy->name,
+//			array(
+//				'fields' => 'id=>name',
+//				'hide_empty' => false,
+//				'hierarchical' => false,
+//			));
+//	$selected_terms = wp_get_object_terms( $post_id, $taxonomy->name, array( 'fields' => 'ids' ) );
+	$taxonomy_name = $taxonomy->name;
 	include( elijah_templates_dir . '/years-taxonomy-input.php' );
+}
+
+/**
+ * Gets the input name for the specified taxonomy
+ * @param string $taxonomy_name
+ * @param boolean $begin_or_end true for 'begin' input, false for 'end'
+ */
+function elijah_year_input_name( $taxonomy_name, $begin_or_end ) {
+	$suffix = $begin_or_end ? 'begin' : 'end';
+	return $taxonomy_name . '-' . $suffix;
 }
 
 /**

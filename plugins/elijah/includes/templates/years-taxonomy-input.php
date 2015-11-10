@@ -1,7 +1,6 @@
 <div style='background-color:red'>
-<select multiple="multiple" name="<?php echo $taxonomy->name;?>-years[]">
-<?php foreach( $year_terms as $year_term_id => $year_name ) { ?>
-	<option value="<?php echo $year_term_id;?>" <?php echo in_array( $year_term_id, $selected_terms ) ? 'selected="selected"' : ''?>><?php echo $year_name;?></option>
-<?php } ?>
-</select>
+	<label for="<?php echo elijah_year_input_name( $taxonomy_name, true );?>-label"><?php _e( 'Between', 'event_espresso');?></label>
+	<input name="<?php echo elijah_year_input_name( $taxonomy_name, true );?>" value="<?php echo get_post_meta( $post_id, elijah_year_input_name( $taxonomy_name, true ), true );?>"> 
+	<label for="<?php echo elijah_year_input_name( $taxonomy_name, false );?>-label"><?php _e( 'and', 'event_espresso');?></label>
+	<input name="<?php echo elijah_year_input_name( $taxonomy_name, false );?>" value="<?php echo get_post_meta( $post_id, elijah_year_input_name( $taxonomy_name, false ), true );?>">
 </div>
