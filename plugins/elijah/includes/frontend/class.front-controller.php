@@ -110,18 +110,21 @@ class Elijah_Front_Controller {
 			if( strpos( $taxonomy, 'year' ) !== false ) {
 				$begin_input_name = elijah_year_input_name( $taxonomy, true );
 				$end_input_name = elijah_year_input_name( $taxonomy, false );
-				$begin_year = max( 
-								intval( $_REQUEST[ $begin_input_name ] ), 
-								0 );
+				
+				$begin_year = intval( $_REQUEST[ $begin_input_name ] ) ?
+						intval( $_REQUEST[ $begin_input_name ] ) :
+						'';				
 				$success = update_post_meta( $post_id, $begin_input_name, $begin_year );
-				$begin_range = 
-						round( $begin_year, -1 );
-				$end_year = $_REQUEST[ $end_input_name ] ? 
-								intval( $_REQUEST[ $end_input_name ] ) :
-									intval( date('Y') );
+				$begin_range = round( 
+						max( 
+								intval( $begin_year ),
+								1500 ), 
+						-1 );
+				$end_year = intval( $_REQUEST[ $end_input_name ] );
 				update_post_meta( $post_id, $end_input_name, $end_year );
-				$end_range = 
-						round( $end_year, -1 );
+				$end_range = round( 
+								$end_year ? $end_year : intval( date('Y') ),
+								-1 );
 				$vals = array_map( 
 						function( $input) { return strval( $input ) . 's'; }, 
 						range( $begin_range, $end_range, 10 ) );

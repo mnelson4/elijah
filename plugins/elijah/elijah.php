@@ -13,7 +13,7 @@ define( 'elijah_templates_dir', elijah_root . '/includes/templates/' );
 
 
 //do definitions
-define( 'elijah_edit_research_objectives_page_id', 179 );
+define( 'elijah_edit_research_objectives_page_id', 167 );
 define( 'elijah_edit_research_strategies_page_id', 153 );
 define( 'elijah_save_and_continue_editing_button_name', __( 'Save & Continue Editing', 'event_espresso' ) );
 define( 'elijah_save_and_research_button_name', __( 'Save & Research', 'event_espresso' ) );
