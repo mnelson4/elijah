@@ -33,6 +33,7 @@ if(is_admin()){
 	require_once(elijah_root.'/includes/admin/research_objectives.php');
 	if (defined('DOING_AJAX') && DOING_AJAX) {
 		require_once(elijah_root.'/includes/ajax/strategy_updates.php');
+		require_once(elijah_root.'/includes/ajax/taxonomy_search.php');
 	}
 }
 //frontned-init
