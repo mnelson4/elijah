@@ -1,4 +1,4 @@
-<div style='background-color:red'>
+<div >
 	<label for="<?php echo elijah_year_input_name( $taxonomy_name, true );?>-label"><?php _e( 'Between', 'event_espresso');?></label>
 	<input 
 		name="<?php echo elijah_year_input_name( $taxonomy_name, true );?>" 

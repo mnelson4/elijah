@@ -6,21 +6,16 @@
  * and open the template in the editor.
  */
 
-add_action('wp_ajax_elijah_taxonomy_search', 'elijah_taxonomy_search' );
-function elijah_taxonomy_search( ) {
-//	echo json_encode( array( 
-//		'results' => array(
-//			array( 'id' => 1, 'text' => 'one' ), 
-//			array( 'id' => 2, 'text' => 'two' ),
-//			),
-//		'pagination' => array(
-//			'more' => true
-//		)) );
-//	die;
+
+add_action('wp_ajax_elijah_taxonomy_country_search', 'elijah_taxonomy_country_search' );
+function elijah_taxonomy_country_search( ) {
+	$per_page = 30;
 	$country_terms = get_terms(
 			$_REQUEST[ 'taxonomy'],
 			array(
 				'parent' => 0,
+				'number' => $per_page,
+				'offset' => $_REQUEST[ 'page' ] * $per_page,
 				'fields' => 'id=>name',
 				'hide_empty' => false,
 				'hierarchical' => false,
@@ -33,8 +28,36 @@ function elijah_taxonomy_search( ) {
 			array( 
 				'results' => $results,
 				'pagination' => array(
-					'more' => true
+					'more' => count( $results ) < $per_page ? false : true
 		)) );
 	die;
-//	var_dump( $_REQUEST );
+}
+
+add_action('wp_ajax_elijah_taxonomy_state_search', 'elijah_taxonomy_state_search' );
+function elijah_taxonomy_state_search( ) {
+	if( is_array( $_REQUEST[ 'countries' ] ) ) {
+		$state_terms = get_terms(
+				$_REQUEST[ 'taxonomy'],
+				array(
+					'parent' => end( $_REQUEST[ 'countries' ] ),
+					'number' => $per_page,
+					'offset' => $_REQUEST[ 'page' ] * $per_page,
+					'fields' => 'id=>name',
+					'hide_empty' => false,
+					'hierarchical' => false,
+			) );
+		$results = array();
+		foreach( $state_terms as $key => $value ) {
+			$results[] = array( 'id' => $key, 'text' => $value );
+		}
+	} else {
+		$results = array();
+	}
+	echo json_encode( 
+			array( 
+				'results' => $results,
+				'pagination' => array(
+					'more' => count( $results ) < $per_page ? false : true,
+		)) );
+	die;
 }

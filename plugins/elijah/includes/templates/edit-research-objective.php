@@ -58,19 +58,19 @@
 				$year_taxonomy = get_taxonomy( $taxonomy_names[ 0 ] );
 				$place_taxonomy = get_taxonomy( $taxonomy_names[ 1 ] );
 				?>
-		<li class="wpuf-el"><?php echo $title;?></li>
-			<li class="wpuf-el <?php echo $year_taxonomy->name;?> elijah-form-half">
-				<div class="wpuf-fields">
-					<?php  elijah_years_input( $year_taxonomy, $post_id ); ?>
-					<span class="wpuf-help"></span>
-				</div>
-			</li>
-			<li class="wpuf-el <?php echo $place_taxonomy->name;?> elijah-form-half">
-				<div class="wpuf-fields">
-					<?php elijah_places_input( $place_taxonomy, $post_id ); ?>
-					<span class="wpuf-help"></span>
-				</div>
-			</li>
+		<h3><?php echo $title;?></h3>
+		<li class="wpuf-el <?php echo $year_taxonomy->name;?> elijah-form-half">
+			<div class="wpuf-fields">
+				<?php  elijah_years_input( $year_taxonomy, $post_id ); ?>
+				<span class="wpuf-help"></span>
+			</div>
+		</li>
+		<li class="wpuf-el <?php echo $place_taxonomy->name;?> elijah-form-half">
+			<div class="wpuf-fields">
+				<?php elijah_places_input( $place_taxonomy, $post_id ); ?>
+				<span class="wpuf-help"></span>
+			</div>
+		</li>
 			<?php
 			}
 			?>

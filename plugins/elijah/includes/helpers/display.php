@@ -139,7 +139,7 @@ function elijah_places_input( $taxonomy, $post_id) {
 	$state_terms = get_terms(
 			$taxonomy->name,
 			array(
-				'exclude' => array_keys( $elijah_country_terms),
+				'exclude' => array_keys( $country_terms),
 				'fields' => 'id=>name',
 				'hide_empty' => false,
 				'hierarchical' => false,
