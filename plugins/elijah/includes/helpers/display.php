@@ -128,22 +128,17 @@ function get_permalink_append_post_id($strategy_id, $referer_id=null, $referer_a
  * @param int $post
  */
 function elijah_places_input( $taxonomy, $post_id) {
-	$country_terms = get_terms(
+	$terms = elijah_prepare_country_term_taxonomies(
+		get_terms(
 			$taxonomy->name,
 			array(
-				'parent' => elijah_get_anywhere_place_taxonomy_term_id( $taxonomy->name ),
-				'fields' => 'id=>name',
+				'fields' => 'all',
 				'hide_empty' => false,
 				'hierarchical' => false,
-		) );
-	$state_terms = get_terms(
-			$taxonomy->name,
-			array(
-				'exclude' => array_keys( $country_terms),
-				'fields' => 'id=>name',
-				'hide_empty' => false,
-				'hierarchical' => false,
-				) );
+			) 
+		)
+	);
+	
 	$selected_terms = wp_get_object_terms( $post_id, $taxonomy->name, array( 'fields' => 'ids' ) );
 	include( elijah_templates_dir . '/places-taxonomy-input.php');
 }

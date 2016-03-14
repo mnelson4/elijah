@@ -135,9 +135,8 @@ class Elijah_Front_Controller {
 						$post_id,
 						array_map(
 								'intval',
-								array_unique( array_merge( (array) $_REQUEST[ $taxonomy . '-countries' ], (array) $_REQUEST[ $taxonomy . '-states' ] ) ) ),
+								array_unique( (array) $_REQUEST[ $taxonomy  ] ) ),
 						$taxonomy );
-//				echo "results:";var_dump($results);
 			}
 		}
 		if( $_REQUEST[ 'submit' ] == elijah_save_and_continue_editing_button_name ) {

@@ -10,7 +10,7 @@ wp_enqueue_style( 'select2', '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.1-rc.
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function(){
-	jQuery('#<?php echo $taxonomy->name;?>-countries').select2({
+	jQuery('#<?php echo $taxonomy->name;?>').select2({
 		ajax: {
 		url: ajaxurl,
 		dataType: 'json',
@@ -20,29 +20,7 @@ jQuery(document).ready(function(){
 			q: params.term, // search term
 			page: params.page,
 			taxonomy: '<?php echo $taxonomy->name;?>',
-			action: 'elijah_taxonomy_country_search'
-		  };
-		},
-		processResults: function (data, params) {
-			return data;
-		},
-		cache: true
-		},
-		minimumInputLength: 0,
-	});
-	jQuery('#<?php echo $taxonomy->name;?>-states').select2({
-		ajax: {
-		url: ajaxurl,
-		dataType: 'json',
-		delay: 250,
-		data: function (params) {
-			var countries = jQuery('#<?php echo $taxonomy->name;?>-countries').val();
-		  return {
-			q: params.term, // search term
-			page: params.page,
-			taxonomy: '<?php echo $taxonomy->name;?>',
-			action: 'elijah_taxonomy_state_search',
-			countries:countries,
+			action: 'elijah_place_taxonomy_search'
 		  };
 		},
 		processResults: function (data, params) {
@@ -56,15 +34,10 @@ jQuery(document).ready(function(){
 	
 </script>
 <div class="elijah-places-taxonomy-input-area" >
-	<select style="width:15em;visibility:hidden" multiple="multiple" name="<?php echo $taxonomy->name;?>-countries[]" id="<?php echo $taxonomy->name;?>-countries" >
+	<select style="width:15em;visibility:hidden" multiple="multiple" name="<?php echo $taxonomy->name;?>" id="<?php echo $taxonomy->name;?>" >
 		<?php
-		foreach( $country_terms as $country_term_id => $country_name ) {?>
+		foreach( $terms as $country_term_id => $country_name ) {?>
 			<option value="<?php echo $country_term_id;?>" <?php echo in_array( $country_term_id, $selected_terms ) ? 'selected="selected"' : ''?>><?php echo $country_name;?></option>
-		<?php } ?>
-	</select>
-	<select style="width:15em;visibility:hidden" multiple="multiple" name="<?php echo $taxonomy->name;?>-states[]" id="<?php echo $taxonomy->name;?>-states">
-		<?php foreach( $state_terms as $state_term_id => $state_name ) {?>
-			<option value="<?php echo $state_term_id;?>" <?php echo in_array( $state_term_id, $selected_terms ) ? 'selected="selected"' : ''?>><?php echo $state_name;?></option>
 		<?php } ?>
 	</select>
 </div>
