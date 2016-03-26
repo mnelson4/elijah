@@ -37,7 +37,7 @@ jQuery(document).ready(function(){
 	<select style="width:15em;visibility:hidden" multiple="multiple" name="<?php echo $taxonomy->name;?>" id="<?php echo $taxonomy->name;?>" >
 		<?php
 		foreach( $terms as $country_term_id => $country_name ) {?>
-			<option value="<?php echo $country_term_id;?>" <?php echo in_array( $country_term_id, $selected_terms ) ? 'selected="selected"' : ''?>><?php echo $country_name;?></option>
+			<option value="<?php echo $country_term_id;?>" selected="selected"><?php echo $country_name;?></option>
 		<?php } ?>
 	</select>
 </div>

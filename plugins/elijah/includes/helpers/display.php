@@ -129,17 +129,14 @@ function get_permalink_append_post_id($strategy_id, $referer_id=null, $referer_a
  */
 function elijah_places_input( $taxonomy, $post_id) {
 	$terms = elijah_prepare_country_term_taxonomies(
-		get_terms(
+		wp_get_object_terms( 
+			$post_id,
 			$taxonomy->name,
 			array(
 				'fields' => 'all',
-				'hide_empty' => false,
-				'hierarchical' => false,
 			) 
 		)
 	);
-	
-	$selected_terms = wp_get_object_terms( $post_id, $taxonomy->name, array( 'fields' => 'ids' ) );
 	include( elijah_templates_dir . '/places-taxonomy-input.php');
 }
 

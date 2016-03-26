@@ -110,24 +110,40 @@ class Elijah_Front_Controller {
 			if( strpos( $taxonomy, 'year' ) !== false ) {
 				$begin_input_name = elijah_year_input_name( $taxonomy, true );
 				$end_input_name = elijah_year_input_name( $taxonomy, false );
-				
+			
 				$begin_year = intval( $_REQUEST[ $begin_input_name ] ) ?
 						intval( $_REQUEST[ $begin_input_name ] ) :
-						'';				
-				$success = update_post_meta( $post_id, $begin_input_name, $begin_year );
-				$begin_range = round( 
-						max( 
-								intval( $begin_year ),
-								1500 ), 
-						-1 );
+						'';
+				
 				$end_year = intval( $_REQUEST[ $end_input_name ] );
+				
+				
+				
+				if( empty( $begin_year ) 
+					&& empty( $end_year ) ) {
+					$vals = array( 'anytime' );
+				} else {
+					if( empty( $begin_year ) ) {
+						$begin_year = $end_year;
+					} 
+					if( empty( $end_year ) ) {
+						$end_year = $begin_year;
+					} 
+					if( $begin_year > $end_year ) {
+						$temp = $end_year;
+						$end_year = $begin_year;
+						$begin_year = $temp;
+					}
+					$vals = array_map( 
+						function( $input) { 
+							return strval( $input ) . 's'; 
+						
+						}, 
+						range( $begin_year, $end_year, 10 ) 
+					);
+				}
+				update_post_meta( $post_id, $begin_input_name, $begin_year );
 				update_post_meta( $post_id, $end_input_name, $end_year );
-				$end_range = round( 
-								$end_year ? $end_year : intval( date('Y') ),
-								-1 );
-				$vals = array_map( 
-						function( $input) { return strval( $input ) . 's'; }, 
-						range( $begin_range, $end_range, 10 ) );
 				$results = wp_set_object_terms( $post_id, $vals, $taxonomy );
 			}elseif( strpos( $taxonomy, 'place' ) !== false ) {
 
