@@ -22,28 +22,20 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 			<div><h1><?php the_title()?></h1></div>
                         <div id="elijah-current-info-wrap-div">
                             <a id="elijah-reveal-elijah-current-info" class="elijah-reveal"><?php _e( 'Known Info', 'event_espress'); ?></a>
-                            <div id="elijah-current-info" class="elijah-start-hidden">
-                                <ul>
-                                    <?php foreach (get_taxonomies(null, 'objects') as $taxonomy_name => $tax_object) { ?>
-                                    <li><b><?php echo $tax_object->labels->singular_name ?></b>
-                                                    <?php
-                                                    $term_names = array();
-                                                    foreach (wp_get_post_terms($post->ID, $taxonomy_name) as $term_value) {
-                                                            $term_names[] = $term_value->name;
-                                                    }
-                                                    if(empty($term_names)){
-                                                            echo "Unknown";
-                                                    }else{
-                                                            echo implode(", ", $term_names);
-                                                    }
-                                                    ?>
-                                            </li>
-                                            <?php
-                                    }
-                                    ?>
-                                </ul>
-                            </div>
-                        </div>
+                            <dl id="elijah-current-info" class="elijah-start-hidden">
+								<?php
+								echo elijah_datalist_item(__( 'Searching for'), implode(', ', wp_get_post_terms($post->ID, 'individual-details', array( 'fields' => 'names' ) ) ) );
+								echo elijah_datalist_item(__('Birthyear', 'event_espresso'), elijah_year_output( 'birthyear', $post->ID, ' ' ) );
+								echo elijah_datalist_item( __( 'Birthplace', 'event_espresso'), elijah_places_output( 'birthplace', $post->ID, ' ' ) );
+								echo elijah_datalist_item( __( 'Marriage Year', 'event_espresso'), elijah_year_output( 'marriage-year', $post->ID, ' ' ) );
+								echo elijah_datalist_item( __( 'Marriage Place', 'event_espresso'), elijah_places_output( 'marriage-place', $post->ID, ' ' ) );
+								echo elijah_datalist_item( __( 'Childrens\' Birthyears', 'event_espresso'), elijah_year_output( 'childrens-birthyears', $post->ID, ' ' ) );
+								echo elijah_datalist_item( __( 'Childrens\' Birthplaces', 'event_espresso'), elijah_places_output( 'childrens-birthplaces', $post->ID, ' ' ) );
+								echo elijah_datalist_item( __( 'Death Year', 'event_espresso'), elijah_year_output( 'death-year', $post->ID, ' ' ) );
+								echo elijah_datalist_item( __( 'Death Place', 'event_espresso'), elijah_places_output( 'deathplace', $post->ID, ' ' ) );
+								?>
+							</dl>
+						</div>
                         <div id="elijah-work-done-wrap-div">
                         <?php
                         $connected = new WP_Query( array(

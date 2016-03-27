@@ -141,16 +141,51 @@ function elijah_places_input( $taxonomy, $post_id) {
 }
 
 function elijah_years_input( $taxonomy, $post_id ) {
-//	$year_terms = get_terms(
-//			$taxonomy->name,
-//			array(
-//				'fields' => 'id=>name',
-//				'hide_empty' => false,
-//				'hierarchical' => false,
-//			));
-//	$selected_terms = wp_get_object_terms( $post_id, $taxonomy->name, array( 'fields' => 'ids' ) );
 	$taxonomy_name = $taxonomy->name;
 	include( elijah_templates_dir . '/years-taxonomy-input.php' );
+}
+
+function elijah_year_output( $taxonomy, $post_id, $anytime_text = null ) {
+	$begin_input_name = elijah_year_input_name( $taxonomy, true );
+	$end_input_name = elijah_year_input_name( $taxonomy, false );
+	$begin_year = get_post_meta( $post_id, $begin_input_name, true );
+	$end_year = get_post_meta( $post_id, $end_input_name, true );
+	if( empty( $begin_year ) 
+		|| empty( $end_year ) ) {
+		if( $anytime_text === null ) {
+			return __( 'Anytime', 'event_espresso' );
+		} else {
+			return $anytime_text;
+		}
+	} else {
+		return sprintf( __( '%1$s-%2$s', 'event_espresso' ), $begin_year, $end_year );
+	}
+}
+function elijah_places_output( $taxonomy, $post_id, $anywhere_text = null ) {
+	$term_names = array();
+	foreach (wp_get_post_terms($post_id, $taxonomy) as $term_value) {
+			$term_names[] = $term_value->name;
+	}
+	$term_names = array_filter( $term_names );
+	if(empty($term_names)){
+		if( $anywhere_text === null ) {
+			$value = $anywhere_text; 
+		} else {
+			$value = __( 'Anywhere', 'event_espresso' );
+		}
+	}else{
+		
+		$value =  implode(", ", $term_names);
+	}
+	return $value;
+}
+
+function elijah_datalist_item( $key, $value ) {
+	if( $value ) {
+		return '<dt>' . $key . '</dt><dd>' . $value . '</dd>';
+	} else {
+		return '';
+	}
 }
 
 /**
