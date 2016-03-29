@@ -36,7 +36,7 @@
 
 			<div class="wpuf-fields">
 				<?php $selected = wp_get_object_terms( $post_id, 'individual-details', array( 'fields' => 'ids' ) ); ?>
-				<select multiple="multiple" data-required="yes" data-type="multiselect" name="individual-details[]" id="individual-details" class="individual-details multiselect">
+				<select multiple="multiple" data-required="yes" required="required" data-type="multiselect" name="individual-details[]" id="individual-details" class="individual-details multiselect">
 					<?php
 
 					foreach ( $individual_details_terms as $term ) { ?>
