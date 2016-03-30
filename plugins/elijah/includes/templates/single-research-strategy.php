@@ -16,106 +16,34 @@ $current_objective = $post;
 wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'),'current_research_objective_id'=>$post->ID));?>
 <div id="primary" >
 	<div id="content" role="main">
-<?php while (have_posts()) : the_post(); 
+<?php while (have_posts()) : the_post(); ?>
 
-?>
-
-				<?php get_template_part('content-single', get_post_format()); ?>
-			<div><h1><?php the_title()?></h1></div>
-                        <div id="elijah-current-info-wrap-div">
-                            <div id="elijah-current-info" >
-                                <ul>
-									<li><?php _e( 'Born:', 'event_espresso');?></li>
-                                    <?php foreach (get_taxonomies(null, 'objects') as $taxonomy_name => $tax_object) { ?>
-                                    <li><b><?php echo $tax_object->labels->singular_name ?></b>
-                                                    <?php
-                                                    $term_names = array();
-                                                    foreach (wp_get_post_terms($post->ID, $taxonomy_name) as $term_value) {
-                                                            $term_names[] = $term_value->name;
-                                                    }
-                                                    if(empty($term_names)){
-                                                            echo "Unknown";
-                                                    }else{
-                                                            echo implode(", ", $term_names);
-                                                    }
-                                                    ?>
-                                            </li>
-                                            <?php
-                                    }
-                                    ?>
-                                </ul>
-                            </div>
-                        </div>
-                        <div id="elijah-work-done-wrap-div">
-                        <?php
-                        $connected = new WP_Query( array(
-                                                        'connected_type' => 'strategies_applied',
-                                                        'connected_items' => get_queried_object(),
-                                                        'connected_orderby' => 'last_updated',
-                                                        'connected_order' => 'asc',
-                                                        'nopaging' => true,
-                                                  ) );
-                        $strategies_applied = $connected->posts;
-//				foreach($connected->posts as $strategy_applied){
-//					echo "strategy:".$strategy_applied->post_title;
-//					$usefulness =  p2p_get_meta( $strategy_applied->p2p_id, 'usefulness', true );
-
-//					echo "usefulness:".  elijah_pretty_usefulness($usefulness);
-//				}
-
-                        ?>
-                        
-                            <a id="elijah-reveal-elijah-work-done" class="elijah-reveal"><?php _e( 'Work Done', 'event_espress'); ?></a>
-                            <div class='elijah-work-done elijah-start-hidden' id="elijah-work-done">
-                                    <div class="work-done-items">
-                                            <?php
-                                            $strategies_applied_ids = array();
-                                            foreach($strategies_applied as $strategy_applied){
-                                                    $strategies_applied_ids[] = $strategy_applied->ID;
-                                                    echo elijah_suggested_research_strategy($strategy_applied, $post);
-                                                    } ?>
-                                    </div>
-                            </div>
-                        </div>
-                        <div id="elijah-work-todo-div">
-                            <?php
-                            global $yarpp;
-
-                            $results = $yarpp->get_related(get_the_ID(),
-                                                    array(
-                                                            'post_type'=>array('research-strategies'),
-                                                            'post__not_in' => $strategies_applied_ids,
-                                                            'threshold'=>1,
-    //									'exclude'=>implode(",",$strategies_applied_ids),
-                                                            'weight'=>array(
-                                                                    //'body'=>1,
-                                                                    'tax'=>array(
-                                                                            'birthyear'=>1,
-                                                                            'birthplace'=>1,
-                                                                            'marriage-year'=>1,
-                                                                            'marriage-place'=>1,
-                                                                            'death-year'=>1,
-                                                                            'death-place'=>1,
-                                                                            'individual-details'=>5,
-
-                                                                    )
-                                                                    )));
-                            ?>
-                            <a id="elijah-reveal-elijah-work-todo" class="elijah-reveal"><?php _e( 'Work To-Do', 'event_espress'); ?></a>
-                            <div id="elijah-work-todo" class="elijah-start-hidden">
-                                    <div class="work-todo-items">
-                                            <?php foreach($results as $strategy_suggested){
-
-                                                    echo elijah_suggested_research_strategy($strategy_suggested, $post );
-                                                    } ?>
-                                    </div>
-                                    <h2><?php _e( 'Do something else', 'event_espresso' );?></h2>
-                                    <?php if( current_user_can( 'edit_research-strategies' ) ){?>
-                                        <a href="<?php echo get_permalink(185);?>"><button class="button button-primary"><?php _e( 'Add Research Strategy', 'event_espresso' );?></button></a>
-                                    <?php } ?>
-                            </div>
-                        </div>
-			<?php comments_template('', true); ?>
+	<?php get_template_part('content-single', get_post_format()); ?>
+	<h1><?php the_title()?></h1>
+	<p><?php printf( __( 'A Research Strategy by %1$s', 'event_espresso' ), get_the_author() );?></p>
+	<div class="post-body-plain">
+		<?php the_content();?>
+	</div>
+	<div id="elijah-current-info-wrap-div">
+		<dl id="elijah-current-info">
+			<?php
+			$individual_details = implode(', ', wp_get_post_terms($post->ID, 'individual-details', array( 'fields' => 'names' ) ) );
+			echo elijah_datalist_item( __( 'Use This Strategy When Searching for'), $individual_details ? $individual_details : __( 'Anything', 'event_espresso' ) );
+			?>
+			<h2><?php _e( '...and the individual being researched matched the following...', 'event_espresso' );?></h2>
+			<?php
+			echo elijah_datalist_item( __('Birthyear', 'event_espresso'), elijah_year_output( 'birthyear', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Birthplace', 'event_espresso'), elijah_places_output( 'birthplace', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Marriage Year', 'event_espresso'), elijah_year_output( 'marriage-year', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Marriage Place', 'event_espresso'), elijah_places_output( 'marriage-place', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Childrens\' Birthyears', 'event_espresso'), elijah_year_output( 'childrens-birthyears', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Childrens\' Birthplaces', 'event_espresso'), elijah_places_output( 'childrens-birthplaces', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Death Year', 'event_espresso'), elijah_year_output( 'death-year', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Death Place', 'event_espresso'), elijah_places_output( 'deathplace', $post->ID, ' ' ) );
+			?>
+		</dl>
+	</div>
+	<?php comments_template('', true); ?>
 
 <?php endwhile; // end of the loop.  ?>
 
