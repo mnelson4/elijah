@@ -18,6 +18,25 @@ function get_excerpt_or_short_content($post){
 	}
 	return $text;
 }
+/**
+* Gets the URL for editing thie post on the frontend
+* @param WP_Post $post
+* @return string URL for editing the post on the frontend
+*/
+function elijah_get_frontend_editing_permalink( WP_Post $post ) {
+	if( $post->post_type === 'research-objectives' ) {
+		$url = add_query_arg( 'research_objective', $post->ID, get_permalink( elijah_edit_research_objectives_page_id ) );
+	} elseif( $post->post_type === 'research-strategies' ) {
+		$url = add_query_arg( 'research_strategy', $post->ID, get_permalink( elijah_edit_research_strategies_page_id ) );
+	} else {
+		if( WP_DEBUG ) {
+			throw new Exception( 'Could not get frontend editing permalink for post ' . print_r( $post, true ) );
+		} else {
+			$url = site_url();
+		}
+	}
+	return $url;
+}
 
 /**
  * Class for containing functions which interact with p2p in order to update

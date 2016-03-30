@@ -20,7 +20,13 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 
 	<?php get_template_part('content-single', get_post_format()); ?>
 	<h1><?php the_title()?></h1>
-	<p><?php printf( __( 'A Research Strategy by %1$s', 'event_espresso' ), get_the_author() );?></p>
+	<p>
+		<?php printf( __( 'A Research Strategy by %1$s', 'event_espresso' ), get_the_author() );
+		if( current_user_can( 'edit_research-strategy', $post->ID ) ) {
+		?> <a href="<?php echo elijah_get_frontend_editing_permalink( $post );?>"><?php _e( 'Edit', 'event_espresso' );?></a>
+		<?php
+	}?>
+	</p>
 	<div class="post-body-plain">
 		<?php the_content();?>
 	</div>

@@ -157,32 +157,12 @@ class Elijah_Front_Controller {
 		}
 		if( $_REQUEST[ 'submit' ] == elijah_save_and_continue_editing_button_name ) {
 			//just save and return to edit
-			wp_safe_redirect( $this->get_frontend_editing_permalink( $post ) );
+			wp_safe_redirect( elijah_get_frontend_editing_permalink( $post ) );
 			die;
 		} else/*if ( $_REQUEST[ 'submit' ] == elijah_save_and_research_button_name )*/ {
 			wp_safe_redirect( get_permalink( $post->ID ) );
 			die;
 		}
-	}
-
-	/**
-	 * Gets the URL for editing thie post on the frontend
-	 * @param WP_Post $post
-	 * @return string URL for editing the post on the frontend
-	 */
-	public function get_frontend_editing_permalink( WP_Post $post ) {
-		if( $post->post_type === 'research-objectives' ) {
-			$url = add_query_arg( 'research_objective', $post->ID, get_permalink( elijah_edit_research_objectives_page_id ) );
-		} elseif( $post->post_type === 'research-strategies' ) {
-			$url = add_query_arg( 'research_strategy', $post->ID, get_permalink( elijah_edit_research_strategies_page_id ) );
-		} else {
-			if( WP_DEBUG ) {
-				throw new Exception( 'Could not get frontend editing permalink for post ' . print_r( $post, true ) );
-			} else {
-				$url = site_url();
-			}
-		}
-		return $url;
 	}
 }
 new Elijah_Front_Controller();
