@@ -62,10 +62,14 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 				<div class="work-done-items">
 						<?php
 						$strategies_applied_ids = array();
+						if( empty( $strategies_applied ) ) {
+							_e( 'None yet', 'event_espresso' );
+						} else {
 						foreach($strategies_applied as $strategy_applied){
-								$strategies_applied_ids[] = $strategy_applied->ID;
-								echo elijah_suggested_research_strategy($strategy_applied, $post);
-								} ?>
+							$strategies_applied_ids[] = $strategy_applied->ID;
+							echo elijah_suggested_research_strategy($strategy_applied, $post);
+							}
+						}?>
 				</div>
 		</div>
 	</div>
