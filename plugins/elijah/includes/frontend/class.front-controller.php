@@ -40,13 +40,13 @@ class Elijah_Front_Controller {
 	
 	protected function _handle_research_thing_submitted( $type_singular, $type_plural ) {
 		if( ! wp_verify_nonce( $_REQUEST[ '_wpnonce'], 'add-research-' . $type_singular ) ) {
-			wp_die( __( 'Cheatin\' huh?', 'event_espresso' ) );
+			wp_die( __( 'Cheatin\' huh?', 'elijah' ) );
 		}
 		$post_id = isset( $_REQUEST[ 'research_' . $type_singular ] ) ? intval( $_REQUEST[ 'research_' . $type_singular ] ): null;
 		
 		if( $post_id ) {
 			if( ! current_user_can(  'edit_research-' . $type_singular, $post_id ) ) {
-				wp_die( __( 'You don\'t have permission to edit this!', 'event_espresso' ));
+				wp_die( __( 'You don\'t have permission to edit this!', 'elijah' ));
 			}
 			//is there a post ID?
 //			echo "post id $post_id";
@@ -68,7 +68,7 @@ class Elijah_Front_Controller {
 		}
 		if ( ! $post instanceof WP_Post || $post->post_type != 'research-' . $type_plural ) {
 			if( ! current_user_can(  'edit_research-' . $type_plural ) ) {
-				wp_die( __( 'You don\'t have permission to insert this!', 'event_espresso' ));
+				wp_die( __( 'You don\'t have permission to insert this!', 'elijah' ));
 			}
 			//if no post ID, create one
 //inserting post

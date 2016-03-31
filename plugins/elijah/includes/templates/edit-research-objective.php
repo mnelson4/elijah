@@ -4,7 +4,7 @@
 
 		<li class="wpuf-el post_title">
 			<div class="wpuf-label">
-				<label for="wpuf-post_title"><?php _e( 'Individual Being Researched', 'event_espresso' );?><span class="required">*</span></label>
+				<label for="wpuf-post_title"><?php _e( 'Individual Being Researched', 'elijah' );?><span class="required">*</span></label>
 			</div>
 
 			<div class="wpuf-fields">
@@ -17,7 +17,7 @@
 		
 		<li class="wpuf-el individual-details">
 			<div class="wpuf-label">
-				<label for="wpuf-individual-details"><?php _e( 'Individual\'s Details you Want to Find', 'event_espresso' );?><span class="required">*</span></label>
+				<label for="wpuf-individual-details"><?php _e( 'Individual\'s Details you Want to Find', 'elijah' );?><span class="required">*</span></label>
 			</div>
 
 			<div class="wpuf-fields">
@@ -35,21 +35,21 @@
         </li>
 		<li class="wpuf-el ">
 			<div class="wpuf-fields">
-				<p class="wpuf-help"><?php _e( 'Known Individual Details', 'event_espresso');?></p>
+				<p class="wpuf-help"><?php _e( 'Known Individual Details', 'elijah');?></p>
 			</div>
         </li>
 			<?php
 			$info_groups = array(
-				__( 'Birth', 'event_espresso' ) => array(
+				__( 'Birth', 'elijah' ) => array(
 					'birthyear', 'birthplace'
 				),
-				__( 'Marriage', 'event_espresso' ) => array(
+				__( 'Marriage', 'elijah' ) => array(
 					'marriage-year', 'marriage-place'
 				),
-				__( 'Childrens\'s births', 'event_espresso' ) => array(
+				__( 'Childrens\'s births', 'elijah' ) => array(
 					'childrens-birthyears', 'childrens-birthplaces'
 				),
-				__( 'Death', 'event_espresso' ) => array(
+				__( 'Death', 'elijah' ) => array(
 					'death-year', 'death-place'
 				),
 			);
@@ -76,7 +76,7 @@
 			?>
 		<li class="wpuf-el post_content">
 			<div class="wpuf-label">
-				<label for="wpuf-post_content"><?php _e( 'Extra Information', 'event_espresso' );?></label>
+				<label for="wpuf-post_content"><?php _e( 'Extra Information', 'elijah' );?></label>
 			</div>
 
 			<div class="wpuf-fields">

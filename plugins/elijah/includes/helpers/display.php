@@ -17,7 +17,7 @@ function elijah_pretty_usefulness($usefulness_int){
 	if(isset($usefulness_int)){
 		return $strategy_usefulness_mapping[$usefulness_int];
 	}else{
-		return __("Unknown", "event_espresso");
+		return __("Unknown", "elijah");
 	}
 }
 
@@ -36,7 +36,7 @@ function elijah_pretty_usefulness($usefulness_int){
 function elijah_usefulness_dropdown($p2p_connection,$input_name){
 	global $strategy_usefulness_mapping;
 	$usefulness = p2p_get_meta( $p2p_connection->p2p_id, 'usefulness', true );
-	$html = "<span class='usefulness-dropdown-area'><label for='$input_name'>".  __("Usefulness", "event_espresso")."</label><img src='".site_url()."/wp-admin/images/wpspin_light.gif' style='display:none' class='spinner'><br/><select id='$input_name' name='$input_name' class='elijah-research-strategy-usefulness'>";
+	$html = "<span class='usefulness-dropdown-area'><label for='$input_name'>".  __("Usefulness", "elijah")."</label><img src='".site_url()."/wp-admin/images/wpspin_light.gif' style='display:none' class='spinner'><br/><select id='$input_name' name='$input_name' class='elijah-research-strategy-usefulness'>";
 	foreach($strategy_usefulness_mapping as $strategy_int => $strategy_text){
 		if($strategy_int == $usefulness){
 			$selected_html = "selected='selected'";
@@ -62,7 +62,7 @@ function elijah_usefulness_dropdown($p2p_connection,$input_name){
  */
 function elijah_comments_textbox($p2p_connection,$input_name){
 	$comments = p2p_get_meta( $p2p_connection->p2p_id, 'comments', true );
-	$html = "<label for='$input_name'>".  __("Comments", "event_espresso")."</label><br/><textarea id='$input_name' name='$input_name' class='strategy-comments-area'>$comments</textarea>";
+	$html = "<label for='$input_name'>".  __("Comments", "elijah")."</label><br/><textarea id='$input_name' name='$input_name' class='strategy-comments-area'>$comments</textarea>";
 	return $html;
 }
 
@@ -84,8 +84,8 @@ function elijah_suggested_research_strategy($strategy_post_obj, $objective_post_
 			<h5><a href='<?php echo get_permalink_append_post_id($strategy_post_obj->ID);?>'><?php echo $strategy_post_obj->post_title;?></a></h5>
 
 			<div class="strategy-buttons" <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>>
-				<button class="start-research-strategy" id="start-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Start", "event_espresso")?></button>
-				<button class="skip-research-strategy" id="skip-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Skip", "event_espresso")?></button>
+				<button class="start-research-strategy" id="start-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Start", "elijah")?></button>
+				<button class="skip-research-strategy" id="skip-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Skip", "elijah")?></button>
 			</div>
 			<div class="strategy-status-info" <?php echo ! in_array($status,array('in_progress', 'completed')) ? 'style="display:none"' : ''?>>
 				<div class="rowed usefulness-div">
@@ -97,7 +97,7 @@ function elijah_suggested_research_strategy($strategy_post_obj, $objective_post_
 			</div>
 			<p <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>><?php echo get_excerpt_or_short_content($strategy_post_obj);?></p>
 			<div class="strategy-skipped-area" <?php echo $status != 'skipped'? 'style="display:none"' : '' ?>>
-				<p><?php	_e("Skipped", "event_espresso");?> <?php printf(__("%s Unskip %s", 'event_espresso'),"<button class='start-research-strategy' id='restart-{$strategy_post_obj->ID}'>","</button>");?></p>
+				<p><?php	_e("Skipped", "elijah");?> <?php printf(__("%s Unskip %s", 'elijah'),"<button class='start-research-strategy' id='restart-{$strategy_post_obj->ID}'>","</button>");?></p>
 			</div>
 
 		</div>
@@ -153,12 +153,12 @@ function elijah_year_output( $taxonomy, $post_id, $anytime_text = null ) {
 	if( empty( $begin_year ) 
 		|| empty( $end_year ) ) {
 		if( $anytime_text === null ) {
-			return __( 'Anytime', 'event_espresso' );
+			return __( 'Anytime', 'elijah' );
 		} else {
 			return $anytime_text;
 		}
 	} else {
-		return sprintf( __( '%1$s-%2$s', 'event_espresso' ), $begin_year, $end_year );
+		return sprintf( __( '%1$s-%2$s', 'elijah' ), $begin_year, $end_year );
 	}
 }
 function elijah_places_output( $taxonomy, $post_id, $anywhere_text = null ) {
@@ -171,7 +171,7 @@ function elijah_places_output( $taxonomy, $post_id, $anywhere_text = null ) {
 		if( $anywhere_text === null ) {
 			$value = $anywhere_text; 
 		} else {
-			$value = __( 'Anywhere', 'event_espresso' );
+			$value = __( 'Anywhere', 'elijah' );
 		}
 	}else{
 		

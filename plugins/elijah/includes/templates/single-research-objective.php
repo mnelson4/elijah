@@ -21,27 +21,27 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 	<?php get_template_part('content-single', get_post_format()); ?>
 	<h1><?php the_title()?></h1>
 	<p>
-		<?php printf( __( 'A Research Objective of %1$s', 'event_espresso' ), get_the_author() );
+		<?php printf( __( 'A Research Objective of %1$s', 'elijah' ), get_the_author() );
 		if( current_user_can( 'edit_research-objective', $post->ID ) ) {
-		?> <a href="<?php echo elijah_get_frontend_editing_permalink( $post );?>"><?php _e( 'Edit', 'event_espresso' );?></a>
+		?> <a href="<?php echo elijah_get_frontend_editing_permalink( $post );?>"><?php _e( 'Edit', 'elijah' );?></a>
 		<?php
 	}?>
 	<div class="post-body-plain">
 		<?php the_content();?>
 	</div>
 	<div id="elijah-current-info-wrap-div">
-		<h2><?php _e( 'Known Info', 'event_espress'); ?></h2>
+		<h2><?php _e( 'Known Info', 'elijah'); ?></h2>
 		<dl id="elijah-current-info">
 			<?php
 			echo elijah_datalist_item(__( 'Searching for'), implode(', ', wp_get_post_terms($post->ID, 'individual-details', array( 'fields' => 'names' ) ) ) );
-			echo elijah_datalist_item(__('Birthyear', 'event_espresso'), elijah_year_output( 'birthyear', $post->ID, ' ' ) );
-			echo elijah_datalist_item( __( 'Birthplace', 'event_espresso'), elijah_places_output( 'birthplace', $post->ID, ' ' ) );
-			echo elijah_datalist_item( __( 'Marriage Year', 'event_espresso'), elijah_year_output( 'marriage-year', $post->ID, ' ' ) );
-			echo elijah_datalist_item( __( 'Marriage Place', 'event_espresso'), elijah_places_output( 'marriage-place', $post->ID, ' ' ) );
-			echo elijah_datalist_item( __( 'Childrens\' Birthyears', 'event_espresso'), elijah_year_output( 'childrens-birthyears', $post->ID, ' ' ) );
-			echo elijah_datalist_item( __( 'Childrens\' Birthplaces', 'event_espresso'), elijah_places_output( 'childrens-birthplaces', $post->ID, ' ' ) );
-			echo elijah_datalist_item( __( 'Death Year', 'event_espresso'), elijah_year_output( 'death-year', $post->ID, ' ' ) );
-			echo elijah_datalist_item( __( 'Death Place', 'event_espresso'), elijah_places_output( 'deathplace', $post->ID, ' ' ) );
+			echo elijah_datalist_item(__('Birthyear', 'elijah'), elijah_year_output( 'birthyear', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Birthplace', 'elijah'), elijah_places_output( 'birthplace', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Marriage Year', 'elijah'), elijah_year_output( 'marriage-year', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Marriage Place', 'elijah'), elijah_places_output( 'marriage-place', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Childrens\' Birthyears', 'elijah'), elijah_year_output( 'childrens-birthyears', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Childrens\' Birthplaces', 'elijah'), elijah_places_output( 'childrens-birthplaces', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Death Year', 'elijah'), elijah_year_output( 'death-year', $post->ID, ' ' ) );
+			echo elijah_datalist_item( __( 'Death Place', 'elijah'), elijah_places_output( 'deathplace', $post->ID, ' ' ) );
 			?>
 		</dl>
 	</div>
@@ -57,13 +57,13 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 	$strategies_applied = $connected->posts;
 	?>
 
-		<h2 id="elijah-reveal-elijah-work-done"><?php _e( 'Work Done', 'event_espress'); ?></h2>
+		<h2 id="elijah-reveal-elijah-work-done"><?php _e( 'Work Done', 'elijah'); ?></h2>
 		<div class='elijah-work-done' id="elijah-work-done">
 				<div class="work-done-items">
 						<?php
 						$strategies_applied_ids = array();
 						if( empty( $strategies_applied ) ) {
-							_e( 'None yet', 'event_espresso' );
+							_e( 'None yet', 'elijah' );
 						} else {
 						foreach($strategies_applied as $strategy_applied){
 							$strategies_applied_ids[] = $strategy_applied->ID;
@@ -98,7 +98,7 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 												)
 												)));
 		?>
-		<h2 id="elijah-reveal-elijah-work-todo"><?php _e( 'Work To-Do', 'event_espress'); ?></h2>
+		<h2 id="elijah-reveal-elijah-work-todo"><?php _e( 'Work To-Do', 'elijah'); ?></h2>
 		<div id="elijah-work-todo">
 				<div class="work-todo-items">
 						<?php foreach($results as $strategy_suggested){
@@ -106,10 +106,10 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 								echo elijah_suggested_research_strategy($strategy_suggested, $post );
 								} ?>
 				</div>
-				<h2><?php _e( 'Do something else', 'event_espresso' );?></h2>
+				<h2><?php _e( 'Do something else', 'elijah' );?></h2>
 				<a href="javascript:history.go(0)"><button class="button button-primary"><?php _e( 'Refresh list', 'event_espesso' );?></button></a><br>
 				<?php if( current_user_can( 'edit_research-strategies' ) ){?>
-					<a href="<?php echo get_permalink(185);?>"><button class="button button-primary"><?php _e( 'Add Research Strategy', 'event_espresso' );?></button></a>
+					<a href="<?php echo get_permalink(185);?>"><button class="button button-primary"><?php _e( 'Add Research Strategy', 'elijah' );?></button></a>
 				<?php } ?>
 		</div>
 	</div>

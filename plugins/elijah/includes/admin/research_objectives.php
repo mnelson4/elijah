@@ -6,7 +6,7 @@ function elijah_add_research_status(){
 	}
 	?>
 <div class='misc-pub-section'>
-	<?php _e("Research Status: ", "event_espresso");?>
+	<?php _e("Research Status: ", "elijah");?>
 	<span style='font-weight:bold'><?php	echo elijah_research_status_dropdown($post_id);?></span>
 </div>
 <?php

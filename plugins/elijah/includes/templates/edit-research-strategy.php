@@ -4,7 +4,7 @@
 
 		<li class="wpuf-el post_title">
 			<div class="wpuf-label">
-				<label for="wpuf-post_title"><?php _e( 'Strategy Title', 'event_espresso' );?><span class="required">*</span></label>
+				<label for="wpuf-post_title"><?php _e( 'Strategy Title', 'elijah' );?><span class="required">*</span></label>
 			</div>
 
 			<div class="wpuf-fields">
@@ -16,7 +16,7 @@
         </li>
 		<li class="wpuf-el post_content">
 			<div class="wpuf-label">
-				<label for="wpuf-post_content"><?php _e( 'Description', 'event_espresso' );?></label>
+				<label for="wpuf-post_content"><?php _e( 'Description', 'elijah' );?></label>
 			</div>
 
 			<div class="wpuf-fields">
@@ -26,12 +26,12 @@
         </li>
 		<li class="wpuf-el ">
 			<div class="wpuf-fields">
-				<p class="wpuf-help"><?php _e( 'What kind of ancestral information can this help you find?', 'event_espresso' );?></p>
+				<p class="wpuf-help"><?php _e( 'What kind of ancestral information can this help you find?', 'elijah' );?></p>
 			</div>
         </li>
 		<li class="wpuf-el individual-details">
 			<div class="wpuf-label">
-				<label for="wpuf-individual-details"><?php _e( 'Research Objective', 'event_espresso' );?><span class="required">*</span></label>
+				<label for="wpuf-individual-details"><?php _e( 'Research Objective', 'elijah' );?><span class="required">*</span></label>
 			</div>
 
 			<div class="wpuf-fields">
@@ -54,16 +54,16 @@
         </li>
 			<?php
 			$info_groups = array(
-				__( 'Birth', 'event_espresso' ) => array(
+				__( 'Birth', 'elijah' ) => array(
 					'birthyear', 'birthplace'
 				),
-				__( 'Marriage', 'event_espresso' ) => array(
+				__( 'Marriage', 'elijah' ) => array(
 					'marriage-year', 'marriage-place'
 				),
-				__( 'Childrens\'s births', 'event_espresso' ) => array(
+				__( 'Childrens\'s births', 'elijah' ) => array(
 					'childrens-birthyears', 'childrens-birthplaces'
 				),
-				__( 'Death', 'event_espresso' ) => array(
+				__( 'Death', 'elijah' ) => array(
 					'death-year', 'death-place'
 				),
 			);

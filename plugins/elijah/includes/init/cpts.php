@@ -135,9 +135,9 @@ function elijah_register_cpts() {
 			'not_found_in_trash' => 'No Research Objectives Found in Trash',
 			'parent' => 'Parent Research Objective',
 		),));
-	register_research_status('enqueued',array('title'=>  __("Enqueued for Research", "event_espresso")));
-	register_research_status('in-progress',array('title'=>  __("In Progress", "event_espresso")));
-	register_research_status('resolved',array('title'=> __("Resolved", "event_espresso")));
+	register_research_status('enqueued',array('title'=>  __("Enqueued for Research", "elijah")));
+	register_research_status('in-progress',array('title'=>  __("In Progress", "elijah")));
+	register_research_status('resolved',array('title'=> __("Resolved", "elijah")));
 
 	register_post_type('research-strategies', array(
 		'label' => 'Research Strategies',

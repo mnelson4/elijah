@@ -9,9 +9,9 @@ get_header();
 	<div id='content' role='main'>
 
 
-		<h2><?php _e("My Research Strategies", "event_espresso") ?></h2>
+		<h2><?php _e("My Research Strategies", "elijah") ?></h2>
 		<?php if (current_user_can( 'edit_research-strategies' ) ) {?>
-		<a href="<?php echo get_permalink( elijah_edit_research_strategies_page_id );?>"><button class="button button-primary"><?php _e( 'Add Research Strategy', 'event_espresso' );?></button></a>
+		<a href="<?php echo get_permalink( elijah_edit_research_strategies_page_id );?>"><button class="button button-primary"><?php _e( 'Add Research Strategy', 'elijah' );?></button></a>
 		<?php } ?>
 		<div class='my-research-strategies-list'>
 			<?php
@@ -37,15 +37,15 @@ get_header();
 
 				<?php } else {
 					?>
-			<h2><?php printf(__('You have no published research strategies.', "event_espresso"), "<a href='" . get_permalink( elijah_edit_research_strategies_page_id ) . "'>", "</a>");
+			<h2><?php printf(__('You have no published research strategies.', "elijah"), "<a href='" . get_permalink( elijah_edit_research_strategies_page_id ) . "'>", "</a>");
 					?></h2>
 					<?php
 				}
 			} else {
 				?>
-				<p><?php printf(__('In order to create research strategies you must first %1$s become a member %2$s', "event_espresso"), "<a href='".site_url('wp-login.php?action=register')."'>", "</a>");
+				<p><?php printf(__('In order to create research strategies you must first %1$s become a member %2$s', "elijah"), "<a href='".site_url('wp-login.php?action=register')."'>", "</a>");
 				?></p>
-				<p><?php printf(__("Already a member? %s Login %s", "event_espresso"),"<a href='".site_url('wp-login.php')."'>","</a>");?></p>
+				<p><?php printf(__("Already a member? %s Login %s", "elijah"),"<a href='".site_url('wp-login.php')."'>","</a>");?></p>
 				<?php
 			}
 			?>

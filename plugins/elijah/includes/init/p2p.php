@@ -9,20 +9,20 @@ function elijah_connection_types(){
 	 */
 	global $strategy_usefulness_mapping,$strategy_stati_mapping;
 	$strategy_usefulness_mapping = array(
-					60=>  __("Found Missing Info and More", "event_espresso"),
-					50=>  __("Found Missing Info", "event_espresso"),
-					40=>  __("Found Something Else", "event_espresso"),
-					30=>  __("Found a hint", "event_espresso"),
-					20=>  __("Looked useful, but didn't find anything", "event_espresso"),
-					0=>  __("---", "event_espresso"),
-					-10 => __("Didn't Complete", "event_espresso"),
-					-30=>  __("Waste of time", "event_espresso"),
-					-100=>  __("Spam", "event_espresso"));
+					60=>  __("Found Missing Info and More", "elijah"),
+					50=>  __("Found Missing Info", "elijah"),
+					40=>  __("Found Something Else", "elijah"),
+					30=>  __("Found a hint", "elijah"),
+					20=>  __("Looked useful, but didn't find anything", "elijah"),
+					0=>  __("---", "elijah"),
+					-10 => __("Didn't Complete", "elijah"),
+					-30=>  __("Waste of time", "elijah"),
+					-100=>  __("Spam", "elijah"));
 	$strategy_stati_mapping = array(
-		'suggested'=>  __("Suggested", "event_espresso"),
-		'in_progress'=>  __("In Progress", "event_espresso"),
-		'completed'=>  __("Complete", "event_espresso"),
-		'skipped'=>  __("Skip", "event_espresso")
+		'suggested'=>  __("Suggested", "elijah"),
+		'in_progress'=>  __("In Progress", "elijah"),
+		'completed'=>  __("Complete", "elijah"),
+		'skipped'=>  __("Skip", "elijah")
 	);
 	p2p_register_connection_type( array(
         'name' => 'strategies_applied',
@@ -42,7 +42,7 @@ function elijah_connection_types(){
 		),
 		'fields'=>array(
 			'status'=>array(
-				'title'=>  __("Status", "event_espresso"),
+				'title'=>  __("Status", "elijah"),
 				'type'=>'select',
 				'values'=>$strategy_stati_mapping
 			),
@@ -53,7 +53,7 @@ function elijah_connection_types(){
 
 			),
 			'comments'=>array(
-				'title'=>  __("Comments", "event_espresso"),
+				'title'=>  __("Comments", "elijah"),
 				'type'=>'textarea'
 			),
 			'finished'=>array(
