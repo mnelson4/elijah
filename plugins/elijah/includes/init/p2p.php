@@ -1,5 +1,13 @@
 <?php
-
+define( 'ELIJAH_STRATEGY_USEFULNESS_FOUND_INFO_AND_MORE', 60 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_FOUND_INFO', 50 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_FOUND_SOMETHING_ELSE', 40 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_FOUND_HINT', 30 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_FOUND_NOTHING', 20 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_DEFAULT', 0 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_DIDNT_COMPLETE', -10 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_WASTE', -30 );
+define( 'ELIJAH_STRATEGY_USEFULNESS_SPAM', -100 );
 //hooks for initing posts 2 posts extension
 function elijah_connection_types(){
 	if ( !function_exists( 'p2p_register_connection_type' ) )
@@ -9,15 +17,15 @@ function elijah_connection_types(){
 	 */
 	global $strategy_usefulness_mapping,$strategy_stati_mapping;
 	$strategy_usefulness_mapping = array(
-					60=>  __("Found Missing Info and More", "elijah"),
-					50=>  __("Found Missing Info", "elijah"),
-					40=>  __("Found Something Else", "elijah"),
-					30=>  __("Found a hint", "elijah"),
-					20=>  __("Looked useful, but didn't find anything", "elijah"),
-					0=>  __("---", "elijah"),
-					-10 => __("Didn't Complete", "elijah"),
-					-30=>  __("Waste of time", "elijah"),
-					-100=>  __("Spam", "elijah"));
+					ELIJAH_STRATEGY_USEFULNESS_FOUND_INFO_AND_MORE =>  __("Found Missing Info and More", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_FOUND_INFO =>  __("Found Missing Info", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_FOUND_SOMETHING_ELSE =>  __("Found Something Else", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_FOUND_HINT =>  __("Found a hint", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_FOUND_NOTHING =>  __("Looked useful, but didn't find anything", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_DEFAULT =>  __("---", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_DIDNT_COMPLETE => __("Didn't Complete", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_WASTE =>  __("Waste of time", "elijah"),
+					ELIJAH_STRATEGY_USEFULNESS_SPAM =>  __("Spam", "elijah"));
 	$strategy_stati_mapping = array(
 		'suggested'=>  __("Suggested", "elijah"),
 		'in_progress'=>  __("In Progress", "elijah"),

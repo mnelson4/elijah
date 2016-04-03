@@ -23,5 +23,11 @@ function elijah_strategy_modified() {
 	$connection_id = p2p_type('strategies_applied')->get_p2p_id( $_POST['strategy-id'], $_POST['objective-id'] );
 	p2p_update_meta($connection_id, 'usefulness', $_POST['strategy-usefulness']);
 	p2p_update_meta($connection_id, 'comments', $_POST['strategy-comments']);
+	if( $_POST['strategy-usefulness'] >= ELIJAH_STRATEGY_USEFULNESS_FOUND_INFO ) {
+		update_post_meta( $_POST['objective-id'],'research_status', 'resolved' );
+	} else {
+		//update to in progress or enqueued? do we need or want both?
+		update_post_meta( $_POST['objective-id'], 'research_status', 'in-progress' );
+	}
 	die;
 }

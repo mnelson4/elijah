@@ -115,7 +115,9 @@ class Elijah_Front_Controller {
 						intval( $_REQUEST[ $begin_input_name ] ) :
 						'';
 				
-				$end_year = intval( $_REQUEST[ $end_input_name ] );
+				$end_year = intval( $_REQUEST[ $end_input_name ] ) ?
+						intval( $_REQUEST[ $end_input_name ] ) :
+						'';
 				
 				
 				
