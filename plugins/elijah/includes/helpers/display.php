@@ -22,6 +22,18 @@ function elijah_pretty_usefulness($usefulness_int){
 }
 
 /**
+ * Shows a pretty i18n version of the research objective's current status
+ * @global array $elijah_research_statuses
+ * @param int $post_id
+ * @return string
+ */
+function elijah_pretty_research_objective_status( $post_id ) {
+	$status = get_post_meta( $post_id, 'research_status', true );
+	global $elijah_research_statuses;
+	return $elijah_research_statuses[ $status ][ 'title' ];
+}
+
+/**
  * Gets teh HTML for displaying a usefulness dropdown
  * @global type $strategy_usefulness_mapping
  * @param WP_Post $p2p_connection with attached p2p connection data, like the results of

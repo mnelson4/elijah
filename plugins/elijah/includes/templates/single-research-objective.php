@@ -20,12 +20,14 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 
 	<?php get_template_part('content-single', get_post_format()); ?>
 	<h1><?php the_title()?></h1>
+	<h2><?php echo elijah_pretty_research_objective_status( $post-ID); ?></h2>
 	<p>
 		<?php printf( __( 'A Research Objective of %1$s', 'elijah' ), get_the_author() );
 		if( current_user_can( 'edit_research-objective', $post->ID ) ) {
 		?> <a href="<?php echo elijah_get_frontend_editing_permalink( $post );?>"><?php _e( 'Edit', 'elijah' );?></a>
 		<?php
 	}?>
+	</p>
 	<div class="post-body-plain">
 		<?php the_content();?>
 	</div>
