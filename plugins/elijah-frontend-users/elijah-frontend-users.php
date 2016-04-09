@@ -7,7 +7,7 @@ Version: 0.0.1
 */
 
 //change the topbar menu
-function my_wp_nav_menu_args( $args = '' ) {
+function elijah_wp_nav_menu_args( $args = '' ) {
 
 	if ($args['theme_location'] == 'topbar_navigation') {
 		if( is_user_logged_in()) {
@@ -18,4 +18,15 @@ function my_wp_nav_menu_args( $args = '' ) {
 	}
 	return $args;
 }
-add_filter( 'wp_nav_menu_args', 'my_wp_nav_menu_args' );
+add_filter( 'wp_nav_menu_args', 'elijah_wp_nav_menu_args' );
+
+//add logout button
+function elijah_add_logout_button( $items, $args ) {
+	if( $args->menu == 'topbar' ) {
+		$redirect = is_home() ? false : get_permalink();
+		$link = '<a href="' . wp_logout_url( $redirect ) . '">' . __( 'Logout', 'elijah' ) . '</a>';
+		$items .= '<li class="menu-item menu-type-link">' . $link . '</li>';
+	}
+	return $items;
+}
+add_filter( 'wp_nav_menu_items', 'elijah_add_logout_button', 10, 2 );
