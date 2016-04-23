@@ -43,21 +43,29 @@ function elijah_pretty_research_objective_status( $post_id ) {
 								'nopaging' => true,
 							  ) );
  * @param string $input_name the name you want the input to have
+ * @param boolean $disabled
  * @return string of html for displaying a nice dropdown
  */
-function elijah_usefulness_dropdown($p2p_connection,$input_name){
+function elijah_usefulness_dropdown($p2p_connection,$input_name, $disabled = false){
 	global $strategy_usefulness_mapping;
 	$usefulness = p2p_get_meta( $p2p_connection->p2p_id, 'usefulness', true );
-	$html = "<span class='usefulness-dropdown-area'><label for='$input_name'>".  __("Usefulness", "elijah")."</label><img src='".site_url()."/wp-admin/images/wpspin_light.gif' style='display:none' class='spinner'><br/><select id='$input_name' name='$input_name' class='elijah-research-strategy-usefulness'>";
-	foreach($strategy_usefulness_mapping as $strategy_int => $strategy_text){
-		if($strategy_int == $usefulness){
-			$selected_html = "selected='selected'";
-		}else{
-			$selected_html = '';
+	$disabled_attr = $disabled ? 'disabled="disabled"' : '';
+	$html = "<span class='usefulness-dropdown-area'><label for='$input_name'>".  __("Usefulness", "elijah")."</label><img src='".site_url()."/wp-admin/images/wpspin_light.gif' style='display:none' class='spinner'><br/>";
+	if( $disabled ) {
+		$html .= $strategy_usefulness_mapping[ $usefulness ];
+	} else {
+		$html .= "<select id='$input_name' name='$input_name' class='elijah-research-strategy-usefulness' $disabled_attr>";
+		foreach($strategy_usefulness_mapping as $strategy_int => $strategy_text){
+			if($strategy_int == $usefulness){
+				$selected_html = "selected='selected'";
+			}else{
+				$selected_html = '';
+			}
+			$html .= "<option value=$strategy_int $selected_html>$strategy_text</option>";
 		}
-		$html .= "<option value=$strategy_int $selected_html>$strategy_text</option>";
+		$html .="</select>";
 	}
-	$html .="</select></span>";
+	$html .="</span>";
 	return $html;
 }
 /**
@@ -70,46 +78,68 @@ function elijah_usefulness_dropdown($p2p_connection,$input_name){
 								'nopaging' => true,
 							  ) );
  * @param string $input_name the name you want the input to have
+ * @param boolean $disabled
  * @return string of html for displaying a nice textarea
  */
-function elijah_comments_textbox($p2p_connection,$input_name){
+function elijah_comments_textbox($p2p_connection,$input_name, $disabled = false ){
 	$comments = p2p_get_meta( $p2p_connection->p2p_id, 'comments', true );
-	$html = "<label for='$input_name'>".  __("Comments", "elijah")."</label><br/><textarea id='$input_name' name='$input_name' class='strategy-comments-area'>$comments</textarea>";
+	$html = "<label for='$input_name'>".  __("Comments", "elijah")."</label><br/>";
+	if( $disabled ) {
+		if( empty( trim( $comments ) ) ) {
+			$html .= __( 'No comments entered.', 'elijah' );
+		} else {
+			$html .= $comments;
+		}
+	} else {
+		$html .= "<textarea id='$input_name' name='$input_name' class='strategy-comments-area'>$comments</textarea>";
+	}
 	return $html;
 }
 
 
 /**
- * Gets HTML for displaying a suggested research strategy for a particular post
+ * Gets HTML for displaying a suggested research strategy for a particular post.
+ * Takes into account whether or not the strategy has already been applied or not
  * @param WP_Post $strategy_post_obj with p2p post data which is attached to teh post when using WP_QUery(array('connected_type' => 'strategies_applied',...));
  */
 function elijah_suggested_research_strategy($strategy_post_obj, $objective_post_obj){
 	$status = get_strategy_status_for_objective($strategy_post_obj);
-	 ?><form method='post' name="strategy-applied-<?php echo $strategy_post_obj->id?>">
+	if( current_user_can( 'edit_research-objective', $objective_post_obj->ID ) ) {
+		$can_edit = true;
+	} else { 
+		$can_edit = false;
+	}
+	 if( $can_edit ) { ?><form method='post' name="strategy-applied-<?php echo $strategy_post_obj->id?>">
 		 <input type="hidden" name='strategy-id' value="<?php echo $strategy_post_obj->ID;?>"/>
 		 <input type="hidden" name="objective-id" value="<?php echo $objective_post_obj->ID;?>"/>
 		 <input type="hidden" name="action" value="elijah_strategy_modified"/>
+	 <?php } ?>
 		<div class="strategy-thumbnail">
 			<?php  echo get_the_post_thumbnail($strategy_post_obj->id,'thumbnail'); ?>
 		</div>
 		<div class="strategy-info">
 			<h5><a href='<?php echo get_permalink_append_post_id($strategy_post_obj->ID);?>'><?php echo $strategy_post_obj->post_title;?></a></h5>
-
+			<?php if( $can_edit ) {?>
 			<div class="strategy-buttons" <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>>
 				<button class="start-research-strategy" id="start-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Start", "elijah")?></button>
 				<button class="skip-research-strategy" id="skip-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Skip", "elijah")?></button>
 			</div>
+			<?php } ?>
 			<div class="strategy-status-info" <?php echo ! in_array($status,array('in_progress', 'completed')) ? 'style="display:none"' : ''?>>
 				<div class="rowed usefulness-div">
-				<?php echo elijah_usefulness_dropdown($strategy_post_obj,'strategy-usefulness');?>
+				<?php echo elijah_usefulness_dropdown($strategy_post_obj,'strategy-usefulness', ! $can_edit );?>
 				</div>
 				<div class="rowed comments-div">
-					<?php echo elijah_comments_textbox($strategy_post_obj,'strategy-comments');?>
+					<?php echo elijah_comments_textbox($strategy_post_obj,'strategy-comments', ! $can_edit );?>
 				</div>
 			</div>
 			<p <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>><?php echo get_excerpt_or_short_content($strategy_post_obj);?></p>
 			<div class="strategy-skipped-area" <?php echo $status != 'skipped'? 'style="display:none"' : '' ?>>
-				<p><?php	_e("Skipped", "elijah");?> <?php printf(__("%s Unskip %s", 'elijah'),"<button class='start-research-strategy' id='restart-{$strategy_post_obj->ID}'>","</button>");?></p>
+				<p><?php _e("Skipped", "elijah");?> 
+					<?php if( $can_edit ) {
+						printf(__("%s Unskip %s", 'elijah'),"<button class='start-research-strategy' id='restart-{$strategy_post_obj->ID}'>","</button>");
+					}?>
+				</p>
 			</div>
 
 		</div>
