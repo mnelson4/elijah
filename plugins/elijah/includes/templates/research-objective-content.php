@@ -1,9 +1,9 @@
 <?php
+$post = $GLOBALS['post'];
 wp_enqueue_script('debounce',plugins_url('js/jquery.debounce-1.0.5.js',elijah_main_file),array('jquery'));
 wp_enqueue_script('elijah', plugins_url('js/elijah.js',elijah_main_file),array('jquery','debounce'));
 wp_enqueue_style('elijah', plugins_url('css/elijah.css',elijah_main_file) );
 wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'),'current_research_objective_id'=>$post->ID));
-$post = $GLOBALS['post'];
 ?>
 <h2><?php echo elijah_pretty_research_objective_status( $post-ID); ?></h2>
 <div class="post-body-plain">
