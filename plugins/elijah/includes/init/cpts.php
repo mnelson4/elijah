@@ -103,7 +103,7 @@ function elijah_register_cpts() {
 	}
 	//@todo: this should really be named "research_objective" (singular, with underscore)
 	register_post_type('research-objectives', array(
-		'label' => 'Research Objectives',
+		'label' => 'Goals',
 		'description' => 'A specific thing about a specific person you want to research. E.g.: great-uncle Tim\\\\\\\\\\\\\\\'s birthplace; great-great-grandmother Susan\\\\\\\\\\\\\\\'s parent\\\\\\\\\\\\\\\'s names and birthplaces; great-aunt Gertrude\\\\\\\\\\\\\\\'s death-place and date',
 		'public' => true,
 		'show_ui' => true,
@@ -120,27 +120,27 @@ function elijah_register_cpts() {
 		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
 			//@todo: i18n please!
-			'name' => 'Research Objectives',
-			'singular_name' => 'Research Objective',
-			'menu_name' => 'Research Objectives',
-			'add_new' => 'Add Research Objective',
-			'add_new_item' => 'Add New Research Objective',
-			'edit' => 'Edit',
-			'edit_item' => 'Edit Research Objective',
-			'new_item' => 'New Research Objective',
-			'view' => 'View Research Objective',
-			'view_item' => 'View Research Objective',
-			'search_items' => 'Search Research Objectives',
-			'not_found' => 'No Research Objectives Found',
-			'not_found_in_trash' => 'No Research Objectives Found in Trash',
-			'parent' => 'Parent Research Objective',
+			'name' => __( 'Research Goals', 'event_espresso' ),
+			'singular_name' => __( 'Goal', 'event_espresso' ),
+			'menu_name' => __( 'Goals', 'event_espresso' ),
+			'add_new' => __( 'Add New', 'event_espresso' ),
+			'add_new_item' => __( 'Add New Goal', 'event_espresso' ),
+			'edit' => __( 'Edit', 'event_espresso' ),
+			'edit_item' => __( 'Edit Goal',	'event_espresso' ),
+			'new_item' => __( 'New Goal', 'event_espresso' ),
+			'view' => __( 'View', 'event_espresso' ),
+			'view_item' => __( 'View Goal',	'event_espresso' ),
+			'search_items' => __( 'Search Research Goals', 'event_espresso' ),
+			'not_found' => __( 'No Goals Found', 'event_espresso' ),
+			'not_found_in_trash' => __( 'No Goals Found in Trash','event_espresso' ),
+			'parent' => __( 'Parent', 'event_espresso' ),
 		),));
 	register_research_status('enqueued',array('title'=>  __("Enqueued for Research", "elijah")));
 	register_research_status('in-progress',array('title'=>  __("In Progress", "elijah")));
 	register_research_status('resolved',array('title'=> __("Resolved", "elijah")));
 
 	register_post_type('research-strategies', array(
-		'label' => 'Research Strategies',
+		'label' => 'Research Tips',
 		'description' => 'A generic task that can be done to complete a research objective. Eg: to find an individual\\\\\\\\\\\\\\\'s birthplace and year, search their name in New Family Search to find duplicates; to find an individual\\\\\\\\\\\\\\\'s parents, search for their birth record at local parishes; or even to find a granparent\\\\\\\\\\\\\\\'s birthplace, ask the oldest relative you know, etc.',
 		'public' => true,
 		'show_ui' => true,
@@ -162,20 +162,20 @@ function elijah_register_cpts() {
 		'supports' => array('title', 'editor', 'comments', 'thumbnail', 'author',),
 		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
-			'name' => 'Research Strategies',
-			'singular_name' => 'Research Strategy',
-			'menu_name' => 'Research Strategies',
-			'add_new' => 'Add Research Strategy',
-			'add_new_item' => 'Add New Research Strategy',
-			'edit' => 'Edit',
-			'edit_item' => 'Edit Research Strategy',
-			'new_item' => 'New Research Strategy',
-			'view' => 'View Research Strategy',
-			'view_item' => 'View Research Strategy',
-			'search_items' => 'Search Research Strategies',
-			'not_found' => 'No Research Strategies Found',
-			'not_found_in_trash' => 'No Research Strategies Found in Trash',
-			'parent' => 'Parent Research Strategy',
+			'name' => __( 'Research Tips', 'event_espresso' ),
+			'singular_name' => __( 'Tip', 'event_espresso' ),
+			'menu_name' => __( 'Research Tips',	'event_espresso' ),
+			'add_new' => __( 'Add New',	'event_espresso' ),
+			'add_new_item' => __( 'Add New Tip', 'event_espresso' ),
+			'edit' => __( 'Edit', 'event_espresso' ),
+			'edit_item' => __( 'Edit Tip', 'event_espresso' ),
+			'new_item' => __( 'New Tip', 'event_espresso' ),
+			'view' => __( 'View Tip', 'event_espresso' ),
+			'view_item' => __( 'View Tip', 'event_espresso' ),
+			'search_items' => __( 'Search Tips', 'event_espresso' ),
+			'not_found' => __( 'No Tips Found', 'event_espresso' ),
+			'not_found_in_trash' => __( 'No Tips Found in Trash', 'event_espresso' ),
+			'parent' => __( 'Paren Tip', 'event_espresso' ),
 		),));
 
 	}

@@ -30,3 +30,17 @@ function elijah_add_logout_button( $items, $args ) {
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'elijah_add_logout_button', 10, 2 );
+
+/**
+ * Replaces the string "current_user" in the menu with the current user's display name
+ * @global type $current_user
+ * @param type $items
+ * @param type $args
+ * @return string
+ */
+function elijah_replace_current_user( $items, $args ) {
+	global $current_user;
+	$items = str_replace('current_user', $current_user->display_name, $items );
+	return $items;
+}
+add_filter( 'wp_nav_menu_items', 'elijah_replace_current_user', 10, 2 );
