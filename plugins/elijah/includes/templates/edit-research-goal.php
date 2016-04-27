@@ -86,10 +86,9 @@
         </li>
 		<li class="wpuf-submit">
 
-            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-objective' )?>">
-            <input type="hidden" name="elijah_request" value="research_objective_submit">
+            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-goal' )?>">
+            <input type="hidden" name="elijah_request" value="research_goal_submit">
 			<input type="hidden" name="post_id" value="<?php echo $post_id;?>">
-			<input type="submit" name="submit" value="<?php echo elijah_save_and_continue_editing_button_name;?>">
 			<input type="submit" name="submit" value="<?php echo elijah_save_and_research_button_name;?>">
 		</li>
 

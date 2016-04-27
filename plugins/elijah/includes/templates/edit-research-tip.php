@@ -31,11 +31,11 @@
         </li>
 		<li class="wpuf-el individual-details">
 			<div class="wpuf-label">
-				<label for="wpuf-individual-details"><?php _e( 'Research Objective', 'elijah' );?><span class="required">*</span></label>
+				<label for="wpuf-individual-details"><?php _e( 'Research goal', 'elijah' );?><span class="required">*</span></label>
 			</div>
 
 			<div class="wpuf-fields">
-				<?php $selected = wp_get_object_terms( $post_id, 'individual-details', array( 'fields' => 'ids' ) ); ?>
+				<?php $selected = wp_get_object_terms( $post_id, 'individual-details', array( 'fields' => 'ids' ) ); var_dump( $selected); ?>
 				<select multiple="multiple" data-required="yes" required="required" data-type="multiselect" name="individual-details[]" id="individual-details" class="individual-details multiselect">
 					<?php
 
@@ -90,10 +90,9 @@
 			?>
 		<li class="wpuf-submit">
 
-            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-strategy' )?>">
-            <input type="hidden" name="elijah_request" value="research_strategy_submit">
+            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-tip' )?>">
+            <input type="hidden" name="elijah_request" value="research_tip_submit">
 			<input type="hidden" name="post_id" value="<?php echo $post_id;?>">
-			<input type="submit" name="submit" value="<?php echo elijah_save_and_continue_editing_button_name;?>">
 			<input type="submit" name="submit" value="<?php echo elijah_save_and_view_button_name;?>">
 		</li>
 

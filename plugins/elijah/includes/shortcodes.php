@@ -1,6 +1,6 @@
 <?php
 
-function my_research_objectives_shortcode_datatables($atts){
+function my_research_goals_shortcode_datatables($atts){
 //	extract( shortcode_atts( array(
 //		'foo' => 'something',
 //		'bar' => 'something else',
@@ -11,7 +11,7 @@ function my_research_objectives_shortcode_datatables($atts){
 	$code = <<<HEREDOC
 	<script>
 		jQuery(document).ready(function() {
-    jQuery('#my_research_objectives_table').dataTable( {
+    jQuery('#my_research_goals_table').dataTable( {
         "bProcessing": true,
         "bServerSide": true,
         "sAjaxSource": ajaxurl,
@@ -23,11 +23,11 @@ function my_research_objectives_shortcode_datatables($atts){
 
 	</script>
 
-<table id='my_research_objectives_table'>
+<table id='my_research_goals_table'>
 <thead>
 <tr>
 <th>#</th>
-<th>Objective</th>
+<th>goal</th>
 <th>Description</th>
 <th>Status</th>
 </tr>
@@ -41,34 +41,34 @@ function my_research_objectives_shortcode_datatables($atts){
 HEREDOC;
 	return $code;
 }
-add_shortcode('my_research_objectives','my_research_objectives_shortcode');
+add_shortcode('my_research_goals','my_research_goals_shortcode');
 
 /**
- * Shortcode taht renders a form for creating or editing research strategies.
+ * Shortcode taht renders a form for creating or editing research tip.
  * The actual logic of handling the form submission is ocntained in elijah/includes/class.front-controller.php
  * @param array $atts
  * @return string
  */
-function elijah_edit_research_strategy_shortcode( $atts ) {
+function elijah_edit_research_tip_shortcode( $atts ) {
 	$individual_details_terms = get_terms( 'individual-details' );
-	$post_id = isset( $_GET[ 'research_strategy' ] ) ? intval( $_GET[ 'research_strategy' ] ) : 0;
+	$post_id = isset( $_GET[ 'tip_id' ] ) ? intval( $_GET[ 'tip_id' ] ) : 0;
 	ob_start();
-	include( elijah_root . '/includes/templates/edit-research-strategy.php' );
+	include( elijah_root . '/includes/templates/edit-research-tip.php' );
 	return ob_get_clean();
 }
-add_shortcode( 'elijah_edit_research_strategy', 'elijah_edit_research_strategy_shortcode' );
+add_shortcode( 'elijah_edit_research_tip', 'elijah_edit_research_tip_shortcode' );
 
 /**
- * Shortcode taht renders a form for creating or editing research objectives.
+ * Shortcode taht renders a form for creating or editing research goals.
  * The actual logic of handling the form submission is ocntained in elijah/includes/class.front-controller.php
  * @param array $atts
  * @return string
  */
-function elijah_edit_research_objective_shortcode( $atts ) {
+function elijah_edit_research_goal_shortcode( $atts ) {
 	$individual_details_terms = get_terms( 'individual-details' );
-	$post_id = isset( $_GET[ 'research_objective' ] ) ? intval( $_GET[ 'research_objective' ] ) : 0;
+	$post_id = isset( $_GET[ 'goal_id' ] ) ? intval( $_GET[ 'goal_id' ] ) : 0;
 	ob_start();
-	include( elijah_root . '/includes/templates/edit-research-objective.php' );
+	include( elijah_root . '/includes/templates/edit-research-goal.php' );
 	return ob_get_clean();
 }
-add_shortcode( 'elijah_edit_research_objective', 'elijah_edit_research_objective_shortcode' );
+add_shortcode( 'elijah_edit_research_goal', 'elijah_edit_research_goal_shortcode' );

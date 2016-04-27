@@ -24,35 +24,35 @@ class Elijah_Front_Controller {
 	}
 	
 	/**
-	 * Takes care fo ahndling request sto create or update a research objective,
+	 * Takes care fo ahndling request sto create or update a research goal,
 	 * and does a redirect afterwards.
 	 */
-	function handle_research_objective_submit() {
-		$this->_handle_research_thing_submitted( 'objective', 'objectives' );
+	function handle_research_goal_submit() {
+		$this->_handle_research_thing_submitted( 'goal', 'goals' );
 	}
 	/**
 	 * Takes care of handling requests to create or update a research strategy. Also takes
 	 * care of performing redirect
 	 */
-	function handle_research_strategy_submit() {
-		$this->_handle_research_thing_submitted( 'strategy', 'strategies' );
+	function handle_research_tip_submit() {
+		$this->_handle_research_thing_submitted( 'tip', 'tips' );
 	}
 	
 	protected function _handle_research_thing_submitted( $type_singular, $type_plural ) {
 		if( ! wp_verify_nonce( $_REQUEST[ '_wpnonce'], 'add-research-' . $type_singular ) ) {
 			wp_die( __( 'Cheatin\' huh?', 'elijah' ) );
 		}
-		$post_id = isset( $_REQUEST[ 'research_' . $type_singular ] ) ? intval( $_REQUEST[ 'research_' . $type_singular ] ): null;
+		$post_id = isset( $_REQUEST[ $type_singular . '_id'] ) ? intval( $_REQUEST[ $type_singular . '_id' ] ): null;
 		
 		if( $post_id ) {
-			if( ! current_user_can(  'edit_research-' . $type_singular, $post_id ) ) {
+			if( ! current_user_can(  'edit_research_' . $type_singular, $post_id ) ) {
 				wp_die( __( 'You don\'t have permission to edit this!', 'elijah' ));
 			}
 			//is there a post ID?
 //			echo "post id $post_id";
 			$post = get_post( $post_id );
 //			echo "post:";var_dump($post);
-			if( $post instanceof WP_Post && $post->post_type == 'research-' . $type_plural) {
+			if( $post instanceof WP_Post && $post->post_type == 'research_' . $type_singular) {
 				//and it's a real research strategy?
 //				//if so update it
 //				echo "update post!!";
@@ -66,13 +66,13 @@ class Elijah_Front_Controller {
 			}
 
 		}
-		if ( ! $post instanceof WP_Post || $post->post_type != 'research-' . $type_plural ) {
-			if( ! current_user_can(  'edit_research-' . $type_plural ) ) {
+		if ( ! $post instanceof WP_Post || $post->post_type != 'research_' . $type_singular ) {
+			if( ! current_user_can(  'edit_research_' . $type_plural ) ) {
 				wp_die( __( 'You don\'t have permission to insert this!', 'elijah' ));
 			}
 			//if no post ID, create one
 //inserting post
-			if( current_user_can( 'publish_research-' . $type_plural ) ) {
+			if( current_user_can( 'publish_research_' . $type_plural ) ) {
 				$post_status = 'publish';
 			} else {
 				$post_status = 'draft';
@@ -81,7 +81,7 @@ class Elijah_Front_Controller {
 					array(
 						'post_title' => sanitize_post_field( 'post_title', $_REQUEST[ 'post_title'], $post_id ),
 						'post_content' => sanitize_post_field( 'post_content', $_REQUEST[ 'post_content'], $post_id ),
-						'post_type' => 'research-' . $type_plural,
+						'post_type' => 'research_' . $type_singular,
 						'post_status' => $post_status
 					));
 			$post = get_post( $post_id );
@@ -157,14 +157,14 @@ class Elijah_Front_Controller {
 						$taxonomy );
 			}
 		}
-		if( $_REQUEST[ 'submit' ] == elijah_save_and_continue_editing_button_name ) {
-			//just save and return to edit
-			wp_safe_redirect( elijah_get_frontend_editing_permalink( $post ) );
-			die;
-		} else/*if ( $_REQUEST[ 'submit' ] == elijah_save_and_research_button_name )*/ {
-			wp_safe_redirect( get_permalink( $post->ID ) );
-			die;
-		}
+//		if( $_REQUEST[ 'submit' ] == elijah_save_and_continue_editing_button_name ) {
+//			//just save and return to edit
+//			wp_safe_redirect( elijah_get_frontend_editing_permalink( $post ) );
+//			die;
+//		} else/*if ( $_REQUEST[ 'submit' ] == elijah_save_and_research_button_name )*/ {
+		wp_safe_redirect( get_permalink( $post->ID ) );
+		die;
+//		}
 	}
 }
 new Elijah_Front_Controller();

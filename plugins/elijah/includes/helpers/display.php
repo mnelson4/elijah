@@ -22,12 +22,12 @@ function elijah_pretty_usefulness($usefulness_int){
 }
 
 /**
- * Shows a pretty i18n version of the research objective's current status
+ * Shows a pretty i18n version of the research goal's current status
  * @global array $elijah_research_statuses
  * @param int $post_id
  * @return string
  */
-function elijah_pretty_research_objective_status( $post_id ) {
+function elijah_pretty_research_goal_status( $post_id ) {
 	$status = get_post_meta( $post_id, 'research_status', true );
 	global $elijah_research_statuses;
 	return $elijah_research_statuses[ $status ][ 'title' ];
@@ -38,7 +38,7 @@ function elijah_pretty_research_objective_status( $post_id ) {
  * @global type $strategy_usefulness_mapping
  * @param WP_Post $p2p_connection with attached p2p connection data, like the results of
  * new WP_Query( array(
-								'connected_type' => 'strategies_applied',
+								'connected_type' => 'work_done',
 								'connected_items' => get_queried_object(),
 								'nopaging' => true,
 							  ) );
@@ -54,7 +54,7 @@ function elijah_usefulness_dropdown($p2p_connection,$input_name, $disabled = fal
 	if( $disabled ) {
 		$html .= $strategy_usefulness_mapping[ $usefulness ];
 	} else {
-		$html .= "<select id='$input_name' name='$input_name' class='elijah-research-strategy-usefulness' $disabled_attr>";
+		$html .= "<select id='$input_name' name='$input_name' class='elijah-research-tip-usefulness' $disabled_attr>";
 		foreach($strategy_usefulness_mapping as $strategy_int => $strategy_text){
 			if($strategy_int == $usefulness){
 				$selected_html = "selected='selected'";
@@ -70,10 +70,10 @@ function elijah_usefulness_dropdown($p2p_connection,$input_name, $disabled = fal
 }
 /**
  * Gets teh HTML for displaying the comments about applying the strategy to a
- * research objective
+ * research goal
  * @param WP_Post $p2p_connection with attached p2p connection data, like the results of
  * new WP_Query( array(
-								'connected_type' => 'strategies_applied',
+								'connected_type' => 'work_done',
 								'connected_items' => get_queried_object(),
 								'nopaging' => true,
 							  ) );
@@ -100,18 +100,18 @@ function elijah_comments_textbox($p2p_connection,$input_name, $disabled = false 
 /**
  * Gets HTML for displaying a suggested research strategy for a particular post.
  * Takes into account whether or not the strategy has already been applied or not
- * @param WP_Post $strategy_post_obj with p2p post data which is attached to teh post when using WP_QUery(array('connected_type' => 'strategies_applied',...));
+ * @param WP_Post $strategy_post_obj with p2p post data which is attached to teh post when using WP_QUery(array('connected_type' => 'work_done',...));
  */
-function elijah_suggested_research_strategy($strategy_post_obj, $objective_post_obj){
-	$status = get_strategy_status_for_objective($strategy_post_obj);
-	if( current_user_can( 'edit_research-objective', $objective_post_obj->ID ) ) {
+function elijah_suggested_research_strategy($strategy_post_obj, $goal_post_obj){
+	$status = get_strategy_status_for_goal($strategy_post_obj);
+	if( current_user_can( 'edit_research_goal', $goal_post_obj->ID ) ) {
 		$can_edit = true;
 	} else { 
 		$can_edit = false;
 	}
 	 if( $can_edit ) { ?><form method='post' name="strategy-applied-<?php echo $strategy_post_obj->id?>">
 		 <input type="hidden" name='strategy-id' value="<?php echo $strategy_post_obj->ID;?>"/>
-		 <input type="hidden" name="objective-id" value="<?php echo $objective_post_obj->ID;?>"/>
+		 <input type="hidden" name="goal-id" value="<?php echo $goal_post_obj->ID;?>"/>
 		 <input type="hidden" name="action" value="elijah_strategy_modified"/>
 	 <?php } ?>
 		<div class="strategy-thumbnail">
@@ -121,8 +121,8 @@ function elijah_suggested_research_strategy($strategy_post_obj, $objective_post_
 			<h5><a href='<?php echo get_permalink_append_post_id($strategy_post_obj->ID);?>'><?php echo $strategy_post_obj->post_title;?></a></h5>
 			<?php if( $can_edit ) {?>
 			<div class="strategy-buttons" <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>>
-				<button class="start-research-strategy" id="start-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Start", "elijah")?></button>
-				<button class="skip-research-strategy" id="skip-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Skip", "elijah")?></button>
+				<button class="start-research-tip" id="start-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Start", "elijah")?></button>
+				<button class="skip-research-tip" id="skip-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Skip", "elijah")?></button>
 			</div>
 			<?php } ?>
 			<div class="strategy-status-info" <?php echo ! in_array($status,array('in_progress', 'completed')) ? 'style="display:none"' : ''?>>
@@ -137,7 +137,7 @@ function elijah_suggested_research_strategy($strategy_post_obj, $objective_post_
 			<div class="strategy-skipped-area" <?php echo $status != 'skipped'? 'style="display:none"' : '' ?>>
 				<p><?php _e("Skipped", "elijah");?> 
 					<?php if( $can_edit ) {
-						printf(__("%s Unskip %s", 'elijah'),"<button class='start-research-strategy' id='restart-{$strategy_post_obj->ID}'>","</button>");
+						printf(__("%s Unskip %s", 'elijah'),"<button class='start-research-tip' id='restart-{$strategy_post_obj->ID}'>","</button>");
 					}?>
 				</p>
 			</div>

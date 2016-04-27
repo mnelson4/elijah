@@ -1,7 +1,7 @@
 <?php
 function elijah_add_research_status(){
 	$post_id = $_GET['post'];
-	if( 'research-objectives' != get_post_type( $post_id ) ){
+	if( 'research_goal' != get_post_type( $post_id ) ){
 		return;
 	}
 	?>
@@ -15,7 +15,7 @@ function elijah_add_research_status(){
 add_action('post_submitbox_misc_actions','elijah_add_research_status');
 
 /**
- * Renders a dropdown select for the objective's research strategy
+ * Renders a dropdown select for the goal's research strategy
  * @global type $elijah_research_statuses
  * @param type $post_id
  */
@@ -34,10 +34,10 @@ function elijah_research_status_dropdown( $post_id ){
 <?php
 }
 
-function elijah_save_research_objective_status($post_id) {
+function elijah_save_research_goal_status($post_id) {
 
 	global $wp_post_types;
-	$slug = $wp_post_types['research-objectives']->rewrite['slug'];
+	$slug = $wp_post_types['research_goal']->rewrite['slug'];
 
     /* check whether anything should be done */
 //    $_POST += array("{$slug}_edit_nonce" => '');
@@ -61,4 +61,4 @@ function elijah_save_research_objective_status($post_id) {
 	}
 }
 
-add_action( 'save_post', 'elijah_save_research_objective_status');
+add_action( 'save_post', 'elijah_save_research_goal_status');

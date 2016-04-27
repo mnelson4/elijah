@@ -3,8 +3,8 @@ global $post;
 wp_enqueue_script('debounce',plugins_url('js/jquery.debounce-1.0.5.js',elijah_main_file),array('jquery'));
 wp_enqueue_script('elijah', plugins_url('js/elijah.js',elijah_main_file),array('jquery','debounce'));
 wp_enqueue_style('elijah', plugins_url('css/elijah.css',elijah_main_file) );
-wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'),'current_research_objective_id'=>$post->ID));
-if( current_user_can( 'edit_research-strategy', $post->ID ) ) {
+wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'),'current_research_goal_id'=>$post->ID));
+if( current_user_can( 'edit_research_tip', $post->ID ) ) {
 	?> <a href="<?php echo elijah_get_frontend_editing_permalink( $post );?>"><?php _e( 'Edit Research Strategy', 'elijah' );?></a>
 <?php }?>
 <div class="post-body-plain">

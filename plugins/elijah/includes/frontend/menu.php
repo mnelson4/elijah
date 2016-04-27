@@ -8,8 +8,8 @@
  * @return string
  */
 function add_description_to_menu($item_output, $item, $depth, $args) {
-	if( in_array( $item->attr_title, array( 'my-research-objectives', 'research-goal-editor' ) ) &&
-			! current_user_can( 'edit_research-strategies' ) ) {
+	if( in_array( $item->attr_title, array( 'my-research_goal', 'research-goal-editor' ) ) &&
+			! current_user_can( 'edit_research_tip' ) ) {
 		$item_output = '';
 	}
     return $item_output;

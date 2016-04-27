@@ -33,20 +33,20 @@ function elijah_connection_types(){
 		'skipped'=>  __("Skip", "elijah")
 	);
 	p2p_register_connection_type( array(
-        'name' => 'strategies_applied',
-        'from' => 'research-objectives',
-        'to' => 'research-strategies',
+        'name' => 'work_done',
+        'from' => 'research_goal',
+        'to' => 'research_tip',
 		'from_labels'=>array(
-			'singular_name' => __( 'Research Objectives that have used this strategy', 'my-textdomain' ),
-			'search_items' => __( 'Research Objectives which have used this strategy', 'my-textdomain' ),
+			'singular_name' => __( 'Research goals that have used this strategy', 'my-textdomain' ),
+			'search_items' => __( 'Research goals which have used this strategy', 'my-textdomain' ),
 			'not_found' => __( 'No one has used this research strategy yet', 'my-textdomain' ),
-			'create' => __( 'Mark a Research Objective as having used this Strategy', 'my-textdomain' ),
+			'create' => __( 'Mark a Research goal as having used this Strategy', 'my-textdomain' ),
 		),
 		'to_labels'=>array(
 			'singular_name' => __( 'Strategy Applied', 'my-textdomain' ),
-			'search_items' => __( 'Search Strategies Applied', 'my-textdomain' ),
-			'not_found' => __( 'No strategies applied yet', 'my-textdomain' ),
-			'create' => __( 'Apply a Strategy to this Research Objective', 'my-textdomain' ),
+			'search_items' => __( 'Search tip Applied', 'my-textdomain' ),
+			'not_found' => __( 'No tip applied yet', 'my-textdomain' ),
+			'create' => __( 'Apply a Strategy to this Research goal', 'my-textdomain' ),
 		),
 		'fields'=>array(
 			'status'=>array(
@@ -79,7 +79,7 @@ add_action( 'p2p_init', 'elijah_connection_types' );
  * @param type $direction I believe either teh string 'from' or 'to'
  * @return int the wp user id
  */
-function elijah_default_author_on_strategies_applied($connection, $direction){
+function elijah_default_author_on_work_done($connection, $direction){
 	$current_user = wp_get_current_user();
 	if($current_user){
 		return $current_user->ID;

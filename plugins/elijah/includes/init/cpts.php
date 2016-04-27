@@ -6,8 +6,8 @@ function elijah_register_cpts() {
 
 	//taxonomies
 	register_taxonomy('individual-details', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
+		0 => 'research_goal',
+		1 => 'research_tip',
 			), array('hierarchical' => true, 'label' => 'Details Being Researched', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Details being Researched',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_individual-details',
@@ -16,7 +16,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_individual-details',
 				)));
 	register_taxonomy('birthyear', array(
-		0 => 'research-objectives',
+		0 => 'research_goal',
 			), array('hierarchical' => true, 'label' => 'Birth Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Birthyear',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_birthyears',
@@ -25,7 +25,7 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_birthyears',
 				)));
 	register_taxonomy('birthplace', array(
-		0 => 'research-objectives',
+		0 => 'research_goal',
 			), array('hierarchical' => true, 'label' => 'Birthplace of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Birthplace',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_birthplaces',
@@ -34,8 +34,8 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_birthplaces',
 				)));
 	register_taxonomy('marriage-year', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
+		0 => 'research_goal',
+		1 => 'research_tip',
 			), array('hierarchical' => true, 'label' => 'Marriage Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Marriage Year',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_marriage-years',
@@ -44,8 +44,8 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_marriage-years',
 				)));
 	register_taxonomy('marriage-place', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
+		0 => 'research_goal',
+		1 => 'research_tip',
 			), array('hierarchical' => true, 'label' => 'Marriage Place of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Marriage Place',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_marriage-places',
@@ -54,8 +54,8 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_marriage-places',
 				)));
 	register_taxonomy('death-year', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
+		0 => 'research_goal',
+		1 => 'research_tip',
 			), array('hierarchical' => true, 'label' => 'Death Year of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Year',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_death-years',
@@ -64,8 +64,8 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_death-years',
 				)));
 	register_taxonomy('death-place', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
+		0 => 'research_goal',
+		1 => 'research_tip',
 			), array('hierarchical' => true, 'label' => 'Death Place of Individual', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Death Place',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_death-places',
@@ -74,8 +74,8 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_death-places',
 				)));
 	register_taxonomy('childrens-birthyears', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
+		0 => 'research_goal',
+		1 => 'research_tip',
 			), array('hierarchical' => true, 'label' => 'Children\'s Birthyears', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birhtyear',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_childrens-birthyears',
@@ -84,8 +84,8 @@ function elijah_register_cpts() {
 					'assign_terms'=>'assign_childrens-birthyears',
 				)));
 	register_taxonomy('childrens-birthplaces', array(
-		0 => 'research-objectives',
-		1 => 'research-strategies',
+		0 => 'research_goal',
+		1 => 'research_tip',
 			), array('hierarchical' => true, 'label' => 'Children\'s Birthplaces', 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => 'Child\'s Birthplace',
 				'capabilities'=>array(
 					'manage_terms'=>'manage_childrens-birthplaces',
@@ -101,17 +101,16 @@ function elijah_register_cpts() {
 	foreach( $year_research_taxonomies as $taxonomy ) {
 		elijah_make_term_for_decades_after( 1600, $taxonomy );
 	}
-	//@todo: this should really be named "research_objective" (singular, with underscore)
-	register_post_type('research-objectives', array(
-		'label' => 'Goals',
+	register_post_type('research_goal', array(
+		'label' => 'Research Goals',
 		'description' => 'A specific thing about a specific person you want to research. E.g.: great-uncle Tim\\\\\\\\\\\\\\\'s birthplace; great-great-grandmother Susan\\\\\\\\\\\\\\\'s parent\\\\\\\\\\\\\\\'s names and birthplaces; great-aunt Gertrude\\\\\\\\\\\\\\\'s death-place and date',
 		'public' => true,
 		'show_ui' => true,
 		'show_in_menu' => true,
-		'capability_type' => 'research-objective',//@todo: this hsould be research_objective
+		'capability_type' => 'research_goal',
 		'map_meta_cap' => true,
 		'hierarchical' => false,
-		'rewrite' => array('slug' => ''),
+		'rewrite' => array('slug' => 'research-goals'),
 		'query_var' => true,
 		'has_archive' => true,
 		'exclude_from_search' => false,
@@ -139,22 +138,22 @@ function elijah_register_cpts() {
 	register_research_status('in-progress',array('title'=>  __("In Progress", "elijah")));
 	register_research_status('resolved',array('title'=> __("Resolved", "elijah")));
 
-	register_post_type('research-strategies', array(
+	register_post_type('research_tip', array(
 		'label' => 'Research Tips',
-		'description' => 'A generic task that can be done to complete a research objective. Eg: to find an individual\\\\\\\\\\\\\\\'s birthplace and year, search their name in New Family Search to find duplicates; to find an individual\\\\\\\\\\\\\\\'s parents, search for their birth record at local parishes; or even to find a granparent\\\\\\\\\\\\\\\'s birthplace, ask the oldest relative you know, etc.',
+		'description' => 'A generic task that can be done to complete a research goal. Eg: to find an individual\\\\\\\\\\\\\\\'s birthplace and year, search their name in New Family Search to find duplicates; to find an individual\\\\\\\\\\\\\\\'s parents, search for their birth record at local parishes; or even to find a granparent\\\\\\\\\\\\\\\'s birthplace, ask the oldest relative you know, etc.',
 		'public' => true,
 		'show_ui' => true,
 		'show_in_menu' => true,
-		'capability_type' => 'research-strategy',
+		'capability_type' => 'research_tip',
 		'capabilities' => array(
-			'edit_posts' => 'edit_research-strategies',
-			'edit_others_posts' => 'edit_others_research-strategies',
-			'publish_posts' => 'publish_research-strategies', 
-			'read_private_posts' => 'read_private_research-strategies',
+			'edit_posts' => 'edit_research_tips',
+			'edit_others_posts' => 'edit_others_research_tips',
+			'publish_posts' => 'publish_research_tips', 
+			'read_private_posts' => 'read_private_research_tips',
 		),
 		'map_meta_cap' => true,
 		'hierarchical' => true,
-		'rewrite' => array('slug' => 'research-strategies'),
+		'rewrite' => array('slug' => 'research-tips'),
 		'query_var' => true,
 		'has_archive' => true,
 		'exclude_from_search' => false,
@@ -206,7 +205,7 @@ function register_research_status($status,$options=array()){
 }
 
 /**
- * Convenience function for getting the pretty title for a research objective status
+ * Convenience function for getting the pretty title for a research goal status
  * @global array $elijah_research_statuses declared in register_research_status
  * @param string $status
  * @return string

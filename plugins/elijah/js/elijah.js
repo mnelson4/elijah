@@ -1,6 +1,6 @@
 
 jQuery(document).ready(function(){
-	jQuery('.start-research-strategy').click(function(event){
+	jQuery('.start-research-tip').click(function(event){
 		parentDiv = jQuery(event.currentTarget).parents('.strategy-info');
 		elijah_send_update('elijah_strategy_update',event.currentTarget.id);
 		jQuery('.strategy-buttons',parentDiv).hide('fast');
@@ -8,15 +8,15 @@ jQuery(document).ready(function(){
 		jQuery('.strategy-skipped-area',parentDiv).hide('fast');
 		event.preventDefault();
 	});
-	jQuery('.skip-research-strategy').click(function(event){
+	jQuery('.skip-research-tip').click(function(event){
 		parentDiv = jQuery(event.currentTarget).parents('.strategy-info');
 		elijah_send_update('elijah_strategy_update',event.currentTarget.id);
 		jQuery('.strategy-buttons',parentDiv).hide('fast');
 		jQuery('.strategy-skipped-area',parentDiv).show('fast');
 		event.preventDefault();
 	});
-	//updating started research strategies
-	jQuery('.elijah-research-strategy-usefulness').change(jQuery.debounce(send_strategy_application_form,500));
+	//updating started research tips
+	jQuery('.elijah-research-tip-usefulness').change(jQuery.debounce(send_strategy_application_form,500));
 	jQuery('.strategy-comments-area').keyup(jQuery.debounce(send_strategy_application_form,500));
         jQuery('.elijah-reveal').click(function() {
             var section_id = this.id;
@@ -41,7 +41,7 @@ function elijah_send_update(action,info_to_send){
 	var data = {
 		action: action,//'elijah_strategy_update',
 		info_to_send: info_to_send,
-		current_research_objective_id: elijah.current_research_objective_id
+		current_research_goal_id: elijah.current_research_goal_id
 	};
 
 
