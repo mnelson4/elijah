@@ -1,38 +1,4 @@
 <?php
-function elijah_add_research_status(){
-	$post_id = $_GET['post'];
-	if( 'research_goal' != get_post_type( $post_id ) ){
-		return;
-	}
-	?>
-<div class='misc-pub-section'>
-	<?php _e("Research Status: ", "elijah");?>
-	<span style='font-weight:bold'><?php	echo elijah_research_status_dropdown($post_id);?></span>
-</div>
-<?php
-
-}
-add_action('post_submitbox_misc_actions','elijah_add_research_status');
-
-/**
- * Renders a dropdown select for the goal's research strategy
- * @global type $elijah_research_statuses
- * @param type $post_id
- */
-function elijah_research_status_dropdown( $post_id ){
-	$current_research_status = get_post_meta( $post_id, 'research_status', TRUE );
-	global $elijah_research_statuses;
-	?>
-<select name='research_status'>
-	<?php foreach( $elijah_research_statuses as $status => $options ){
-		?>
-	<option value="<?php echo $status?>" <?php echo $current_research_status == $status ? 'selected="selected"' : ''?>><?php echo $options['title']?></option>
-		<?php
-
-	}?>
-</select>
-<?php
-}
 
 function elijah_save_research_goal_status($post_id) {
 

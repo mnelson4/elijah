@@ -35,7 +35,7 @@
 			</div>
 
 			<div class="wpuf-fields">
-				<?php $selected = wp_get_object_terms( $post_id, 'individual-details', array( 'fields' => 'ids' ) ); var_dump( $selected); ?>
+				<?php $selected = wp_get_object_terms( $post_id, 'individual-details', array( 'fields' => 'ids' ) );?>
 				<select multiple="multiple" data-required="yes" required="required" data-type="multiselect" name="individual-details[]" id="individual-details" class="individual-details multiselect">
 					<?php
 
@@ -49,7 +49,7 @@
         </li>
 		<li class="wpuf-el ">
 			<div class="wpuf-fields">
-				<p class="wpuf-help">When could this research strategy be helpful? (Eg, when research ancestors from what place and time?)</p>
+				<p class="wpuf-help">When could this research tip be helpful? (Eg, when research ancestors from what place and time?)</p>
 			</div>
         </li>
 			<?php

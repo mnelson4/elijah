@@ -22,6 +22,26 @@ function elijah_customize_cpt_content( $content ) {
 }
 add_filter( 'the_content', 'elijah_customize_cpt_content' );
 
+//add checkmarks
+add_filter( 
+	'the_title', 
+	function( $title, $post_id ) {
+		$post = get_post( $post_id );
+		if( $post instanceof WP_Post 
+			&& $post->post_type === 'research_goal'
+		) {
+			if( $post->post_status === 'complete' ) {
+				$title = '☑ ' . sprintf( '%1$s (%2$s)', $title, __( 'Completed', 'elijah' ) );
+			} else {
+				$title = '◻ ' . $title;
+			}
+		}
+		return $title;
+	},
+	10,
+	2
+);
+
 /* Use research goals for author archive page instead of posts */
 function custom_post_author_archive($query) {
     if ($query->is_author)

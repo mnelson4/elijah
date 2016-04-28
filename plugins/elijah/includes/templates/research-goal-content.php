@@ -5,7 +5,6 @@ wp_enqueue_script('elijah', plugins_url('js/elijah.js',elijah_main_file),array('
 wp_enqueue_style('elijah', plugins_url('css/elijah.css',elijah_main_file) );
 wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'),'current_research_goal_id'=>$post->ID));
 ?>
-<h2><?php echo elijah_pretty_research_goal_status( $post-ID); ?></h2>
 <div class="post-body-plain">
 	<?php  echo $content;?>
 </div>
@@ -50,9 +49,9 @@ $work_done = $connected->posts;
 					if( empty( $work_done ) ) {
 						_e( 'None yet', 'elijah' );
 					} else {
-					foreach($work_done as $strategy_applied){
-						$work_done_ids[] = $strategy_applied->ID;
-						echo elijah_suggested_research_strategy($strategy_applied, $post);
+					foreach($work_done as $tip_applied){
+						$work_done_ids[] = $tip_applied->ID;
+						echo elijah_suggested_research_tip($tip_applied, $post);
 						}
 					}?>
 			</div>
@@ -86,9 +85,9 @@ $work_done = $connected->posts;
 	<h2 id="elijah-reveal-elijah-work-todo"><?php _e( 'Work To-Do', 'elijah'); ?></h2>
 	<div id="elijah-work-todo">
 			<div class="work-todo-items">
-					<?php if( $results) foreach($results as $strategy_suggested){
+					<?php if( $results) foreach($results as $tip_suggested){
 
-							echo elijah_suggested_research_strategy($strategy_suggested, $post );
+							echo elijah_suggested_research_tip($tip_suggested, $post );
 							} ?>
 			</div>
 			<h2><?php _e( 'Do something else', 'elijah' );?></h2>

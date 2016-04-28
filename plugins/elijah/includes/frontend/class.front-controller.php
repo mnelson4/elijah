@@ -31,7 +31,7 @@ class Elijah_Front_Controller {
 		$this->_handle_research_thing_submitted( 'goal', 'goals' );
 	}
 	/**
-	 * Takes care of handling requests to create or update a research strategy. Also takes
+	 * Takes care of handling requests to create or update a research tip. Also takes
 	 * care of performing redirect
 	 */
 	function handle_research_tip_submit() {
@@ -53,7 +53,7 @@ class Elijah_Front_Controller {
 			$post = get_post( $post_id );
 //			echo "post:";var_dump($post);
 			if( $post instanceof WP_Post && $post->post_type == 'research_' . $type_singular) {
-				//and it's a real research strategy?
+				//and it's a real research tip?
 //				//if so update it
 //				echo "update post!!";
 				$success = wp_update_post(

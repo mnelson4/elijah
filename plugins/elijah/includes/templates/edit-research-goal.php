@@ -8,7 +8,7 @@
 			</div>
 
 			<div class="wpuf-fields">
-				<input class="textfield" id="post_title" type="text" data-required="yes" data-type="text" required="required" name="post_title" value="<?php echo $post_id ? get_the_title( $post_id ) : '';?>" size="40">
+				<input class="textfield" id="post_title" type="text" data-required="yes" data-type="text" required="required" name="post_title" value="<?php echo $post instanceof WP_Post ? $post->post_title : '';?>" size="40">
 				<span class="wpuf-help"></span>
 
 			</div>

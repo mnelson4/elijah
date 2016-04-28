@@ -32,7 +32,7 @@ if(is_admin()){
 	//actually only needed on post pagae when its a research goal
 	require_once(elijah_root.'/includes/admin/research_goals.php');
 	if (defined('DOING_AJAX') && DOING_AJAX) {
-		require_once(elijah_root.'/includes/ajax/tip_updates.php');
+		require_once(elijah_root.'/includes/ajax/work_done_updates.php');
 		require_once(elijah_root.'/includes/ajax/taxonomy_search.php');
 	}
 }

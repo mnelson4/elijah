@@ -7,35 +7,23 @@
 
 /**
  *
- * @global type $strategy_usefulness_mapping
- * @param int $usefulness_int one of the keys in global $strategy_usefulness_mapping
+ * @global type $tip_usefulness_mapping
+ * @param int $usefulness_int one of the keys in global $tip_usefulness_mapping
  * which is defined in plugins/elijah/init/p2p.php's elijah_connection_types
  * @return string
  */
 function elijah_pretty_usefulness($usefulness_int){
-	global $strategy_usefulness_mapping;
+	global $tip_usefulness_mapping;
 	if(isset($usefulness_int)){
-		return $strategy_usefulness_mapping[$usefulness_int];
+		return $tip_usefulness_mapping[$usefulness_int];
 	}else{
 		return __("Unknown", "elijah");
 	}
 }
 
 /**
- * Shows a pretty i18n version of the research goal's current status
- * @global array $elijah_research_statuses
- * @param int $post_id
- * @return string
- */
-function elijah_pretty_research_goal_status( $post_id ) {
-	$status = get_post_meta( $post_id, 'research_status', true );
-	global $elijah_research_statuses;
-	return $elijah_research_statuses[ $status ][ 'title' ];
-}
-
-/**
  * Gets teh HTML for displaying a usefulness dropdown
- * @global type $strategy_usefulness_mapping
+ * @global type $tip_usefulness_mapping
  * @param WP_Post $p2p_connection with attached p2p connection data, like the results of
  * new WP_Query( array(
 								'connected_type' => 'work_done',
@@ -47,21 +35,21 @@ function elijah_pretty_research_goal_status( $post_id ) {
  * @return string of html for displaying a nice dropdown
  */
 function elijah_usefulness_dropdown($p2p_connection,$input_name, $disabled = false){
-	global $strategy_usefulness_mapping;
+	global $tip_usefulness_mapping;
 	$usefulness = p2p_get_meta( $p2p_connection->p2p_id, 'usefulness', true );
 	$disabled_attr = $disabled ? 'disabled="disabled"' : '';
 	$html = "<span class='usefulness-dropdown-area'><label for='$input_name'>".  __("Usefulness", "elijah")."</label><img src='".site_url()."/wp-admin/images/wpspin_light.gif' style='display:none' class='spinner'><br/>";
 	if( $disabled ) {
-		$html .= $strategy_usefulness_mapping[ $usefulness ];
+		$html .= $tip_usefulness_mapping[ $usefulness ];
 	} else {
 		$html .= "<select id='$input_name' name='$input_name' class='elijah-research-tip-usefulness' $disabled_attr>";
-		foreach($strategy_usefulness_mapping as $strategy_int => $strategy_text){
-			if($strategy_int == $usefulness){
+		foreach($tip_usefulness_mapping as $tip_int => $tip_text){
+			if($tip_int == $usefulness){
 				$selected_html = "selected='selected'";
 			}else{
 				$selected_html = '';
 			}
-			$html .= "<option value=$strategy_int $selected_html>$strategy_text</option>";
+			$html .= "<option value=$tip_int $selected_html>$tip_text</option>";
 		}
 		$html .="</select>";
 	}
@@ -69,7 +57,7 @@ function elijah_usefulness_dropdown($p2p_connection,$input_name, $disabled = fal
 	return $html;
 }
 /**
- * Gets teh HTML for displaying the comments about applying the strategy to a
+ * Gets teh HTML for displaying the comments about applying the tip to a
  * research goal
  * @param WP_Post $p2p_connection with attached p2p connection data, like the results of
  * new WP_Query( array(
@@ -91,53 +79,53 @@ function elijah_comments_textbox($p2p_connection,$input_name, $disabled = false 
 			$html .= $comments;
 		}
 	} else {
-		$html .= "<textarea id='$input_name' name='$input_name' class='strategy-comments-area'>$comments</textarea>";
+		$html .= "<textarea id='$input_name' name='$input_name' class='tip-comments-area'>$comments</textarea>";
 	}
 	return $html;
 }
 
 
 /**
- * Gets HTML for displaying a suggested research strategy for a particular post.
- * Takes into account whether or not the strategy has already been applied or not
- * @param WP_Post $strategy_post_obj with p2p post data which is attached to teh post when using WP_QUery(array('connected_type' => 'work_done',...));
+ * Gets HTML for displaying a suggested research tip for a particular post.
+ * Takes into account whether or not the tip has already been applied or not
+ * @param WP_Post $tip_post_obj with p2p post data which is attached to teh post when using WP_QUery(array('connected_type' => 'work_done',...));
  */
-function elijah_suggested_research_strategy($strategy_post_obj, $goal_post_obj){
-	$status = get_strategy_status_for_goal($strategy_post_obj);
+function elijah_suggested_research_tip($tip_post_obj, $goal_post_obj){
+	$status = get_tip_status_for_goal($tip_post_obj);
 	if( current_user_can( 'edit_research_goal', $goal_post_obj->ID ) ) {
 		$can_edit = true;
 	} else { 
 		$can_edit = false;
 	}
-	 if( $can_edit ) { ?><form method='post' name="strategy-applied-<?php echo $strategy_post_obj->id?>">
-		 <input type="hidden" name='strategy-id' value="<?php echo $strategy_post_obj->ID;?>"/>
+	 if( $can_edit ) { ?><form method='post' name="tip-applied-<?php echo $tip_post_obj->id?>">
+		 <input type="hidden" name='tip-id' value="<?php echo $tip_post_obj->ID;?>"/>
 		 <input type="hidden" name="goal-id" value="<?php echo $goal_post_obj->ID;?>"/>
-		 <input type="hidden" name="action" value="elijah_strategy_modified"/>
+		 <input type="hidden" name="action" value="elijah_work_done_modified"/>
 	 <?php } ?>
-		<div class="strategy-thumbnail">
-			<?php  echo get_the_post_thumbnail($strategy_post_obj->id,'thumbnail'); ?>
+		<div class="tip-thumbnail">
+			<?php  echo get_the_post_thumbnail($tip_post_obj->id,'thumbnail'); ?>
 		</div>
-		<div class="strategy-info">
-			<h5><a href='<?php echo get_permalink_append_post_id($strategy_post_obj->ID);?>'><?php echo $strategy_post_obj->post_title;?></a></h5>
+		<div class="tip-info">
+			<h5><a href='<?php echo get_permalink_append_post_id($tip_post_obj->ID);?>'><?php echo $tip_post_obj->post_title;?></a></h5>
 			<?php if( $can_edit ) {?>
-			<div class="strategy-buttons" <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>>
-				<button class="start-research-tip" id="start-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Start", "elijah")?></button>
-				<button class="skip-research-tip" id="skip-<?php echo $strategy_post_obj->ID?>" ><?php	_e("Skip", "elijah")?></button>
+			<div class="tip-buttons" <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>>
+				<button class="start-research-tip" id="start-<?php echo $tip_post_obj->ID?>" ><?php	_e("Start", "elijah")?></button>
+				<button class="skip-research-tip" id="skip-<?php echo $tip_post_obj->ID?>" ><?php	_e("Skip", "elijah")?></button>
 			</div>
 			<?php } ?>
-			<div class="strategy-status-info" <?php echo ! in_array($status,array('in_progress', 'completed')) ? 'style="display:none"' : ''?>>
+			<div class="tip-status-info" <?php echo ! in_array($status,array('in_progress', 'completed')) ? 'style="display:none"' : ''?>>
 				<div class="rowed usefulness-div">
-				<?php echo elijah_usefulness_dropdown($strategy_post_obj,'strategy-usefulness', ! $can_edit );?>
+				<?php echo elijah_usefulness_dropdown($tip_post_obj,'tip-usefulness', ! $can_edit );?>
 				</div>
 				<div class="rowed comments-div">
-					<?php echo elijah_comments_textbox($strategy_post_obj,'strategy-comments', ! $can_edit );?>
+					<?php echo elijah_comments_textbox($tip_post_obj,'tip-comments', ! $can_edit );?>
 				</div>
 			</div>
-			<p <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>><?php echo get_excerpt_or_short_content($strategy_post_obj);?></p>
-			<div class="strategy-skipped-area" <?php echo $status != 'skipped'? 'style="display:none"' : '' ?>>
+			<p <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>><?php echo get_excerpt_or_short_content($tip_post_obj);?></p>
+			<div class="tip-skipped-area" <?php echo $status != 'skipped'? 'style="display:none"' : '' ?>>
 				<p><?php _e("Skipped", "elijah");?> 
 					<?php if( $can_edit ) {
-						printf(__("%s Unskip %s", 'elijah'),"<button class='start-research-tip' id='restart-{$strategy_post_obj->ID}'>","</button>");
+						printf(__("%s Unskip %s", 'elijah'),"<button class='start-research-tip' id='restart-{$tip_post_obj->ID}'>","</button>");
 					}?>
 				</p>
 			</div>
@@ -151,16 +139,16 @@ function elijah_suggested_research_strategy($strategy_post_obj, $goal_post_obj){
  * Exactly like get_permalink, except it also appends the referer's id to teh querystring,
  * using the specified name (defaults to 'referer'). If no referer id is provided, it is assumed
  * to be teh current post id
- * @param type $strategy_id
+ * @param type $tip_id
  */
-function get_permalink_append_post_id($strategy_id, $referer_id=null, $referer_arg_name='referer'){
+function get_permalink_append_post_id($tip_id, $referer_id=null, $referer_arg_name='referer'){
 	if( ! $referer_id){
 		global $wp_query;
 
 		$current_post = $wp_query->post;
 		$referer_id = $current_post->ID;
 	}
-	return add_query_arg($referer_arg_name,$referer_id,get_permalink($strategy_id));
+	return add_query_arg($referer_arg_name,$referer_id,get_permalink($tip_id));
 }
 
 /**

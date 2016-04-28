@@ -119,31 +119,28 @@ function elijah_register_cpts() {
 		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
 			//@todo: i18n please!
-			'name' => __( 'Research Goals', 'event_espresso' ),
-			'singular_name' => __( 'Goal', 'event_espresso' ),
-			'menu_name' => __( 'Goals', 'event_espresso' ),
-			'add_new' => __( 'Add New', 'event_espresso' ),
-			'add_new_item' => __( 'Add New Goal', 'event_espresso' ),
-			'edit' => __( 'Edit', 'event_espresso' ),
-			'edit_item' => __( 'Edit Goal',	'event_espresso' ),
-			'new_item' => __( 'New Goal', 'event_espresso' ),
-			'view' => __( 'View', 'event_espresso' ),
-			'view_item' => __( 'View Goal',	'event_espresso' ),
-			'search_items' => __( 'Search Research Goals', 'event_espresso' ),
-			'not_found' => __( 'No Goals Found', 'event_espresso' ),
-			'not_found_in_trash' => __( 'No Goals Found in Trash','event_espresso' ),
-			'parent' => __( 'Parent', 'event_espresso' ),
+			'name' => __( 'Research Goals', 'elijah' ),
+			'singular_name' => __( 'Goal', 'elijah' ),
+			'menu_name' => __( 'Goals', 'elijah' ),
+			'add_new' => __( 'Add New', 'elijah' ),
+			'add_new_item' => __( 'Add New Goal', 'elijah' ),
+			'edit' => __( 'Edit', 'elijah' ),
+			'edit_item' => __( 'Edit Goal',	'elijah' ),
+			'new_item' => __( 'New Goal', 'elijah' ),
+			'view' => __( 'View', 'elijah' ),
+			'view_item' => __( 'View Goal',	'elijah' ),
+			'search_items' => __( 'Search Research Goals', 'elijah' ),
+			'not_found' => __( 'No Goals Found', 'elijah' ),
+			'not_found_in_trash' => __( 'No Goals Found in Trash','elijah' ),
+			'parent' => __( 'Parent', 'elijah' ),
 		),));
-	register_research_status('enqueued',array('title'=>  __("Enqueued for Research", "elijah")));
-	register_research_status('in-progress',array('title'=>  __("In Progress", "elijah")));
-	register_research_status('resolved',array('title'=> __("Resolved", "elijah")));
 
 	register_post_type('research_tip', array(
 		'label' => 'Research Tips',
 		'description' => 'A generic task that can be done to complete a research goal. Eg: to find an individual\\\\\\\\\\\\\\\'s birthplace and year, search their name in New Family Search to find duplicates; to find an individual\\\\\\\\\\\\\\\'s parents, search for their birth record at local parishes; or even to find a granparent\\\\\\\\\\\\\\\'s birthplace, ask the oldest relative you know, etc.',
 		'public' => true,
 		'show_ui' => true,
-		'show_in_menu' => true,
+		'show_in_menu' => false,
 		'capability_type' => 'research_tip',
 		'capabilities' => array(
 			'edit_posts' => 'edit_research_tips',
@@ -161,78 +158,59 @@ function elijah_register_cpts() {
 		'supports' => array('title', 'editor', 'comments', 'thumbnail', 'author',),
 		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
-			'name' => __( 'Research Tips', 'event_espresso' ),
-			'singular_name' => __( 'Tip', 'event_espresso' ),
-			'menu_name' => __( 'Research Tips',	'event_espresso' ),
-			'add_new' => __( 'Add New',	'event_espresso' ),
-			'add_new_item' => __( 'Add New Tip', 'event_espresso' ),
-			'edit' => __( 'Edit', 'event_espresso' ),
-			'edit_item' => __( 'Edit Tip', 'event_espresso' ),
-			'new_item' => __( 'New Tip', 'event_espresso' ),
-			'view' => __( 'View Tip', 'event_espresso' ),
-			'view_item' => __( 'View Tip', 'event_espresso' ),
-			'search_items' => __( 'Search Tips', 'event_espresso' ),
-			'not_found' => __( 'No Tips Found', 'event_espresso' ),
-			'not_found_in_trash' => __( 'No Tips Found in Trash', 'event_espresso' ),
-			'parent' => __( 'Paren Tip', 'event_espresso' ),
+			'name' => __( 'Research Tips', 'elijah' ),
+			'singular_name' => __( 'Tip', 'elijah' ),
+			'menu_name' => __( 'Research Tips',	'elijah' ),
+			'add_new' => __( 'Add New',	'elijah' ),
+			'add_new_item' => __( 'Add New Tip', 'elijah' ),
+			'edit' => __( 'Edit', 'elijah' ),
+			'edit_item' => __( 'Edit Tip', 'elijah' ),
+			'new_item' => __( 'New Tip', 'elijah' ),
+			'view' => __( 'View Tip', 'elijah' ),
+			'view_item' => __( 'View Tip', 'elijah' ),
+			'search_items' => __( 'Search Tips', 'elijah' ),
+			'not_found' => __( 'No Tips Found', 'elijah' ),
+			'not_found_in_trash' => __( 'No Tips Found in Trash', 'elijah' ),
+			'parent' => __( 'Paren Tip', 'elijah' ),
 		),));
-
-	}
+	
+	//new post type for completed goals
+	register_post_status( 
+		'complete', 
+		array(
+			'label'                     => _x( 'Completed', 'elijah' ),
+			'public'                    => true,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			'label_count'               => _n_noop( 'Completed <span class="count">(%s)</span>', 'Completed <span class="count">(%s)</span>' ),
+		) 
+	);
+	//also add it to the admin list, see http://wordpress.stackexchange.com/questions/89351/new-post-status-for-custom-post-type
+	add_action('admin_footer-post.php', 
+		function (){
+		 global $post;
+		 $complete = '';
+		 $label = '';
+		 if($post->post_type == 'research_goal'){
+			  if($post->post_status == 'complete'){
+				   $complete = ' selected=\"selected\"';
+				   $label = '<span id=\"post-status-display\"> Completed</span>';
+			  }
+			  echo '
+			  <script>
+			  jQuery(document).ready(function($){
+				   $("select#post_status").append("<option value=\"complete\" '.$complete.'>Completed</option>");
+				   $(".misc-pub-section label").append("'.$label.'");
+			  });
+			  </script>
+			  ';
+		  }
+		}
+	);
+}
 
 add_action('init', 'elijah_register_cpts', 100);
-
-/**
- * Registers a 'research status', and adds it to a new global array
- * called '$elijah_research_statuses'.
- * Options you can provide are:
- * -title (i18n-ized name)
- * @param string $status
- * @param array $options
- * @return void
- */
-function register_research_status($status,$options=array()){
-	global $elijah_research_statuses;
-	if( ! $elijah_research_statuses ){
-		$elijah_research_statuses = array();
-	}
-
-	$options = array_merge(array(
-		'title'=>$status,
-		'other_option-x'=>'monkey'
-	),$options);
-
-	$elijah_research_statuses[$status] = $options;
-}
-
-/**
- * Convenience function for getting the pretty title for a research goal status
- * @global array $elijah_research_statuses declared in register_research_status
- * @param string $status
- * @return string
- */
-function elijah_get_research_status_title($status){
-	global $elijah_research_statuses;
-	if(array_key_exists($status, $elijah_research_statuses)){
-		return $elijah_research_statuses[$status]['title'];
-	}else{
-		return 'status does not exist';
-	}
-}
-
-/**
- * Gets the research title for the post with id $post_id. If none is set,
- * sets it
- * @param int $post_id
- * @return string
- */
-function elijah_get_research_status_title_for_post($post_id){
-	$status = get_post_meta($post_id,'research_status',true);
-	if( ! $status ){
-		$status = 'enqueued';
-		update_post_meta($post_id,'research_status',$status);
-	}
-	return elijah_get_research_status_title( $status  );
-}
 
 function elijah_make_term_for_decades_after( $year, $taxonomy ){
 	$current_year = date("Y");
