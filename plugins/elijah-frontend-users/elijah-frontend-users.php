@@ -44,3 +44,23 @@ function elijah_replace_current_user( $items, $args ) {
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'elijah_replace_current_user', 10, 2 );
+
+//redirect users to their research goals
+add_filter( 'login_redirect', function( $url, $requested_url, $user ){
+		if( $user instanceof WP_User ) {
+			return '/author/' . $user->display_name;
+		} else {
+			return $url;
+		}
+	},
+	20,
+	3 
+);
+	
+//and when they logout send them to the logged out page
+add_filter( 'logout_redirect', function( $url, $requested_url, $user ){
+		return '/logout';
+	},
+	20,
+	3 
+);
