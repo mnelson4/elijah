@@ -42,7 +42,7 @@ else{
 	require_once( elijah_root.'/includes/frontend/menu.php');
 	require_once( elijah_root. '/includes/frontend/class.front-controller.php' );
 	require_once( elijah_root. '/includes/frontend/hooks.php' );
-	require_once( elijah_root. '/includes/integrations/profile-builder.php' );
+	require_once( elijah_root. '/includes/integrations/kadence-pinnacle.php' );
 	wp_enqueue_style('elijah', plugins_url('css/elijah.css',elijah_main_file) );
 }
 
