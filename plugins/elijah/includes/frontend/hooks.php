@@ -41,12 +41,12 @@ add_filter(
 
 /* Use research goals for author archive page instead of posts */
 function elijah_post_author_archive($query) {
-    if ($query->is_author) {
+    if ($query->is_author && empty( $_GET['post_type'] ) ) {
         $query->set( 'post_type', array('research_goal' ) );
-	} else {
+	} elseif( ! empty( $_GET['s'])) {
 		$query->set( 'post_type', array( 'research_goal', 'research_tip' ) );
 	}
-    remove_action( 'pre_get_posts', 'custom_post_author_archive' );
+    remove_action( 'pre_get_posts', 'elijah_post_author_archive' );
 }
 add_action('pre_get_posts', 'elijah_post_author_archive');
 

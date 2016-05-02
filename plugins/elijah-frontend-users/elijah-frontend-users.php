@@ -40,7 +40,7 @@ add_filter( 'wp_nav_menu_items', 'elijah_add_logout_button', 10, 2 );
  */
 function elijah_replace_current_user( $items, $args ) {
 	global $current_user;
-	$items = str_replace('current_user', $current_user->display_name, $items );
+	$items = str_replace('current_user', $current_user->user_login, $items );
 	return $items;
 }
 add_filter( 'wp_nav_menu_items', 'elijah_replace_current_user', 10, 2 );
