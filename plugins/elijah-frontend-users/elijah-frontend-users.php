@@ -48,7 +48,7 @@ add_filter( 'wp_nav_menu_items', 'elijah_replace_current_user', 10, 2 );
 //redirect users to their research goals
 add_filter( 'login_redirect', function( $url, $requested_url, $user ){
 		if( $user instanceof WP_User ) {
-			return '/author/' . $user->display_name;
+			return '/author/' . $user->user_nicename;
 		} else {
 			return $url;
 		}
