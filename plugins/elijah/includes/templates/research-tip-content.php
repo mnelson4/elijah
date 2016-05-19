@@ -5,7 +5,7 @@ wp_enqueue_script('elijah', plugins_url('js/elijah.js',elijah_main_file),array('
 wp_enqueue_style('elijah', plugins_url('css/elijah.css',elijah_main_file) );
 wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'),'current_research_goal_id'=>$post->ID));
 if( current_user_can( 'edit_research_tip', $post->ID ) ) {
-	?> <a href="<?php echo elijah_get_frontend_editing_permalink( $post );?>"><?php _e( 'Edit Research Strategy', 'elijah' );?></a>
+	?> <a href="<?php echo elijah_get_frontend_editing_permalink( $post );?>"><?php _e( 'Edit Tip', 'elijah' );?></a>
 <?php }?>
 <div class="post-body-plain">
 	<?php echo $content?>

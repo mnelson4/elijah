@@ -93,7 +93,7 @@ $work_done = $connected->posts;
 			<h2><?php _e( 'Do something else', 'elijah' );?></h2>
 			<a href="javascript:history.go(0)"><button class="button button-primary"><?php _e( 'Refresh list', 'event_espesso' );?></button></a><br>
 			<?php if( current_user_can( 'edit_research_tip' ) ){?>
-				<a href="<?php echo get_permalink(elijah_edit_research_tip_page_id);?>"><button class="button button-primary"><?php _e( 'Add Research Strategy', 'elijah' );?></button></a>
+				<a href="<?php echo get_permalink(elijah_edit_research_tip_page_id);?>"><button class="button button-primary"><?php _e( 'Add Tip', 'elijah' );?></button></a>
 			<?php } ?>
 	</div>
 </div>
