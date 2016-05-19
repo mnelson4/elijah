@@ -110,8 +110,10 @@ function cn_nf_url_parse( $content ) {
 			
 				$tag  = $matches[$i][0];
 				$tag2 = $matches[$i][0];
-				$url  = $matches[$i][0];
-					
+				$url  = $matches[$i][2];
+				if( $url[0] === '/' ) {
+					continue;
+				}
 				// bypass #more type internal link
 				$res = preg_match('/href(\s)*=(\s)*"#[a-zA-Z0-9-_]+"/',$url);
 				if($res) {
