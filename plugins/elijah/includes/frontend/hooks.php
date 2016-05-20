@@ -4,7 +4,7 @@
  * Add a filter to customize the research goal display
  */
 function elijah_customize_cpt_content( $content ) {
-	if( ! is_archive() && ! is_author() ) {
+	if( ! is_archive() && ! is_author() && !is_search() ) {
 		if ($GLOBALS['post']->post_type == 'research_goal') {
 			ob_start();
 			include( elijah_templates_dir . 'research-goal-content.php' );
