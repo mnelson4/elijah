@@ -4,16 +4,18 @@
  * Add a filter to customize the research goal display
  */
 function elijah_customize_cpt_content( $content ) {
-	if ($GLOBALS['post']->post_type == 'research_goal') {
-		ob_start();
-		include( elijah_templates_dir . 'research-goal-content.php' );
-		$content = ob_get_contents();
-		ob_end_clean();
-	} elseif( $GLOBALS['post']->post_type == 'research_tip') {
-		ob_start();
-		include( elijah_templates_dir . 'research-tip-content.php' );
-		$content = ob_get_contents();
-		ob_end_clean();
+	if( ! is_archive() && ! is_author() ) {
+		if ($GLOBALS['post']->post_type == 'research_goal') {
+			ob_start();
+			include( elijah_templates_dir . 'research-goal-content.php' );
+			$content = ob_get_contents();
+			ob_end_clean();
+		} elseif( $GLOBALS['post']->post_type == 'research_tip') {
+			ob_start();
+			include( elijah_templates_dir . 'research-tip-content.php' );
+			$content = ob_get_contents();
+			ob_end_clean();
+		}
 	}
 	return $content;
 }
