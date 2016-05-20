@@ -83,6 +83,8 @@ function _elijah_show_research_thing( $thing ) {
 	} else {
 		$post = null;
 	}
+//	wp_enqueue_script( 'jquery-validate', 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js', array( 'jquery' ), '1.15.0', true );
+//	wp_enqueue_script('elijah-edit-research-thing', plugins_url('js/elijah-edit-research-thing.js',elijah_main_file),array( 'jquery','jquery-validate' ) );
 	ob_start();
 	include( elijah_root . '/includes/templates/edit-research-' . $thing . '.php' );
 	return ob_get_clean();
