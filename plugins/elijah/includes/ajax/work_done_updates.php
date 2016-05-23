@@ -32,7 +32,7 @@ function elijah_work_done_modified() {
 		$post->post_status = 'complete';
 	} else {
 		//check if this update means the goal has been completed
-		$completed = new WP_Query( array(
+		$connections_indicating_complete = new WP_Query( array(
 			'connected_type' => 'work_done',
 			'connected_items' => $_POST['goal-id'],
 			'connected_meta' => array(
@@ -44,7 +44,8 @@ function elijah_work_done_modified() {
 			//we just want to see if there's one
 			'posts_per_page' => 1,
 		) );
-		if( $completed ) {
+		
+		if( $connections_indicating_complete->have_posts() ) {
 			$post->post_status = 'complete';
 		} else {
 			$post->post_status = 'publish';
