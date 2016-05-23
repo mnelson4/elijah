@@ -17,7 +17,7 @@ jQuery(document).ready(function(){
 	});
 	//updating started research tips
 	jQuery('.elijah-research-tip-usefulness').change(jQuery.debounce(send_tip_application_form,500));
-	jQuery('.tip-comments-area').keyup(jQuery.debounce(send_tip_application_form,500));
+	jQuery('.tip-comments-area').keyup(jQuery.debounce(send_tip_application_form,2000));
         jQuery('.elijah-reveal').click(function() {
             var section_id = this.id;
             var section_id_to_reveal = section_id.replace('elijah-reveal-', '' );
