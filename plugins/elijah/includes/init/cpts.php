@@ -114,14 +114,13 @@ function elijah_register_cpts() {
 		'query_var' => true,
 		'has_archive' => true,
 		'exclude_from_search' => false,
-		'menu_position' => 2,
+		'menu_position' => 20,
 		'supports' => array('title', 'editor', 'excerpt', 'comments', 'revisions', 'thumbnail', 'author',),
 		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
-			//@todo: i18n please!
 			'name' => __( 'Research Goals', 'elijah' ),
 			'singular_name' => __( 'Goal', 'elijah' ),
-			'menu_name' => __( 'Goals', 'elijah' ),
+			'menu_name' => __( 'Research Goals', 'elijah' ),
 			'add_new' => __( 'Add New', 'elijah' ),
 			'add_new_item' => __( 'Add New Goal', 'elijah' ),
 			'edit' => __( 'Edit', 'elijah' ),
@@ -140,7 +139,7 @@ function elijah_register_cpts() {
 		'description' => 'A generic task that can be done to complete a research goal. Eg: to find an individual\\\\\\\\\\\\\\\'s birthplace and year, search their name in New Family Search to find duplicates; to find an individual\\\\\\\\\\\\\\\'s parents, search for their birth record at local parishes; or even to find a granparent\\\\\\\\\\\\\\\'s birthplace, ask the oldest relative you know, etc.',
 		'public' => true,
 		'show_ui' => true,
-		'show_in_menu' => false,
+		'show_in_menu' => true,
 		'capability_type' => 'research_tip',
 		'capabilities' => array(
 			'edit_posts' => 'edit_research_tips',
@@ -154,7 +153,7 @@ function elijah_register_cpts() {
 		'query_var' => true,
 		'has_archive' => true,
 		'exclude_from_search' => false,
-		'menu_position' => 2,
+		'menu_position' => 20,
 		'supports' => array('title', 'editor', 'comments', 'thumbnail', 'author',),
 		'taxonomies' => $all_research_taxonomies,
 		'labels' => array(
