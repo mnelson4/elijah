@@ -72,7 +72,7 @@ class Elijah_Front_Controller {
 			}
 			//if no post ID, create one
 //inserting post
-			if( current_user_can( 'publish_research_' . $type_plural ) ) {
+			if( current_user_can( 'publish_research_' . $type_plural ) && $_REQUEST['submit'] !== elijah_save_draft ) {
 				$post_status = 'publish';
 			} else {
 				$post_status = 'draft';
@@ -157,14 +157,14 @@ class Elijah_Front_Controller {
 						$taxonomy );
 			}
 		}
-//		if( $_REQUEST[ 'submit' ] == elijah_save_and_continue_editing_button_name ) {
-//			//just save and return to edit
-//			wp_safe_redirect( elijah_get_frontend_editing_permalink( $post ) );
-//			die;
-//		} else/*if ( $_REQUEST[ 'submit' ] == elijah_save_and_research_button_name )*/ {
-		wp_safe_redirect( get_permalink( $post->ID ) );
-		die;
-//		}
+		if( $_REQUEST[ 'submit' ] !== elijah_save_draft ) {
+			//just save and return to edit
+			wp_safe_redirect( elijah_get_frontend_editing_permalink( $post ) );
+			die;
+		} else/*if ( $_REQUEST[ 'submit' ] == elijah_save_and_research_button_name )*/ {
+			wp_safe_redirect( get_permalink( $post->ID ) );
+			die;
+		}
 	}
 }
 new Elijah_Front_Controller();

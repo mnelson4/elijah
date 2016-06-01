@@ -16,6 +16,7 @@ define( 'elijah_templates_dir', elijah_root . '/includes/templates/' );
 define( 'elijah_edit_research_goals_page_id', 167 );
 define( 'elijah_edit_research_tip_page_id', 153 );
 define( 'elijah_save_and_research_button_name', __( 'Save & Research', 'elijah' ) );
+define( 'elijah_save_draft', __( 'Save Draft', 'event_espresso' ) );
 define( 'elijah_save_and_view_button_name', __( 'Save & View', 'elijah' ) );
 define( 'elijah_select2_count_per_ajax_request', 30 );
 

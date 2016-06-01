@@ -31,8 +31,16 @@ add_filter(
 		) {
 			if( $post->post_status === 'complete' ) {
 				$title = '☑ ' . sprintf( '%1$s (%2$s)', $title, __( 'Completed', 'elijah' ) );
-			} else {
+			} elseif( $post->post_status === 'draft' ) {
+				$title = '✍ ' . sprintf( '%1$s (%2$s)', $title, __( 'Draft', 'event_espresso' ) );
+			} else{
 				$title = '◻ ' . $title;
+			}
+		}elseif( $post instanceof WP_Post 
+			&& $post->post_type === 'research_tip'
+		) {
+			if( $post->post_status === 'draft' ) {
+				$title = '✍ ' . sprintf( '%1$s (%2$s)', $title, __( 'Draft', 'event_espresso' ) );
 			}
 		}
 		return $title;
@@ -51,6 +59,25 @@ function elijah_post_author_archive($query) {
     remove_action( 'pre_get_posts', 'elijah_post_author_archive' );
 }
 add_action('pre_get_posts', 'elijah_post_author_archive');
+
+add_action( 'pre_get_posts', function ( $query ) {
+
+    if( is_author() ) {
+		$current_post_type_info = get_post_type_object( elijah_get_single_post_type_from_wp_query() );
+		if( $current_post_type_info ) {
+			$viewed_user = elijah_get_author_from_wp_query();
+			$viewed_user_display_name = $viewed_user->display_name;
+			$current_user = wp_get_current_user();
+			$current_post_type_label = $current_post_type_info->labels->name;
+			if( $viewed_user_display_name === $current_user->display_name ) {
+				if( $query instanceof WP_Query ) {
+					$query->set( 'post_status', array( 'publish', 'draft', 'complete' ) );
+				}
+			}
+		}	
+    }
+    return $query;
+});
 
 
 function elijah_init_modify_cpt_titles_on_search() {
