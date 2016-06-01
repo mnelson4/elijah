@@ -93,6 +93,16 @@ function elijah_register_cpts() {
 					'delete_terms'=>'delete_childrens-birthplaces',
 					'assign_terms'=>'assign_childrens-birthplaces',
 				)));
+	register_taxonomy('tip-type', array(
+		0 => 'research_goal',
+		1 => 'research_tip',
+			), array('hierarchical' => true, 'label' => __( 'Tip Types', 'event_espresso' ), 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => __( 'Tip Type', 'event_espresso' ),
+				'capabilities'=>array(
+					'manage_terms'=>'manage_tip-types',
+					'edit_terms'=>'edit_tip-types',
+					'delete_terms'=>'delete_tip-types',
+					'assign_terms'=>'assign_tip-types',
+				)));
 	$year_research_taxonomies = array('birthyear', 'marriage-year', 'death-year', 'childrens-birthyears' );
 	$place_research_taxonomies = array( 'birthplace', 'death-place', 'marriage-place', 'childrens-birthplaces' );
 	$other_research_taxonomies = array( 'individual-details' );

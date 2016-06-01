@@ -26,6 +26,8 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 		echo elijah_datalist_item( __( 'Childrens\' Birthplaces', 'elijah'), elijah_places_output( 'childrens-birthplaces', $post->ID, ' ' ) );
 		echo elijah_datalist_item( __( 'Death Year', 'elijah'), elijah_year_output( 'death-year', $post->ID, ' ' ) );
 		echo elijah_datalist_item( __( 'Death Place', 'elijah'), elijah_places_output( 'deathplace', $post->ID, ' ' ) );
+		$tip_type = implode(', ', wp_get_post_terms($post->ID, 'tip-type', array( 'fields' => 'names' ) ) );
+		echo elijah_datalist_item(__( 'Preferred Research Tip Type'), $tip_type ? $tip_type : __( 'Quick, Free, Online') );
 		?>
 	</dl>
 </div>

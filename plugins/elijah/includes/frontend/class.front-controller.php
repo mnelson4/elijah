@@ -87,6 +87,7 @@ class Elijah_Front_Controller {
 			$post = get_post( $post_id );
 		}
 		$results = wp_set_object_terms( $post_id, array_map('intval', $_REQUEST[ 'individual-details' ] ), 'individual-details' );
+		$results = wp_set_object_terms( $post_id, array_map('intval', $_REQUEST[ 'tip-type' ] ), 'tip-type' );
 		//add relations to all the taxonomies mentioned in the request
 		//and remove all its taxonomies
 		$taxonomies = array(
@@ -157,7 +158,7 @@ class Elijah_Front_Controller {
 						$taxonomy );
 			}
 		}
-		if( $_REQUEST[ 'submit' ] !== elijah_save_draft ) {
+		if( $_REQUEST[ 'submit' ] === elijah_save_draft ) {
 			//just save and return to edit
 			wp_safe_redirect( elijah_get_frontend_editing_permalink( $post ) );
 			die;

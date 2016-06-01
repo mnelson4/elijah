@@ -47,6 +47,24 @@
 			</div>
 
         </li>
+		<li class="wpuf-el tip-type">
+			<div class="wpuf-label">
+				<label for="wpuf-tip-type"><?php _e( 'Type', 'elijah' );?><span class="required">*</span></label>
+			</div>
+
+			<div class="wpuf-fields">
+				<?php $selected = wp_get_object_terms( $post_id, 'tip-type', array( 'fields' => 'ids' ) );?>
+				<select multiple="multiple" data-required="yes" required="required" data-type="multiselect" name="tip-type[]" id="tip-type" class="tip-type multiselect">
+					<?php
+
+					foreach ( $tip_type_terms as $term ) { ?>
+						<option class="level-0" value="<?php echo $term->term_id; ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name; ?></option>
+					<?php } ?>
+				</select>
+				<span class="wpuf-help"></span>
+			</div>
+
+        </li>
 		<li class="wpuf-el ">
 			<div class="wpuf-fields">
 				<p class="wpuf-help">When could this research tip be helpful? (Eg, when research ancestors from what place and time?)</p>

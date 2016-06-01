@@ -77,6 +77,12 @@ function _elijah_show_research_thing( $thing ) {
 			'hide_empty' => false
 		)
 	);
+	$tip_type_terms = get_terms( 
+		'tip-type',
+		array(
+			'hide_empty' => false
+		)
+	);
 	$post_id = isset( $_GET[ $thing . '_id' ] ) ? intval( $_GET[ $thing . '_id' ] ) : 0;
 	if( $post_id && current_user_can( 'edit_research_' . $thing, $post_id ) ) {
 		$post = get_post( $post_id );

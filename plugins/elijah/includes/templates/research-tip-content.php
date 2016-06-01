@@ -13,6 +13,9 @@ if( current_user_can( 'edit_research_tip', $post->ID ) ) {
 <div id="elijah-current-info-wrap-div">
 	<dl id="elijah-current-info">
 		<?php
+		$tip_type = implode(', ', wp_get_post_terms($post->ID, 'tip-type', array( 'fields' => 'names' ) ) );
+		echo elijah_datalist_item( __( 'Type'), $tip_type ? $tip_type : __( 'Quick, Free, Online', 'elijah' ) );
+		
 		$individual_details = implode(', ', wp_get_post_terms($post->ID, 'individual-details', array( 'fields' => 'names' ) ) );
 		echo elijah_datalist_item( __( 'Use This Strategy When Searching for'), $individual_details ? $individual_details : __( 'Anything', 'elijah' ) );
 		?>

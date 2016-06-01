@@ -84,6 +84,25 @@
 			</div>
 
         </li>
+		
+		<li class="wpuf-el tip-types">
+			<div class="wpuf-label">
+				<label for="wpuf-tip-types"><?php _e( 'Research Tip Type', 'elijah' );?><span class="required">*</span></label>
+			</div>
+
+			<div class="wpuf-fields">
+				<?php $selected = wp_get_object_terms( $post_id, 'tip-type', array( 'fields' => 'ids' ) ); ?>
+				<select multiple="multiple" data-required="yes" required="required" data-type="multiselect" name="tip-type[]" id="tip-type" class="tip-types multiselect">
+					<?php
+
+					foreach ( $tip_type_terms as $term ) { ?>
+						<option class="level-0" value="<?php echo $term->term_id; ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name; ?></option>
+					<?php } ?>
+				</select>
+				<span class="wpuf-help"><?php _e( 'Types of Research Tips you\'d like to see when researching this goal.')?></span>
+			</div>
+
+        </li>
 		<li class="wpuf-submit">
 
             <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-goal' )?>">
