@@ -44,6 +44,12 @@ class Elijah_Front_Controller {
 		}
 		$post_id = isset( $_REQUEST[ $type_singular . '_id'] ) ? intval( $_REQUEST[ $type_singular . '_id' ] ): null;
 		
+		if( current_user_can( 'publish_research_' . $type_plural ) && $_REQUEST['submit'] !== elijah_save_draft ) {
+			$post_status = 'publish';
+		} else {
+			$post_status = 'draft';
+		}
+			
 		if( $post_id ) {
 			if( ! current_user_can(  'edit_research_' . $type_singular, $post_id ) ) {
 				wp_die( __( 'You don\'t have permission to edit this!', 'elijah' ));
@@ -60,7 +66,8 @@ class Elijah_Front_Controller {
 						array(
 							'ID' => $post_id,
 							'post_title' => sanitize_post_field( 'post_title', $_REQUEST[ 'post_title'], $post_id ),
-							'post_content' => sanitize_post_field( 'post_content', $_REQUEST[ 'post_content'], $post_id )
+							'post_content' => sanitize_post_field( 'post_content', $_REQUEST[ 'post_content'], $post_id ),
+							'post_status' => $post_status
 						));
 
 			}
@@ -72,11 +79,6 @@ class Elijah_Front_Controller {
 			}
 			//if no post ID, create one
 //inserting post
-			if( current_user_can( 'publish_research_' . $type_plural ) && $_REQUEST['submit'] !== elijah_save_draft ) {
-				$post_status = 'publish';
-			} else {
-				$post_status = 'draft';
-			}
 			$post_id = wp_insert_post(
 					array(
 						'post_title' => sanitize_post_field( 'post_title', $_REQUEST[ 'post_title'], $post_id ),
