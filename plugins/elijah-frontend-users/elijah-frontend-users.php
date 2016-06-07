@@ -21,15 +21,15 @@ function elijah_wp_nav_menu_args( $args = '' ) {
 add_filter( 'wp_nav_menu_args', 'elijah_wp_nav_menu_args' );
 
 //add logout button
-function elijah_add_logout_button( $items, $args ) {
-	if( $args->menu == 'topbar' ) {
-		$redirect = is_home() ? false : get_permalink();
-		$link = '<a href="' . wp_logout_url( $redirect ) . '">' . __( 'Logout', 'elijah' ) . '</a>';
-		$items .= '<li class="menu-item menu-type-link">' . $link . '</li>';
-	}
-	return $items;
-}
-add_filter( 'wp_nav_menu_items', 'elijah_add_logout_button', 10, 2 );
+//function elijah_add_logout_button( $items, $args ) {
+//	if( $args->menu == 'topbar' ) {
+//		$redirect = is_home() ? false : get_permalink();
+//		$link = '<a href="' . wp_logout_url( $redirect ) . '">' . __( 'Logout', 'elijah' ) . '</a>';
+//		$items .= '<li class="menu-item menu-type-link">' . $link . '</li>';
+//	}
+//	return $items;
+//}
+//add_filter( 'wp_nav_menu_items', 'elijah_add_logout_button', 10, 2 );
 
 /**
  * Replaces the string "current_user" in the menu with the current user's display name
@@ -58,9 +58,9 @@ add_filter( 'login_redirect', function( $url, $requested_url, $user ){
 );
 	
 //and when they logout send them to the logged out page
-add_filter( 'logout_redirect', function( $url, $requested_url, $user ){
-		return '/logout';
-	},
-	20,
-	3 
-);
+//add_filter( 'logout_redirect', function( $url, $requested_url, $user ){
+//		return '/logout';
+//	},
+//	20,
+//	3 
+//);
