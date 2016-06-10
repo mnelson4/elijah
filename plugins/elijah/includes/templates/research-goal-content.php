@@ -87,10 +87,13 @@ $work_done = $connected->posts;
 	<h2 id="elijah-reveal-elijah-work-todo"><?php _e( 'Work To-Do', 'elijah'); ?></h2>
 	<div id="elijah-work-todo">
 			<div class="work-todo-items">
-					<?php if( $results) foreach($results as $tip_suggested){
-
+					<?php if( $results){
+						foreach($results as $tip_suggested){
 							echo elijah_suggested_research_tip($tip_suggested, $post );
-							} ?>
+						} 
+					} else {
+						_e( 'No tips available. You\'ll just need to search and create some new tips...', 'elijah' );
+					}?>
 			</div>
 			<h2><?php _e( 'Do something else', 'elijah' );?></h2>
 			<a href="javascript:history.go(0)"><button class="button button-primary"><?php _e( 'Refresh list', 'event_espesso' );?></button></a><br>
