@@ -18,16 +18,16 @@ wp_localize_script('elijah','elijah',array('ajaxurl'=>admin_url('admin-ajax.php'
 	<dl id="elijah-current-info">
 		<?php
 		echo elijah_datalist_item(__( 'Searching for'), implode(', ', wp_get_post_terms($post->ID, 'individual-details', array( 'fields' => 'names' ) ) ) );
-		echo elijah_datalist_item(__('Birthyear', 'elijah'), elijah_year_output( 'birthyear', $post->ID, ' ' ) );
-		echo elijah_datalist_item( __( 'Birthplace', 'elijah'), elijah_places_output( 'birthplace', $post->ID, ' ' ) );
-		echo elijah_datalist_item( __( 'Marriage Year', 'elijah'), elijah_year_output( 'marriage-year', $post->ID, ' ' ) );
-		echo elijah_datalist_item( __( 'Marriage Place', 'elijah'), elijah_places_output( 'marriage-place', $post->ID, ' ' ) );
-		echo elijah_datalist_item( __( 'Childrens\' Birthyears', 'elijah'), elijah_year_output( 'childrens-birthyears', $post->ID, ' ' ) );
-		echo elijah_datalist_item( __( 'Childrens\' Birthplaces', 'elijah'), elijah_places_output( 'childrens-birthplaces', $post->ID, ' ' ) );
-		echo elijah_datalist_item( __( 'Death Year', 'elijah'), elijah_year_output( 'death-year', $post->ID, ' ' ) );
-		echo elijah_datalist_item( __( 'Death Place', 'elijah'), elijah_places_output( 'deathplace', $post->ID, ' ' ) );
+		echo elijah_datalist_item(__('Birthyear', 'elijah'), elijah_year_output( 'birthyear', $post->ID ) );
+		echo elijah_datalist_item( __( 'Birthplace', 'elijah'), elijah_places_output( 'birthplace', $post->ID ) );
+		echo elijah_datalist_item( __( 'Marriage Year', 'elijah'), elijah_year_output( 'marriage-year', $post->ID ) );
+		echo elijah_datalist_item( __( 'Marriage Place', 'elijah'), elijah_places_output( 'marriage-place', $post->ID ) );
+		echo elijah_datalist_item( __( 'Childrens\' Birthyears', 'elijah'), elijah_year_output( 'childrens-birthyears', $post->ID ) );
+		echo elijah_datalist_item( __( 'Childrens\' Birthplaces', 'elijah'), elijah_places_output( 'childrens-birthplaces', $post->ID ) );
+		echo elijah_datalist_item( __( 'Death Year', 'elijah'), elijah_year_output( 'death-year', $post->ID ) );
+		echo elijah_datalist_item( __( 'Death Place', 'elijah'), elijah_places_output( 'deathplace', $post->ID ) );
 		$tip_type = implode(', ', wp_get_post_terms($post->ID, 'tip-type', array( 'fields' => 'names' ) ) );
-		echo elijah_datalist_item(__( 'Preferred Research Tip Type'), $tip_type ? $tip_type : __( 'Quick, Free, Online') );
+		echo elijah_datalist_item(__( 'Preferred Research Tip Type'), $tip_type );
 		?>
 	</dl>
 </div>

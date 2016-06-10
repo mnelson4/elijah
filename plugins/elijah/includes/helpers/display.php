@@ -199,9 +199,9 @@ function elijah_places_output( $taxonomy, $post_id, $anywhere_text = null ) {
 	$term_names = array_filter( $term_names );
 	if(empty($term_names)){
 		if( $anywhere_text === null ) {
-			$value = $anywhere_text; 
+			$value = __( 'Anywhere', 'elijah' ); 
 		} else {
-			$value = __( 'Anywhere', 'elijah' );
+			$value = $anywhere_text;
 		}
 	}else{
 		
