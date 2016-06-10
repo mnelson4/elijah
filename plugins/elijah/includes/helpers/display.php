@@ -121,7 +121,7 @@ function elijah_suggested_research_tip($tip_post_obj, $goal_post_obj){
 					<?php echo elijah_comments_textbox($tip_post_obj,'tip-comments', ! $can_edit );?>
 				</div>
 			</div>
-			<p <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>><?php echo get_excerpt_or_short_content($tip_post_obj);?></p>
+			<p <?php echo $status == 'suggested' ? '' : 'style="display:none"' ?>><?php echo get_excerpt_or_short_content($tip_post_obj);?> <a href="<?php echo get_permalink_append_post_id( $tip_post_obj->ID);?>"><?php _e( 'Read More...', 'elijah' );?></a></p>
 			<div class="tip-skipped-area" <?php echo $status != 'skipped'? 'style="display:none"' : '' ?>>
 				<p><?php _e("Skipped", "elijah");?> 
 					<?php if( $can_edit ) {
