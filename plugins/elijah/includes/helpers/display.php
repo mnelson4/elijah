@@ -79,7 +79,7 @@ function elijah_comments_textbox($p2p_connection,$input_name, $disabled = false 
 			$html .= $comments;
 		}
 	} else {
-		$html .= "<textarea id='$input_name' name='$input_name' class='tip-comments-area'>$comments</textarea>";
+		$html .= "<textarea id='$input_name' name='$input_name' class='tip-comments-area'>$comments</textarea><div class='autosaved-mention'></div>";
 	}
 	return $html;
 }
