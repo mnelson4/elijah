@@ -71,7 +71,7 @@ function elijah_usefulness_dropdown($p2p_connection,$input_name, $disabled = fal
  */
 function elijah_comments_textbox($p2p_connection,$input_name, $disabled = false ){
 	$comments = p2p_get_meta( $p2p_connection->p2p_id, 'comments', true );
-	$html = "<label for='$input_name'>".  __("Comments", "elijah")."</label><br/>";
+	$html = "<label for='$input_name'>".  __("Comments", "elijah")."</label> <span class='autosaved-mention'></span><br/>";
 	if( $disabled ) {
 		if( empty( trim( $comments ) ) ) {
 			$html .= __( 'No comments entered.', 'elijah' );
@@ -79,7 +79,7 @@ function elijah_comments_textbox($p2p_connection,$input_name, $disabled = false 
 			$html .= $comments;
 		}
 	} else {
-		$html .= "<textarea id='$input_name' name='$input_name' class='tip-comments-area'>$comments</textarea><div class='autosaved-mention'></div>";
+		$html .= "<textarea id='$input_name' name='$input_name' class='tip-comments-area'>$comments</textarea>";
 	}
 	return $html;
 }

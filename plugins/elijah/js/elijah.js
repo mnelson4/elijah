@@ -37,7 +37,7 @@ function send_tip_application_form(){
 	jQuery.post(url, data, function(response) {
 		jQuery(".spinner").hide();
 		var d = new Date();
-		jQuery(".autosaved-mention", form).html('Saved at ' + formatDate(d, "dddd h:mmtt d MMM yyyy" ) );
+		jQuery(".autosaved-mention", form).html('Saved ' + formatDate(d, "dddd d MMM yyyy" ) + ' at ' + formatDate(d, "h:mmtt") );
 //		alert('got this from the server' + response );
 	})
 //	elijah_send_update( 'elijah_work_done_modified', );
