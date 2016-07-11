@@ -16,6 +16,11 @@ div.howitworks{
 	min-height:100px;
 }
 
-.tip-comments-area{
-	height: 8em;
+
+@media (max-width:400px) {
+
+	.tip-comments-area{
+		height: 16em;
+	}
+
 }
