@@ -15,3 +15,7 @@ and open the template in the editor.
 div.howitworks{
 	min-height:100px;
 }
+
+.tip-comments-area{
+	height: 8em;
+}
