@@ -27,6 +27,37 @@ add_filter( 'kadence_title', function ( $title ) {
 
 });
 
+//filter the single page title when viewing a tip or goal
+add_filter( 
+	'get_post_metadata', 
+	function( $metadata, $object_id, $meta_key, $single ) {
+		if( $meta_key === '_kad_post_header_title'
+			&& in_array( get_post_type(), array( 'research_tip', 'research_goal' ) ) 
+		) {
+			switch(get_post_type() ){
+				case 'research_tip':
+					$metadata = __( 'Family History Research Tip', 'event_espresso' );
+					break;
+				case 'research_goal':
+					$metadata = __( 'Family History Research Goal', 'event_espresso' );
+					break;
+			}
+		}
+		return $metadata;
+	},
+	10,
+	4
+);
+	
+
+
+// elseif( is_single() ) {
+//		echo "get post type" . get_post_type();die;
+//		return get_post_type();
+//	} else {
+//		echo "say what";die;
+//	}
+
 /**
  * I manually added this filter onto pinnacle theme's archive.php page which filters the subtitle
  */
