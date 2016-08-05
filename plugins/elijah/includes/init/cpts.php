@@ -103,9 +103,19 @@ function elijah_register_cpts() {
 					'delete_terms'=>'delete_tip-types',
 					'assign_terms'=>'assign_tip-types',
 				)));
+	register_taxonomy('group-affiliation', array(
+		0 => 'research_goal',
+		1 => 'research_tip',
+			), array('hierarchical' => true, 'label' => __( 'Group Affiliations', 'event_espresso' ), 'show_ui' => true, 'query_var' => true, 'rewrite' => array('slug' => ''), 'singular_label' => __( 'Group Affiliation', 'event_espresso' ),
+				'capabilities'=>array(
+					'manage_terms'=>'manage_group-affiliations',
+					'edit_terms'=>'edit_group-affiliations',
+					'delete_terms'=>'delete_group-affiliations',
+					'assign_terms'=>'assign_group-affiliations',
+				)));
 	$year_research_taxonomies = array('birthyear', 'marriage-year', 'death-year', 'childrens-birthyears' );
 	$place_research_taxonomies = array( 'birthplace', 'death-place', 'marriage-place', 'childrens-birthplaces' );
-	$other_research_taxonomies = array( 'individual-details' );
+	$other_research_taxonomies = array( 'individual-details', 'tip-type', 'group-affiliation' );
 	$all_research_taxonomies = array_merge( $year_research_taxonomies, $place_research_taxonomies, $other_research_taxonomies );
 
 	foreach( $year_research_taxonomies as $taxonomy ) {

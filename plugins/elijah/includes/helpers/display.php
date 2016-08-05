@@ -264,3 +264,104 @@ function elijah_select( $name, $select_options, $selected = false, $html_attribu
 	<?php
 	return ob_get_clean();
 }
+
+function elijah_hierarchical_reveal_checkboxes( $taxonomy, $post_id ) {
+	$terms_organized_hierarchically = elijah_get_terms_hierarchically( array( 'taxonomy' => $taxonomy ) );
+	$terms_selected = wp_get_object_terms( $post_id, $taxonomy, array( 'fields' => 'ids' ) );
+	return elijah_hierarchical_reveal_checkbox_and_child( $terms_organized_hierarchically, $taxonomy, $terms_selected );
+}
+
+/**
+ * Recursively walks through $terms_with_children, creating HTML with checkboxes and 
+ * divs
+ * @param WP_Term[] $terms_with_children
+ * @param string $input_name
+ * @param array $selected array of term IDs
+ * @return string
+ */
+function elijah_hierarchical_reveal_checkbox_and_child( $terms_with_children, $input_name, $selected_term_ids = array() ) {
+	$html = '';
+	foreach( $terms_with_children as $term_with_children ) {
+		$this_id = $input_name . $term_with_children->term()->slug;
+		$selected = in_array( $term_with_children->term()->term_id, $selected_term_ids );
+		$selected_attribute = $selected ? 'checked="checked"' : '';
+		$hidden_style = $selected ? '' : 'display:none;';
+		$html .= '<div class="hierarchical-reveal-checkbox-and-area">';
+		$html .= ' <label for="' . $this_id . '"><input type="checkbox" class="hierarchical-reveal-source" id = "' . $this_id . '" name="' . $input_name . '[]" value="' . $term_with_children->term()->term_id . '" ' . $selected_attribute . '>' . $term_with_children->term()->name . '</label>';
+		$html .= ' <div class="hierarchical-reveal-destination-area" id="' . $this_id . '-children" style="' . $hidden_style .'">';
+		$html .= elijah_hierarchical_reveal_checkbox_and_child( $term_with_children->children(), $input_name, $selected_term_ids );
+		$html .= ' </div>';
+		$html .= '</div>';
+	}
+	return $html;
+}
+
+/**
+ * Returns results exactly get_terms, except instead returns the results organized
+ * by their parent-child relationships. This is done by returning an array of thin wrappers
+ * of WP_Term, called WP_Term_With_Children. The wrapper has the originaly term, 
+ * PLUS a list of its direct children. Each of those children has their direct children etc.
+ * So if you ran this on the entire set of terms, the top-level array would be all
+ * WP_Term_With_Children that have no parent
+ * @param array $args
+ * @return WP_Term_With_Children[]
+ */
+function elijah_get_terms_hierarchically( $args ) {
+	$defaults = array(
+		'hide_empty' => false,		
+	);
+	$final_args = array_replace( $defaults, $args );
+	
+	$terms = get_terms( $final_args );
+	
+	//convert the WP_Terms to WP_Term_With_Childrens
+	$terms_to_organize = array();
+	foreach( $terms as $term ) {
+		$terms_to_organize[ $term->term_id ] = new WP_Term_With_Children( $term );
+	}
+	//we want to keep a flat reference to all the terms
+	$terms_ref = $terms_to_organize;
+	//start building the term tree by adding a term onto its parent as a child
+	$i = 0;
+	do{
+		$organized_one_on_this_pass = false;
+		foreach( $terms_to_organize as $term_id => $term_with_children ) {
+			if( isset( $terms_ref[ $term_with_children->term()->parent] ) ){
+				$parent_with_children = $terms_ref[ $term_with_children->term()->parent];
+				$parent_with_children->add_child( $term_with_children );
+				unset( $terms_to_organize[ $term_id ] );
+				$organized_one_on_this_pass = true;
+			}
+		}
+	} while ( $organized_one_on_this_pass && $i++ < 50 );
+	//all done organizing!
+	return $terms_to_organize;
+}
+
+class WP_Term_With_Children {
+	protected $term;
+	protected $children;
+	
+	public function __construct( WP_Term $term ) {
+		$this->term = $term;
+	}
+	
+	/**
+	 * 
+	 * @return WP_Term
+	 */
+	public function term() {
+		return $this->term;
+	}
+	public function add_child( WP_Term_With_Children $child_term ) {
+		$this->children[] = $child_term;
+	}
+	
+	/**
+	 * 
+	 * @return WP_Term[]
+	 */
+	public function children() {
+		return $this->children;
+	}
+}

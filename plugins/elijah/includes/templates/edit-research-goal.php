@@ -72,8 +72,19 @@
 			</div>
 		</li>
 			<?php
-			}
-			?>
+			} ?>
+		<li class="wpuf-el group-affiliations">
+			<div class="wpuf-label">
+				<label for="wpuf-group-affiliations"><?php _e( 'Individual\'s Group Affiliations', 'elijah' );?></label>
+			</div>
+			<p class="help"><?php printf( __( 'Groups to which this individual probably belonged, which might help in researching them. (If you need other groups added to this list, please %1$s contact us %2$s.)', 'elijah' ), '<a href="/contact-us-feedback">', '</a>' );?></p>
+
+			<div class="wpuf-fields">
+				<?php
+				echo elijah_hierarchical_reveal_checkboxes( 'group-affiliation', $post_id );
+				?>
+			</div>
+		</li>
 		<li class="wpuf-el post_content">
 			<div class="wpuf-label">
 				<label for="wpuf-post_content"><?php _e( 'Extra Information', 'elijah' );?></label>

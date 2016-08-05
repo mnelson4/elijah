@@ -6,5 +6,14 @@
 
 
 jQuery(document).ready(function(){
-	jQuery('#elijah-edit-researc-thing').validate();
+//	jQuery('#elijah-edit-researc-thing').validate();
+	jQuery('.hierarchical-reveal-source').change(function(){
+		var grandparent = jQuery(this).parent().parent();
+		if(this.checked){
+			grandparent.children('.hierarchical-reveal-destination-area').show();
+		} else {
+			grandparent.children('.hierarchical-reveal-destination-area').hide();
+			grandparent.find( '.hierarchical-reveal-source').prop( 'checked', false );
+		}
+	})
 });

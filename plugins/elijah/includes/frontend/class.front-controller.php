@@ -90,6 +90,7 @@ class Elijah_Front_Controller {
 		}
 		$results = wp_set_object_terms( $post_id, array_map('intval', $_REQUEST[ 'individual-details' ] ), 'individual-details' );
 		$results = wp_set_object_terms( $post_id, array_map('intval', $_REQUEST[ 'tip-type' ] ), 'tip-type' );
+		$results = wp_set_object_terms( $post_id, array_map('intval', $_REQUEST[ 'group-affiliation' ] ), 'group-affiliation' );
 		//add relations to all the taxonomies mentioned in the request
 		//and remove all its taxonomies
 		$taxonomies = array(
