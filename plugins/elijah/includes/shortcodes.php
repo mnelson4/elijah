@@ -84,12 +84,16 @@ function _elijah_show_research_thing( $thing ) {
 		)
 	);
 	$post_id = isset( $_GET[ $thing . '_id' ] ) ? intval( $_GET[ $thing . '_id' ] ) : 0;
-	if( $post_id && current_user_can( 'edit_research_' . $thing, $post_id ) ) {
-		$post = get_post( $post_id );
+	if( current_user_can( 'edit_research_' . $thing, $post_id ) ) {
+		if( $post_id ) {
+			$post = get_post( $post_id );
+		} else {
+			$post = null;
+		}
 		wp_enqueue_script('elijah-edit-research-thing', plugins_url('js/elijah-edit-research-thing.js',elijah_main_file),array( 'jquery','jquery-validate' ) );
-	ob_start();
-	include( elijah_root . '/includes/templates/edit-research-' . $thing . '.php' );
-	return ob_get_clean();
+		ob_start();
+		include( elijah_root . '/includes/templates/edit-research-' . $thing . '.php' );
+		return ob_get_clean();
 	} else {
 		printf( __( 'You do not have permission to edit this %1$s', 'elijah' ), $thing );
 	}
