@@ -297,11 +297,15 @@ function elijah_hierarchical_reveal_checkbox_and_child( $terms_with_children, $i
 }
 
 function elijah_hierarchical_show_leaf_nodes( $taxonomy, $post_id ) {
+	$selected_terms = wp_get_object_terms( $post_id, $taxonomy, array( 'fields' => 'ids' ) );
+	if( ! $selected_terms ) {
+		return '';
+	}
 	$terms_organized_hierarchically = elijah_get_terms_hierarchically( 
-		array( 'taxonomy' => $taxonomy, 
-			'include' => wp_get_object_terms( $post_id, $taxonomy, array( 'fields' => 'ids' ) ) 
-		)
-	);
+			array( 'taxonomy' => $taxonomy, 
+				'include' => $selected_terms
+			)
+		);
 	$leaf_terms = elijah_hierarchical_get_leaf_terms( $terms_organized_hierarchically );
 	$term_names = array();
 	foreach( $leaf_terms as $term ) {

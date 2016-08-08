@@ -81,8 +81,8 @@ $work_done = $connected->posts;
 													'death-year'=>1,
 													'death-place'=>1,
 													'individual-details'=>5,
-//													'group-affiliation'=>1,
-//													'tip-type' => 2
+													'group-affiliation'=>1,
+													'tip-type' => 2
 											)
 											)));
 	?>
