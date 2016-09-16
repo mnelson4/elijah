@@ -2,122 +2,129 @@
 # This file is distributed under the same license as the  package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Posts 2 Posts sv_SE\n"
+"Project-Id-Version: Posts 2 Posts\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/p2p\n"
-"POT-Creation-Date: 2013-02-17 08:06:11+00:00\n"
-"PO-Revision-Date: 2014-04-10 12:33+0100\n"
-"Last-Translator: Mattias Tengblad <mst@eyesx.com>\n"
-"Language-Team: WordPress Sverige <info@wpsv.se>\n"
-"Language: sv_SE\n"
+"POT-Creation-Date: 2015-10-15 10:55+0100\n"
+"PO-Revision-Date: 2016-01-28 12:42+0000\n"
+"Last-Translator: Pedro Mendonça <ped.gaspar@gmail.com>\n"
+"Language-Team: Pedro Mendonça <ped.gaspar@gmail.com>\n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.6.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
+"esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;"
+"esc_html_x:1,2c\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
 
 #: admin/box.php:45
 msgid "Are you sure you want to delete all connections?"
-msgstr "Är du säker på att du vill radera alla kopplingar?"
+msgstr "Tem a certeza que quer eliminar todas as conexões?"
 
 #: admin/box.php:136
 msgid "Search"
-msgstr "Sök"
+msgstr "Pesquisar"
 
 #: admin/box.php:213
 msgid "previous"
-msgstr "föregående"
+msgstr "anterior"
 
 #: admin/box.php:214
 msgid "next"
-msgstr "nästa"
+msgstr "seguinte"
 
 #: admin/box.php:215
 msgid "of"
-msgstr "av"
+msgstr "de"
 
 #: admin/dropdown-user.php:32
 msgid "Filter"
-msgstr "Filtrera"
+msgstr "Filtrar"
 
 #: admin/factory.php:88
 msgid " (from)"
-msgstr "(från)"
+msgstr " (de)"
 
 #: admin/factory.php:89
 msgid " (to)"
-msgstr " (till)"
+msgstr " (para)"
 
 #: admin/field-delete.php:7
 msgid "Delete all connections"
-msgstr "Radera alla kopplingar"
+msgstr "Eliminar todas as conexões"
 
 #: admin/field-delete.php:16
 msgid "Delete connection"
-msgstr "Radera koppling"
+msgstr "Eliminar conexão"
 
 #: admin/tools-page.php:7
 msgid "Connection Types"
-msgstr "Kopplingstyper"
+msgstr "Tipos de conexões"
 
 #: admin/tools-page.php:41
 msgid "<em>%s</em> is not a registered connection type."
-msgstr "<em>%s</em> är inte en registrerad kopplingstyp."
+msgstr "<em>%s</em> não é um tipo de conexão registado."
 
 #: admin/tools-page.php:50
 msgid "Converted %1$s connections from <em>%2$s</em> to <em>%3$s</em>."
-msgstr "Konverterade %1$s kopplingar från <em>%2$s</em> till <em>%3$s</em>."
+msgstr "Convertidas %1$s conexões de <em>%2$s</em> para <em>%3$s</em>."
 
 #: admin/tools-page.php:64
 msgid "Name"
-msgstr "Namn"
+msgstr "Nome"
 
 #: admin/tools-page.php:65
 msgid "Information"
-msgstr "Information"
+msgstr "Informações"
 
 #: admin/tools-page.php:66
 msgid "Connections"
-msgstr "Kopplingar"
+msgstr "Conexões"
 
 #: admin/tools-page.php:74
 msgid "No connection types registered."
-msgstr "Inga kopplingstyper registrerade."
+msgstr "Nenhum tipo de conexão registado."
 
 #: admin/tools-page.php:76
 msgid "To register a connection type, see <a href=\"%s\">the wiki</a>."
-msgstr "För att registrera en kopplingstyp, se <a href=\"%s\">wikin</a>."
+msgstr "Para registar um tipo de conexão, ver <a href=\"%s\">a wiki</a>."
 
 #: admin/tools-page.php:93
 msgid "Convert to registered connection type:"
-msgstr "Konvertera till registrerad kopplingstyp:"
+msgstr "Converter para tipo de conexão registado."
 
 #: admin/tools-page.php:129
 msgid "Go"
-msgstr "Ok"
+msgstr "Ir"
 
 #: core/connection-type.php:102
 msgid "Create connections"
-msgstr "Skapa kopplingar"
+msgstr "Criar conexões"
 
 #: core/connection-type.php:120
 msgid "Connected %s"
-msgstr "Kopplad till %s"
+msgstr "%s conectado(a)"
 
 #: core/side-user.php:16
 msgid "Users"
-msgstr "Användare"
+msgstr "Utilizadores"
 
 #: core/side-user.php:25
 msgid "User"
-msgstr "Användare"
+msgstr "Utilizador"
 
 #: core/side-user.php:26
 msgid "Search Users"
-msgstr "Sök efter användare"
+msgstr "Pesquisar utilizadores"
 
 #: core/side-user.php:27
 msgid "No users found."
-msgstr "Inga användare funna."
+msgstr "Nenhum utilizador encontrado."
 
 #: core/widget.php:16
 msgid "Posts 2 Posts"
@@ -125,41 +132,50 @@ msgstr "Posts 2 Posts"
 
 #: core/widget.php:17
 msgid "A list of posts connected to the current post"
-msgstr "En lista över inlägg kopplade till aktuellt inlägg"
+msgstr "Uma lista dos artigos conectados ao artigo actual"
 
 #: core/widget.php:34
 msgid "Title:"
-msgstr "Titel:"
+msgstr "Título:"
 
 #: core/widget.php:41
 msgid "Connection type:"
-msgstr "Kopplingstyp: "
+msgstr "Tipo de conexão:"
 
 #: core/widget.php:46
 msgid "Connection listing:"
-msgstr "Kopplingslistning:"
+msgstr "Lista de conexões:"
 
 #: core/widget.php:52
 msgid "connected"
-msgstr "kopplad"
+msgstr "conectado"
 
 #: core/widget.php:53
 msgid "related"
-msgstr "relaterad"
+msgstr "relacionado"
 
 #: scb/AdminPage.php:227
 msgid "Settings <strong>saved</strong>."
-msgstr "Inställningar <strong>sparade</strong>."
+msgstr "Definições <strong>guardadas</strong>."
 
 #: scb/AdminPage.php:466
 msgid "Settings"
-msgstr "Inställningar"
+msgstr "Definições"
 
 #~ msgid "Save Changes"
-#~ msgstr "Spara ändringar"
+#~ msgstr "Salvar Alterações"
+
+#~ msgid "Create connections:"
+#~ msgstr "Criar relações:"
+
+#~ msgid "Recent"
+#~ msgstr "Recentes"
+
+#~ msgid "Previous"
+#~ msgstr "Anteriores"
+
+#~ msgid "Next"
+#~ msgstr "Próximas"
 
 #~ msgid "Create connection"
-#~ msgstr "Skapa koppling"
-
-#~ msgid "View All"
-#~ msgstr "Visa alla"
+#~ msgstr "Criar relação"
