@@ -28,3 +28,7 @@ div.howitworks{
 .hierarchical-reveal-destination-area{
 	padding-left:1em;
 }
+
+#topbar-search .icon-reorder:before {
+  content: "\f007";
+}
