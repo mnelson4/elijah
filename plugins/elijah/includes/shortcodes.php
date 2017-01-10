@@ -84,7 +84,10 @@ function _elijah_show_research_thing( $thing ) {
 		)
 	);
 	$post_id = isset( $_GET[ $thing . '_id' ] ) ? intval( $_GET[ $thing . '_id' ] ) : 0;
-	if( current_user_can( 'edit_research_' . $thing, $post_id ) ) {
+	if(
+        ( ! $post_id && current_user_can('publish_research_' . $thing . 's' ) )
+	    || ( $post_id && current_user_can( 'edit_research_' . $thing, $post_id ) )
+    ) {
 		if( $post_id ) {
 			$post = get_post( $post_id );
 		} else {
