@@ -18,11 +18,15 @@ div.howitworks{
 
 
 @media (max-width:400px) {
-
 	.tip-comments-area{
 		height: 16em;
 	}
 
+}
+@media (min-width:400px) {
+    .tip-comments-area{
+        height: 10em;
+    }
 }
 
 .hierarchical-reveal-destination-area{
