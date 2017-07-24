@@ -21,6 +21,9 @@ div.howitworks{
 	.tip-comments-area{
 		height: 16em;
 	}
+    .single-article h1.entry-title{
+        font-size:33px;
+    }
 
 }
 @media (min-width:400px) {
