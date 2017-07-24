@@ -8,7 +8,8 @@
 			</div>
 
 			<div class="wpuf-fields">
-				<input class="textfield" id="post_title" type="text" data-required="yes" data-type="text" required="required" name="post_title" value="<?php echo $post instanceof WP_Post ? $post->post_title : '';?>" size="40">
+				<input class="textfield" id="post_title" type="text" data-required="yes" data-type="text" required="required" name="post_title" value="<?php esc_attr_e($post instanceof WP_Post ?
+                    $post->post_title : '');?>" size="40">
 				<span class="wpuf-help"></span>
 
 			</div>
@@ -40,7 +41,8 @@
 					<?php
 
 					foreach ( $individual_details_terms as $term ) { ?>
-						<option class="level-0" value="<?php echo $term->term_id; ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name; ?></option>
+						<option class="level-0" value="<?php esc_attr_e($term->term_id); ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name;
+						?></option>
 					<?php } ?>
 				</select>
 				<span class="wpuf-help"></span>
@@ -58,7 +60,8 @@
 					<?php
 
 					foreach ( $tip_type_terms as $term ) { ?>
-						<option class="level-0" value="<?php echo $term->term_id; ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name; ?></option>
+						<option class="level-0" value="<?php esc_attr_e($term->term_id); ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name;
+						?></option>
 					<?php } ?>
 				</select>
 				<span class="wpuf-help"></span>
@@ -90,14 +93,14 @@
 				$year_taxonomy = get_taxonomy( $taxonomy_names[ 0 ] );
 				$place_taxonomy = get_taxonomy( $taxonomy_names[ 1 ] );
 				?>
-		<li class="wpuf-el"><?php echo $title;?></li>
+		<li class="wpuf-el"><?php esc_attr_e($title);?></li>
 			<li class="wpuf-el <?php echo $year_taxonomy->name;?> elijah-form-half">
 				<div class="wpuf-fields">
 					<?php  elijah_years_input( $year_taxonomy, $post_id ); ?>
 					<span class="wpuf-help"></span>
 				</div>
 			</li>
-			<li class="wpuf-el <?php echo $place_taxonomy->name;?> elijah-form-half">
+			<li class="wpuf-el <?php esc_attr_e($place_taxonomy->name);?> elijah-form-half">
 				<div class="wpuf-fields">
 					<?php elijah_places_input( $place_taxonomy, $post_id ); ?>
 					<span class="wpuf-help"></span>
@@ -120,9 +123,9 @@
 		</li>
 		<li class="wpuf-submit">
 
-            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-tip' )?>">
+            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php esc_attr_e( wp_create_nonce( 'add-research-tip' ))?>">
             <input type="hidden" name="elijah_request" value="research_tip_submit">
-			<input type="hidden" name="post_id" value="<?php echo $post_id;?>">
+			<input type="hidden" name="post_id" value="<?php esc_attr_e($post_id);?>">
 			<input type="submit" name="submit" value="<?php echo elijah_save_and_view_button_name;?>">
 			<input type="submit" name="submit" value="<?php echo elijah_save_draft;?>">
 		</li>
