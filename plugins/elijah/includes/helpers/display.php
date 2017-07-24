@@ -287,8 +287,9 @@ function elijah_hierarchical_reveal_checkbox_and_child( $terms_with_children, $i
 		$selected_attribute = $selected ? 'checked="checked"' : '';
 		$hidden_style = $selected ? '' : 'display:none;';
 		$html .= '<div class="hierarchical-reveal-checkbox-and-area">';
-		$html .= ' <label for="' . $this_id . '"><input type="checkbox" class="hierarchical-reveal-source" id = "' . $this_id . '" name="' . $input_name . '[]" value="' . $term_with_children->term()->term_id . '" ' . $selected_attribute . '>' . $term_with_children->term()->name . '</label>';
-		$html .= ' <div class="hierarchical-reveal-destination-area" id="' . $this_id . '-children" style="' . $hidden_style .'">';
+		$html .= ' <label for="' . esc_attr($this_id) . '"><input type="checkbox" class="hierarchical-reveal-source" id = "' . esc_attr($this_id) . '" name="' . esc_attr($input_name) . '[]" value="' .
+                                        esc_attr($term_with_children->term()->term_id) . '" ' . $selected_attribute . '>' . esc_attr($term_with_children->term()->name) . '</label>';
+		$html .= ' <div class="hierarchical-reveal-destination-area" id="' . esc_attr($this_id) . '-children" style="' . $hidden_style .'">';
 		$html .= elijah_hierarchical_reveal_checkbox_and_child( $term_with_children->children(), $input_name, $selected_term_ids );
 		$html .= ' </div>';
 		$html .= '</div>';

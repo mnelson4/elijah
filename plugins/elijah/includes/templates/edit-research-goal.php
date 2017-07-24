@@ -8,7 +8,8 @@
 			</div>
 
 			<div class="wpuf-fields">
-				<input class="textfield" id="post_title" type="text" data-required="yes" data-type="text" required="required" name="post_title" value="<?php echo $post instanceof WP_Post ? $post->post_title : '';?>" size="40">
+				<input class="textfield" id="post_title" type="text" data-required="yes" data-type="text" required="required" name="post_title" value="<?php echo $post instanceof WP_Post ?
+                    esc_attr($post->post_title) : '';?>" size="40">
 				<span class="wpuf-help"></span>
 
 			</div>
@@ -26,7 +27,9 @@
 					<?php
 
 					foreach ( $individual_details_terms as $term ) { ?>
-						<option class="level-0" value="<?php echo $term->term_id; ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name; ?></option>
+						<option class="level-0" value="<?php esc_attr_e($term->term_id); ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php esc_attr_e
+                            ($term->name);
+						?></option>
 					<?php } ?>
 				</select>
 				<span class="wpuf-help"></span>
@@ -107,7 +110,10 @@
 					<?php
 
 					foreach ( $tip_type_terms as $term ) { ?>
-						<option class="level-0" value="<?php echo $term->term_id; ?>" <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php echo $term->name; ?></option>
+						<option class="level-0" value="<?php esc_attr_e($term->term_id); ?>"
+                            <?php echo in_array( $term->term_id, $selected ) ? 'selected="selected"' : ''?>><?php
+                            esc_html_e($term->name);
+						?></option>
 					<?php } ?>
 				</select>
 				<span class="wpuf-help"><?php _e( 'Types of Research Tips you\'d like to see when researching this goal.')?></span>
@@ -116,9 +122,9 @@
         </li>
 		<li class="wpuf-submit">
 
-            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php echo wp_create_nonce( 'add-research-goal' )?>">
+            <input type="hidden" id="_wpnonce" name="_wpnonce" value="<?php esc_attr_e(wp_create_nonce( 'add-research-goal' ))?>">
             <input type="hidden" name="elijah_request" value="research_goal_submit">
-			<input type="hidden" name="post_id" value="<?php echo $post_id;?>">
+			<input type="hidden" name="post_id" value="<?php esc_attr_e($post_id); ?>">
 			<input type="submit" name="submit" value="<?php echo elijah_save_and_research_button_name;?>">
 			<input type="submit" name="submit" value="<?php echo elijah_save_draft;?>">
 		</li>
