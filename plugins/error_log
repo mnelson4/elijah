@@ -1,0 +1,5 @@
+[16-Nov-2017 10:12:34 America/Denver] PHP Fatal error:  Call to undefined function add_action() in /home1/deadeas1/public_html/wp-content/plugins/hello.php on line 60
+[19-Nov-2017 18:11:02 America/Denver] PHP Fatal error:  Call to undefined function add_action() in /home1/deadeas1/public_html/wp-content/plugins/hello.php on line 60
+[19-Jan-2018 15:05:13 America/Denver] PHP Fatal error:  Call to undefined function add_action() in /home1/deadeas1/public_html/wp-content/plugins/hello.php on line 60
+[22-Jan-2018 19:50:11 America/Denver] PHP Fatal error:  Call to undefined function add_action() in /home1/deadeas1/public_html/wp-content/plugins/hello.php on line 60
+[04-Mar-2018 22:01:16 America/Denver] PHP Fatal error:  Call to undefined function add_action() in /home1/deadeas1/public_html/wp-content/plugins/hello.php on line 60
