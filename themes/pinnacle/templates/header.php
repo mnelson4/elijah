@@ -40,7 +40,7 @@
     <div class="row">
       <div class="<?php echo esc_attr($logocclass); ?> clearfix kad-header-left">
         <div id="logo" class="logocase">
-          <a class="brand logofont" style="height:<?php echo esc_attr($header_height);?>px; line-height:<?php echo esc_attr($header_height);?>px; display:block;" href="<?php echo esc_url(home_url()); ?>/">
+          <a class="brand logofont" style="height:<?php echo esc_attr($header_height);?>px; line-height:<?php echo esc_attr($header_height);?>px; display:block;" href="<?php echo esc_url(apply_filters('pinnacle_logo_link', home_url())); ?>">
             <?php if (!empty($pinnacle['x1_logo_upload']['url'])) { ?> 
             <div id="thelogo" style="height:<?php echo esc_attr($header_height);?>px; line-height:<?php echo esc_attr($header_height);?>px;">
                 <div style="background-image: url('<?php echo esc_attr($pinnacle['x1_logo_upload']['url']); ?>'); max-height:<?php echo esc_attr($header_height);?>px; height:<?php echo esc_attr($pinnacle['x1_logo_upload']['height']); ?>px; width:<?php echo esc_attr($pinnacle['x1_logo_upload']['width']); ?>px;" class="kad-standard-logo kad-lg"></div>

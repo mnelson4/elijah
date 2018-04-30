@@ -32,7 +32,104 @@ Yes, go here: https://wordpress.org/support/theme/pinnacle
 
 == Changelog ==
 
-= 1.3.6 | 3rd Febuary 2015 = 
+= 1.6.1 | 22nd February 2018 = 
+* Update: woo templates.
+* Fix: issue with single post sidebar.
+
+= 1.6.0 | 30th January 2018 = 
+* Update: Meta
+* Update: Woo 3.3
+
+= 1.5.9 | 7th December 2017 = 
+* Update: Google Fonts
+* Update: Woo Archive
+
+= 1.5.8 | 4th July 2017 = 
+* Small fix for polylang.
+* Small css update.
+* Update: unminified for referance.
+
+= 1.5.7 | 28th June 2017 = 
+* Update: wc templates
+
+= 1.5.6 | 1st June 2017 = 
+* Update: Schema
+
+= 1.5.5 | 20th April 2017 = 
+* Fix: Issue with woocommerce notice.
+* Update: archive title.
+* Update: Icons to add vimeo.
+
+= 1.5.4 | 12th April 2017 = 
+* Fix: Issue with woocommerce notice.
+* Update: Workaround for google schema changes.
+
+= 1.5.3 | 10th April 2017 = 
+* Fix: Issue with woocommerce zoom init.
+
+= 1.5.2 | 6th April 2017 = 
+* Fix: Issue with woocommerce notice.
+
+= 1.5.1 | 4th April 2017 = 
+* Fix: Issue with related/similar carousel when no image is set.
+
+= 1.5.0 | 4th April 2017 = 
+* Update: remove warnings.
+* Update: Woo 3.0 Gallery.
+
+= 1.4.9 | 22th March 2017 = 
+* Update: WC ready for 3.0
+* Update: Schema.
+
+= 1.4.8 | 22th March 2017 = 
+* Update: Workaround for certain odd servers and trailingslashit
+
+= 1.4.7 | 17th March 2017 = 
+* Update: Image sizing.
+* Update: Schema.
+* Udpate: Archive title.
+* Update: Scripts.
+
+= 1.4.6 | 7th November 2016 = 
+* Update: Add some checks for images.
+
+= 1.4.5 | 4th October 2016 = 
+* Update: Portfolio Grid Title order.
+
+= 1.4.4 | 3rd August 2016 = 
+* Update: Polylang 2.0 Support
+
+= 1.4.3 | 30th July 2016 = 
+* Update: Sidebar template
+
+= 1.4.2 | 19th July 2016 = 
+* Update: Woo Files
+
+= 1.4.1 | 18th July 2016 = 
+* Fix: Conflict with Jetpack Photon.
+
+= 1.4.0 | 13th July 2016 = 
+* Update: Contact form Map API input. 
+* Update: Google plus icon.
+* Fix: woo issue with quantity in cart when updated.
+
+= 1.3.9 | 16th June 2016 = 
+* Update: Woo template
+* Update: RTL support.
+
+= 1.3.8 | 13th June 2016 = 
+* Update: Theme options.
+* Update: WC 2.6
+* Update: Admin CSS
+* Fix: Notification.
+* Fix: Menu background.
+
+= 1.3.7 | 6th April 2016 = 
+* Add: srcset to products, portfolio.
+* Update: Theme Options. Add info for customizer.
+* Update: icon select.
+
+= 1.3.6 | 3rd February 2016 = 
 * Update: Various HTML changes (Thanks LAN.)
 * Update: Cart css.
 * Update: Woocommerce file.
@@ -170,36 +267,3 @@ Yes, go here: https://wordpress.org/support/theme/pinnacle
 = 1.0.0 =
 * Initial Release
 
-== Upgrade Notice ==
-
-= 1.2.7 =
-* This version includes an option to turn comments on for pages.
-
-== Resources ==
-
-* Photos on example_slider by Benjamin Ritner (licensed under GNU General Public License v2.0 or later)
-* Photos on in the screenshot (licensed under Public Domain) http://publicdomainarchive.com/category/modern/, http://unsplash.com/
-* FontAwesome by Dave Gandy (http://fontawesome.io) licensed under the SIL OFL 1.1 (http://scripts.sil.org/OFL)
-* FlexSlider by WooThemes under the GPLv2 license (http://www.gnu.org/licenses/gpl-2.0.html)
-* Redux Options Framework (http://reduxframework.com/) licensed under GNU General Public License v3.0
-* Star Font, icons image folder and Woocommerce Templates by Woothemes for Woocommerce (licensed under GNU General Public License v2.0 or later)
-* Google Fonts (available through Google web Fonts: http://www.google.com/fonts/), licensed under Apache License Version 2
-* Aqua Resizer (https://github.com/syamilmj/Aqua-Resizer), licensed under WTFPL http://www.wtfpl.net/
-* Twitter Bootstrap (https://github.com/twbs/bootstrap), licensed under Apache License Version 2
-* Custom Metaboxes and Fields for WordPress (https://github.com/jaredatch/Custom-Metaboxes-and-Fields-for-WordPress), licensed under GNU General Public License v2.0 or later
-* Magnific Popup (http://dimsemenov.com/plugins/magnific-popup/) licensed under MIT license, http://www.opensource.org/licenses/mit-license.php
-* carouFredSel (https://github.com/gilbitron/carouFredSel), licensed under GNU General Public License v2.0 or later 
-* Select2 (http://ivaynberg.github.io/select2/), licensed under GNU General Public License v2.0 or later
-* hoverIntent (https://github.com/briancherne/jquery-hoverIntent), licensed under MIT license, http://www.opensource.org/licenses/mit-license.php
-* Superfish (https://github.com/joeldbirch/superfish) Dual licensed under the MIT and GPL licenses: http://www.opensource.org/licenses/mit-license.php, http://www.gnu.org/licenses/gpl.html
-* MobileDetect (http://mobiledetect.net/) licensed under MIT license, http://www.opensource.org/licenses/mit-license.php
-* Fitvids (https://github.com/davatron5000/FitVids.js/blob/master/jquery.fitvids.js), Released under the WTFPL license - http://sam.zoy.org/wtfpl/
-* touchSwipe, (https://github.com/mattbryson/TouchSwipe-Jquery-Plugin), Dual licensed under the MIT or GPL Version 2 licenses
-* jquery.customSelect (http://adam.co/lab/jquery/customselect/), Dual licensed under the MIT or GPL Version 2 licenses
-* GMAP3 Plugin for JQuery (http://gmap3.net/), licensed under GNU General Public License v3.0
-* jQuery Scroll to Top Control script (http://www.dynamicdrive.com/) Custom license: http://www.dynamicdrive.com/notice.htm
-* TGM Plugin Activation library (https://github.com/thomasgriffin/TGM-Plugin-Activation) licensed under GNU General Public License v2.0 or later
-* Theme aspects derived from RootsTheme (http://www.rootstheme.com/) licensed under MIT license, http://www.opensource.org/licenses/mit-license.php
-* Masonry (http://masonry.desandro.com/) licensed under MIT license, http://www.opensource.org/licenses/mit-license.php
-* imagesLoaded (https://github.com/desandro/imagesloaded) licensed under MIT license, http://www.opensource.org/licenses/mit-license.php
-* SmartResize (https://github.com/louisremi/jquery-smartresize) licensed under MIT license, http://www.opensource.org/licenses/mit-license.php

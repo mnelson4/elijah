@@ -1,10 +1,10 @@
 === Select All Terms ===
-Contributors: luistinygod, geethemes
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40geethemes%2ecom&item_name=Select%20All%20Terms&no_shipping=1&cn=Donation%20Notes&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8
+Contributors: luistinygod, wearegomo
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40gomo%2ept&item_name=Select%20All%20Terms&no_shipping=1&cn=Donation%20Notes&tax=0&currency_code=EUR&bn=PP%2dDonationsBF&charset=UTF%2d8
 Tags: taxonomies, metabox, select all, terms
 Requires at least: 3.5.1
-Tested up to: 4.0
-Stable tag: 1.0.1
+Tested up to: 4.8
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,13 +19,13 @@ Very easy to use and simple plugin. No setup required.
 
 That’s all! Suggestions, questions and other feedback are welcome:
 
-* [twitter: @geethemeswp](http://twitter.com/geethemeswp)
+* [twitter: @wearegomo](http://twitter.com/wearegomo)
 * [blog]( http://tinygod.pt/contact/ "Contact form")
 
 = Available Translations =
 
 * Spanish (es_ES) - Thanks to [Marcelo Pedra](http://www.marcelopedra.com.ar/blog/)
-* Portuguese (pt_PT) - Thanks to [geeThemes](http://www.geethemes.com/)
+* Portuguese (pt_PT) - Thanks to [GOMO](http://www.gomo.pt/)
 
 
 == Installation ==
@@ -65,6 +65,14 @@ If your question isn't listed here, please open a new topic at the [Support tab]
 
 
 == Changelog ==
+
+= 1.0.3 =
+* Tested against WP version 4.8
+* Fixed global JS var for label l10n.
+
+= 1.0.2 =
+* [GOMO](http://gomo.pt/) replaces geeThemes brand.
+* Tested against WP version 4.6.1
 
 = 1.0.1 =
 * Added spannish (es_ES) and portuguese (pt_PT) translation files

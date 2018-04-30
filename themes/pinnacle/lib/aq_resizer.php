@@ -187,24 +187,25 @@ if(!class_exists('Aq_Resize')) {
                     
                     // If possible lets make the @2x image
                     if($dst_x2_h) {
-                    
-                        //@2x image url
-                        $destfilename = "{$upload_dir}{$dst_rel_path}-{$suffix}@2x.{$ext}";
-                        
-                        //check if retina image exists
-                        if(file_exists($destfilename) && getimagesize($destfilename)) { 
-                            // already exists, do nothing
+                        if (true == $crop && ( $dst_x2_w < $retina_w || $dst_x2_h < $retina_h ) ) {
+                            // do nothing
                         } else {
-                            // doesnt exist, lets create it
-                            $editor = wp_get_image_editor($img_path);
-                            if ( ! is_wp_error( $editor ) ) {
-                                $editor->resize( $retina_w, $retina_h, $crop );
-                                $editor->set_quality( 100 );
-                                $filename = $editor->generate_filename( $dst_w . 'x' . $dst_h . '@2x'  );
-                                $editor = $editor->save($filename); 
+                            $x2suffix = "{$dst_x2_w}x{$dst_x2_h}";
+                            //@2x image url
+                             $destfilename = "{$upload_dir}{$dst_rel_path}-{$x2suffix}.{$ext}";
+                            
+                            //check if retina image exists
+                            if(file_exists($destfilename) && getimagesize($destfilename)) { 
+                                // already exists, do nothing
+                            } else {
+                                // doesnt exist, lets create it
+                                $editor = wp_get_image_editor($img_path);
+                                if ( ! is_wp_error( $editor ) ) {
+                                    $editor->resize( $retina_w, $retina_h, true );
+                                    $editor = $editor->save(); 
+                                }
                             }
                         }
-                    
                     }
                     endif;
 
@@ -266,12 +267,26 @@ if(!function_exists('aq_resize')) {
      * This is just a tiny wrapper function for the class above so that there is no
      * need to change any code in your own WP themes. Usage is still the same :)
      */
-    function aq_resize( $url, $width = null, $height = null, $crop = null, $single = true, $upscale = false ) {
+    function aq_resize( $url, $width = null, $height = null, $crop = null, $single = true, $upscale = false, $id = null ) {
         if( class_exists( 'Jetpack' ) && Jetpack::is_module_active( 'photon' ) ) {
                             if(empty($height) ) {
                                 $args = array( 'w' => $width );
+                                if(!empty($id)) {
+                                    $image_attributes = wp_get_attachment_image_src ( $id, 'full' );
+                                    $sizes = image_resize_dimensions($image_attributes[1], $image_attributes[2], $width, null, false );
+                                    $height = $sizes[5];
+                                } else {
+                                    $height = null;
+                                }
                             } else if(empty($width) ) {
                                 $args = array( 'h' => $height );
+                                if(!empty($id)) {
+                                    $image_attributes = wp_get_attachment_image_src ( $id, 'full' );
+                                    $sizes = image_resize_dimensions($image_attributes[1], $image_attributes[2], null, $height, false );
+                                    $width = $sizes[4];
+                                } else {
+                                    $width = null;
+                                }
                             } else {
                                 $args = array( 'resize' => $width . ',' . $height );
                             }
@@ -282,8 +297,8 @@ if(!function_exists('aq_resize')) {
                                     // array return.
                                     $image = array (
                                         0 => jetpack_photon_url( $url, $args ),
-                                        1 => '',
-                                        2 => ''
+                                        1 => $width,
+                                        2 => $height
                                     );
                                 }
                                 return $image;

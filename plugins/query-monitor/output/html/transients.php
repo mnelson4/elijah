@@ -1,18 +1,9 @@
 <?php
-/*
-Copyright 2009-2015 John Blackbourn
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-*/
+/**
+ * Transient storage output for HTML pages.
+ *
+ * @package query-monitor
+ */
 
 class QM_Output_Html_Transients extends QM_Output_Html {
 
@@ -26,64 +17,105 @@ class QM_Output_Html_Transients extends QM_Output_Html {
 		$data = $this->collector->get_data();
 
 		echo '<div class="qm" id="' . esc_attr( $this->collector->id() ) . '">';
-		echo '<table cellspacing="0">';
-		echo '<thead>';
-		echo '<tr>';
-		echo '<th>' . __( 'Transient Set', 'query-monitor' ) . '</th>';
-		if ( is_multisite() ) {
-			echo '<th>' . __( 'Type', 'query-monitor' ) . '</th>';
-		}
-		if ( !empty( $data['trans'] ) and isset( $data['trans'][0]['expiration'] ) ) {
-			echo '<th>' . __( 'Expiration', 'query-monitor' ) . '</th>';
-		}
-		echo '<th>' . __( 'Call Stack', 'query-monitor' ) . '</th>';
-		echo '<th>' . __( 'Component', 'query-monitor' ) . '</th>';
-		echo '</tr>';
-		echo '</thead>';
 
-		if ( !empty( $data['trans'] ) ) {
+		if ( ! empty( $data['trans'] ) ) {
+
+			echo '<table>';
+			echo '<caption class="screen-reader-text">' . esc_html__( 'Transient Updates', 'query-monitor' ) . '</caption>';
+
+			echo '<thead>';
+			echo '<tr>';
+			echo '<th scope="col">' . esc_html__( 'Updated Transient', 'query-monitor' ) . '</th>';
+			if ( is_multisite() ) {
+				echo '<th>' . esc_html_x( 'Type', 'transient type', 'query-monitor' ) . '</th>';
+			}
+			echo '<th scope="col">' . esc_html__( 'Expiration', 'query-monitor' ) . '</th>';
+			echo '<th scope="col">' . esc_html_x( 'Size', 'size of transient value', 'query-monitor' ) . '</th>';
+			echo '<th scope="col">' . esc_html__( 'Caller', 'query-monitor' ) . '</th>';
+			echo '<th scope="col">' . esc_html__( 'Component', 'query-monitor' ) . '</th>';
+			echo '</tr>';
+			echo '</thead>';
 
 			echo '<tbody>';
 
 			foreach ( $data['trans'] as $row ) {
-				$stack = $row['trace']->get_stack();
 				$transient = str_replace( array(
 					'_site_transient_',
-					'_transient_'
+					'_transient_',
 				), '', $row['transient'] );
-				$type = ( is_multisite() ) ? "<td valign='top'>{$row['type']}</td>\n" : '';
-				if ( 0 === $row['expiration'] ) {
-					$row['expiration'] = '<em>' . __( 'none', 'query-monitor' ) . '</em>';
-				}
-				$expiration = ( isset( $row['expiration'] ) ) ? "<td valign='top'>{$row['expiration']}</td>\n" : '';
 
 				$component = $row['trace']->get_component();
 
-				$stack = implode( '<br>', $stack );
-				echo "
-					<tr>\n
-						<td valign='top'>{$transient}</td>\n
-						{$type}
-						{$expiration}
-						<td valign='top' class='qm-nowrap qm-ltr'>{$stack}</td>\n
-						<td valign='top' class='qm-nowrap'>{$component->name}</td>\n
-					</tr>\n
-				";
+				echo '<tr>';
+				printf(
+					'<td class="qm-ltr"><code>%s</code></td>',
+					esc_html( $transient )
+				);
+				if ( is_multisite() ) {
+					printf(
+						'<td class="qm-ltr">%s</td>',
+						esc_html( $row['type'] )
+					);
+				}
+
+				if ( 0 === $row['expiration'] ) {
+					printf(
+						'<td><em>%s</em></td>',
+						esc_html__( 'none', 'query-monitor' )
+					);
+				} else {
+					printf(
+						'<td>%s</td>',
+						esc_html( $row['expiration'] )
+					);
+				}
+
+				printf(
+					'<td>~%s</td>',
+					esc_html( size_format( $row['size'] ) )
+				);
+
+				$stack          = array();
+				$filtered_trace = $row['trace']->get_display_trace();
+				array_pop( $filtered_trace ); // remove do_action('setted_(site_)?transient')
+				array_pop( $filtered_trace ); // remove set_(site_)?transient()
+
+				foreach ( $filtered_trace as $item ) {
+					$stack[] = self::output_filename( $item['display'], $item['calling_file'], $item['calling_line'] );
+				}
+
+				echo '<td class="qm-has-toggle qm-nowrap qm-ltr"><ol class="qm-toggler qm-numbered">';
+
+				$caller = array_pop( $stack );
+
+				if ( ! empty( $stack ) ) {
+					echo self::build_toggler(); // WPCS: XSS ok;
+					echo '<div class="qm-toggled"><li>' . implode( '</li><li>', $stack ) . '</li></div>'; // WPCS: XSS ok.
+				}
+
+				echo "<li>{$caller}</li>"; // WPCS: XSS ok.
+				echo '</ol></td>';
+
+				printf(
+					'<td class="qm-nowrap">%s</td>',
+					esc_html( $component->name )
+				);
+
+				echo '</tr>';
+
 			}
 
 			echo '</tbody>';
+			echo '</table>';
 
 		} else {
 
-			echo '<tbody>';
-			echo '<tr>';
-			echo '<td colspan="4" style="text-align:center !important"><em>' . __( 'none', 'query-monitor' ) . '</em></td>';
-			echo '</tr>';
-			echo '</tbody>';
+			echo '<div class="qm-none">';
+			echo '<p>' . esc_html__( 'None', 'query-monitor' ) . '</p>';
+			echo '</div>';
 
 		}
 
-		echo '</table>';
 		echo '</div>';
 
 	}
@@ -94,11 +126,15 @@ class QM_Output_Html_Transients extends QM_Output_Html {
 		$count = isset( $data['trans'] ) ? count( $data['trans'] ) : 0;
 
 		$title = ( empty( $count ) )
-			? __( 'Transients Set', 'query-monitor' )
-			: __( 'Transients Set (%s)', 'query-monitor' );
+			? __( 'Transient Updates', 'query-monitor' )
+			/* translators: %s: Number of transient values that were updated */
+			: __( 'Transient Updates (%s)', 'query-monitor' );
 
 		$menu[] = $this->menu( array(
-			'title' => sprintf( $title, number_format_i18n( $count ) )
+			'title' => esc_html( sprintf(
+				$title,
+				number_format_i18n( $count )
+			) ),
 		) );
 		return $menu;
 

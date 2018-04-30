@@ -17,6 +17,8 @@ require_once locate_template('/themeoptions/options_assets/pinnacle_extension.ph
 require_once locate_template('/lib/utils.php');           								// Utility functions
 require_once locate_template('/lib/init.php');            								// Initial theme setup and constants
 require_once locate_template('/lib/aq_resizer.php');      								// Resize on the fly
+require_once locate_template('/lib/class-pinnacle-get-image.php');      								// image_functions
+require_once locate_template('/lib/image_functions.php');      								// image_functions
 require_once locate_template('/lib/sidebar.php');         								// Sidebar class
 require_once locate_template('/lib/config.php');          								// Configuration
 require_once locate_template('/lib/cleanup.php');        								// Cleanup
@@ -36,6 +38,8 @@ require_once locate_template('/lib/widgets.php');         								// Sidebars an
 require_once locate_template('/lib/comments.php');        								// Custom comments modifications
 require_once locate_template('/lib/authorbox.php');         							// Author box
 require_once locate_template('/lib/custom-woocommerce.php'); 							// Woocommerce functions
+require_once locate_template('/lib/woo-account.php'); 									// Woocommerce functions
+require_once( trailingslashit( get_template_directory() ) . 'lib/woocommerce/product-archive-hooks.php'); 					// Woocommerce functions
 require_once locate_template('/lib/template-actions.php');         					    // Template actions
 
 /*

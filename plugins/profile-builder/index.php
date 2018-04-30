@@ -1,11 +1,13 @@
 <?php
 /*
 Plugin Name: Profile Builder
-Plugin URI: http://www.cozmoslabs.com/wordpress-profile-builder/
-Description: Login, registration and edit profile shortcodes for the front-end. Also you can chose what fields should be displayed or add new (custom) ones both in the front-end and in the dashboard.
-Version: 2.3.4
+Plugin URI: https://www.cozmoslabs.com/wordpress-profile-builder/
+Description: Login, registration and edit profile shortcodes for the front-end. Also you can choose what fields should be displayed or add new (custom) ones both in the front-end and in the dashboard.
+Version: 2.8.1
 Author: Cozmoslabs, Madalin Ungureanu, Antohe Cristian, Barina Gabriel, Mihai Iova
-Author URI: http://www.cozmoslabs.com/
+Author URI: https://www.cozmoslabs.com/
+Text Domain: profile-builder
+Domain Path: /translation
 License: GPL2
 
 == Copyright ==
@@ -31,7 +33,7 @@ function wppb_free_plugin_init() {
         {
             ?>
             <div class="error">
-                <p><?php _e( PROFILE_BUILDER . ' is also activated. You need to deactivate it before activating this version of the plugin.', 'profile-builder'); ?></p>
+                <p><?php printf( __( '%s is also activated. You need to deactivate it before activating this version of the plugin.', 'profile-builder'), PROFILE_BUILDER ); ?></p>
             </div>
         <?php
         }
@@ -58,11 +60,11 @@ function wppb_free_plugin_init() {
             switch (strtolower($val[strlen($val) - 1])) {
                 // The 'G' modifier is available since PHP 5.1.0
                 case 'g':
-                    $val *= 1024;
+                    $val = intval($val) * 1024;
                 case 'm':
-                    $val *= 1024;
+                    $val = intval($val) * 1024;
                 case 'k':
-                    $val *= 1024;
+                    $val = intval($val) * 1024;
             }
 
             return $val;
@@ -73,7 +75,7 @@ function wppb_free_plugin_init() {
          *
          *
          */
-        define('PROFILE_BUILDER_VERSION', '2.3.4' );
+        define('PROFILE_BUILDER_VERSION', '2.8.1' );
         define('WPPB_PLUGIN_DIR', plugin_dir_path(__FILE__));
         define('WPPB_PLUGIN_URL', plugin_dir_url(__FILE__));
         define('WPPB_SERVER_MAX_UPLOAD_SIZE_BYTE', apply_filters('wppb_server_max_upload_size_byte_constant', wppb_return_bytes(ini_get('upload_max_filesize'))));
@@ -127,13 +129,19 @@ function wppb_free_plugin_init() {
         include_once(WPPB_PLUGIN_DIR . '/admin/admin-bar.php');
         include_once(WPPB_PLUGIN_DIR . '/admin/manage-fields.php');
         include_once(WPPB_PLUGIN_DIR . '/admin/pms-cross-promotion.php');
+        include_once(WPPB_PLUGIN_DIR . '/admin/feedback.php');
         include_once(WPPB_PLUGIN_DIR . '/features/email-confirmation/email-confirmation.php');
         include_once(WPPB_PLUGIN_DIR . '/features/email-confirmation/class-email-confirmation.php');
         if (file_exists(WPPB_PLUGIN_DIR . '/features/admin-approval/admin-approval.php')) {
             include_once(WPPB_PLUGIN_DIR . '/features/admin-approval/admin-approval.php');
             include_once(WPPB_PLUGIN_DIR . '/features/admin-approval/class-admin-approval.php');
         }
+        if (file_exists(WPPB_PLUGIN_DIR . '/features/conditional-fields/conditional-fields.php')) {
+            include_once(WPPB_PLUGIN_DIR . '/features/conditional-fields/conditional-fields.php');
+        }
         include_once(WPPB_PLUGIN_DIR . '/features/login-widget/login-widget.php');
+        include_once(WPPB_PLUGIN_DIR . '/features/roles-editor/roles-editor.php');
+        include_once(WPPB_PLUGIN_DIR . '/features/content-restriction/content-restriction.php');
 
         if (file_exists(WPPB_PLUGIN_DIR . '/update/update-checker.php')) {
             include_once(WPPB_PLUGIN_DIR . '/update/update-checker.php');
@@ -142,28 +150,30 @@ function wppb_free_plugin_init() {
 
         if (file_exists(WPPB_PLUGIN_DIR . '/modules/modules.php')) {
             include_once(WPPB_PLUGIN_DIR . '/modules/modules.php');
+            include_once(WPPB_PLUGIN_DIR . '/modules/repeater-field/repeater-module.php');
             include_once(WPPB_PLUGIN_DIR . '/modules/custom-redirects/custom-redirects.php');
             include_once(WPPB_PLUGIN_DIR . '/modules/email-customizer/email-customizer.php');
             include_once(WPPB_PLUGIN_DIR . '/modules/multiple-forms/multiple-forms.php');
+            include_once(WPPB_PLUGIN_DIR . '/modules/user-listing/userlisting.php');
 
             $wppb_module_settings = get_option('wppb_module_settings');
             if (isset($wppb_module_settings['wppb_userListing']) && ($wppb_module_settings['wppb_userListing'] == 'show')) {
-                include_once(WPPB_PLUGIN_DIR . '/modules/user-listing/userlisting.php');
                 add_shortcode('wppb-list-users', 'wppb_user_listing_shortcode');
             } else
-                add_shortcode('wppb-list-users', 'wppb_list_all_users_display_error');
+            add_shortcode('wppb-list-users', 'wppb_list_all_users_display_error');
 
             if (isset($wppb_module_settings['wppb_emailCustomizerAdmin']) && ($wppb_module_settings['wppb_emailCustomizerAdmin'] == 'show'))
-                include_once(WPPB_PLUGIN_DIR . '/modules/email-customizer/admin-email-customizer.php');
+            include_once(WPPB_PLUGIN_DIR . '/modules/email-customizer/admin-email-customizer.php');
 
             if (isset($wppb_module_settings['wppb_emailCustomizer']) && ($wppb_module_settings['wppb_emailCustomizer'] == 'show'))
-                include_once(WPPB_PLUGIN_DIR . '/modules/email-customizer/user-email-customizer.php');
+            include_once(WPPB_PLUGIN_DIR . '/modules/email-customizer/user-email-customizer.php');
         }
 
         include_once(WPPB_PLUGIN_DIR . '/admin/add-ons.php');
         include_once(WPPB_PLUGIN_DIR . '/assets/misc/plugin-compatibilities.php');
-        if ( PROFILE_BUILDER != 'Profile Builder Free' )
-            include_once(WPPB_PLUGIN_DIR . '/front-end/extra-fields/recaptcha/recaptcha.php'); //need to load this here for displaying reCAPTCHA on Login and Recover Password forms
+
+        /* added recaptcha and user role field since version 2.6.2 */
+        include_once(WPPB_PLUGIN_DIR . '/front-end/default-fields/recaptcha/recaptcha.php'); //need to load this here for displaying reCAPTCHA on Login and Recover Password forms
 
 
         /**
@@ -184,8 +194,8 @@ function wppb_free_plugin_init() {
 
 
 // these settings are important, so besides running them on page load, we also need to do a check on plugin activation
-        register_activation_hook(__FILE__, 'wppb_generate_default_settings_defaults');    //prepoulate general settings
-        register_activation_hook(__FILE__, 'wppb_prepopulate_fields');                    //prepopulate manage fields list
+        add_action('init', 'wppb_generate_default_settings_defaults');    //prepoulate general settings
+        add_action('init', 'wppb_prepopulate_fields');                    //prepopulate manage fields list
 
     }
 } //end wppb_free_plugin_init

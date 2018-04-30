@@ -61,4 +61,202 @@ class WPPB_Add_General_Notices{
         do_action( $this->notificationId.'_after_notification_dismissed', $current_user );
     }
 }
-?>
+
+Class WPPB_Plugin_Notifications {
+
+    public $notifications = array();
+    private static $_instance = null;
+    private $prefix = 'wppb';
+    private $menu_slug = 'profile-builder';
+    public $pluginPages = array( 'profile-builder-', 'manage-fields', 'wppb-', 'admin-email-customizer', 'user-email-customizer' );
+
+    protected function __construct() {
+        add_action( 'admin_init', array( $this, 'dismiss_admin_notifications' ), 200 );
+        add_action( 'admin_init', array( $this, 'add_admin_menu_notification_counts' ), 1000 );
+    }
+
+
+    function dismiss_admin_notifications() {
+        if( ! empty( $_GET[$this->prefix.'_dismiss_admin_notification'] ) ) {
+            $notifications = self::get_instance();
+            $notifications->dismiss_notification( sanitize_text_field( $_GET[$this->prefix.'_dismiss_admin_notification'] ) );
+        }
+
+    }
+
+    function add_admin_menu_notification_counts() {
+
+        global $menu, $submenu;
+
+        $notifications = WPPB_Plugin_Notifications::get_instance();
+
+        if( ! empty( $menu ) ) {
+            foreach( $menu as $menu_position => $menu_data ) {
+                if( ! empty( $menu_data[2] ) && $menu_data[2] == $this->menu_slug ) {
+                    $menu_count = $notifications->get_count_in_menu();
+                    if( ! empty( $menu_count ) )
+                        $menu[$menu_position][0] .= '<span class="update-plugins '.$this->prefix.'-update-plugins"><span class="plugin-count">' . $menu_count . '</span></span>';
+                }
+            }
+        }
+
+        if( ! empty( $submenu[$this->menu_slug] ) ) {
+            foreach( $submenu[$this->menu_slug] as $menu_position => $menu_data ) {
+                $menu_count = $notifications->get_count_in_submenu( $menu_data[2] );
+
+                if( ! empty( $menu_count ) )
+                    $submenu[$this->menu_slug][$menu_position][0] .= '<span class="update-plugins '.$this->prefix.'-update-plugins"><span class="plugin-count">' . $menu_count . '</span></span>';
+            }
+        }
+    }
+
+    /**
+     *
+     *
+     */
+    public static function get_instance() {
+        if( is_null( self::$_instance ) )
+            self::$_instance = new WPPB_Plugin_Notifications();
+
+        return self::$_instance;
+    }
+
+
+    /**
+     *
+     *
+     */
+    public function add_notification( $notification_id = '', $notification_message = '', $notification_class = 'update-nag', $count_in_menu = true, $count_in_submenu = array() ) {
+
+        if( empty( $notification_id ) )
+            return;
+
+        if( empty( $notification_message ) )
+            return;
+
+        global $current_user;
+
+        if( get_user_meta( $current_user->ID, $notification_id . '_dismiss_notification' ) )
+            return;
+
+        $this->notifications[$notification_id] = array(
+            'id' 	  		   => $notification_id,
+            'message' 		   => $notification_message,
+            'class'   		   => $notification_class,
+            'count_in_menu'    => $count_in_menu,
+            'count_in_submenu' => $count_in_submenu
+        );
+
+
+        if( $this->is_plugin_page() ) {
+            new WPPB_Add_General_Notices( $notification_id, $notification_message, $notification_class );
+        }
+
+    }
+
+
+    /**
+     *
+     *
+     */
+    public function get_notifications() {
+        return $this->notifications;
+    }
+
+
+    /**
+     *
+     *
+     */
+    public function get_notification( $notification_id = '' ) {
+
+        if( empty( $notification_id ) )
+            return null;
+
+        $notifications = $this->get_notifications();
+
+        if( ! empty( $notifications[$notification_id] ) )
+            return $notifications[$notification_id];
+        else
+            return null;
+
+    }
+
+
+    /**
+     *
+     *
+     */
+    public function dismiss_notification( $notification_id = '' ) {
+        global $current_user;
+        add_user_meta( $current_user->ID, $notification_id . '_dismiss_notification', 'true', true );
+    }
+
+
+    /**
+     *
+     *
+     */
+    public function get_count_in_menu() {
+        $count = 0;
+
+        foreach( $this->notifications as $notification ) {
+            if( ! empty( $notification['count_in_menu'] ) )
+                $count++;
+        }
+
+        return $count;
+    }
+
+
+    /**
+     *
+     *
+     */
+    public function get_count_in_submenu( $submenu = '' ) {
+
+        if( empty( $submenu ) )
+            return 0;
+
+        $count = 0;
+
+        foreach( $this->notifications as $notification ) {
+            if( empty( $notification['count_in_submenu'] ) )
+                continue;
+
+            if( ! is_array( $notification['count_in_submenu'] ) )
+                continue;
+
+            if( ! in_array( $submenu, $notification['count_in_submenu'] ) )
+                continue;
+
+            $count++;
+        }
+
+        return $count;
+
+    }
+
+
+    /**
+     *
+     *
+     */
+    protected function is_plugin_page() {
+        if( !empty( $this->pluginPages ) ){
+            foreach ( $this->pluginPages as $pluginPage ){
+                if( ! empty( $_GET['page'] ) && false !== strpos( $_GET['page'], $pluginPage ) )
+                    return true;
+
+                if( ! empty( $_GET['post_type'] ) && false !== strpos( $_GET['post_type'], $pluginPage ) )
+                    return true;
+
+                if( ! empty( $_GET['post'] ) && false !== strpos( get_post_type( (int)$_GET['post'] ), $pluginPage ) )
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+}

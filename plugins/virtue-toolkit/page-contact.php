@@ -2,45 +2,44 @@
 /*
 Template Name: Contact
 */
-?>
-	<?php global $virtue, $post; 
-		$map 				= get_post_meta( $post->ID, '_kad_contact_map', true ); 
-		$form_math 			= get_post_meta( $post->ID, '_kad_contact_form_math', true );
-		$contactformtitle 	= get_post_meta( $post->ID, '_kad_contact_form_title', true );
-		$form 				= get_post_meta( $post->ID, '_kad_contact_form', true );
-		if ($form == 'yes') { ?>
-			<script type="text/javascript">jQuery(document).ready(function ($) {$.extend($.validator.messages, {
-			        required: "<?php echo __('This field is required.', 'virtue-toolkit'); ?>",
-					email: "<?php echo __('Please enter a valid email address.', 'virtue-toolkit'); ?>",
-				 });
-				$("#contactForm").validate();
-			});</script>
-			<script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/assets/js/jquery.validate.js"></script>
+
+global $virtue, $post; 
+$map 				= get_post_meta( $post->ID, '_kad_contact_map', true ); 
+$form_math 			= get_post_meta( $post->ID, '_kad_contact_form_math', true );
+$contactformtitle 	= get_post_meta( $post->ID, '_kad_contact_form_title', true );
+$form 				= get_post_meta( $post->ID, '_kad_contact_form', true );
+	if ($form == 'yes') { ?>
+		<script type="text/javascript">jQuery(document).ready(function ($) {$.extend($.validator.messages, {required: "<?php echo esc_attr(__('This field is required.', 'virtue-toolkit')); ?>",email: "<?php echo esc_attr(__('Please enter a valid email address.', 'virtue-toolkit')); ?>",});$("#contactForm").validate();});</script>
+			<script type="text/javascript" src="<?php echo VIRTUE_TOOLKIT_URL ?>assets/jquery.validate.js"></script>
 		<?php } 
-		if ($map == 'yes') { ?>
-		    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
-		    	<?php 	$address 	= get_post_meta( $post->ID, '_kad_contact_address', true ); 
-						$maptype 	= get_post_meta( $post->ID, '_kad_contact_maptype', true ); 
-						$height 	= get_post_meta( $post->ID, '_kad_contact_mapheight', true );
-						$mapzoom 	= get_post_meta( $post->ID, '_kad_contact_zoom', true );
-							
-							if(!empty($height)) {
-								$mapheight = $height;
-							} else {
-								$mapheight = 300;
-							}
-							if(!empty($mapzoom)) {
-								$zoom = $mapzoom;
-							} else {
-								$zoom = 15;
-							} ?>
+			if ($map == 'yes') { 
+    		 	$address 	= get_post_meta( $post->ID, '_kad_contact_address', true ); 
+				$maptype 	= get_post_meta( $post->ID, '_kad_contact_maptype', true ); 
+				$height 	= get_post_meta( $post->ID, '_kad_contact_mapheight', true );
+				$mapzoom 	= get_post_meta( $post->ID, '_kad_contact_zoom', true );
+				if(isset($virtue['google_map_api']) && !empty($virtue['google_map_api'])) {
+		    		$gmap_api = $virtue['google_map_api'];
+			    } else {
+			    	$gmap_api = 'AIzaSyBt7JOCM4XQTEi9jzdqB8alFc1Vm_3mbfQ';
+			    }
+				if(!empty($height)) {
+					$mapheight = $height;
+				} else {
+					$mapheight = 300;
+				}
+				if(!empty($mapzoom)) {
+					$zoom = $mapzoom;
+				} else {
+					$zoom = 15;
+				} ?>
+				<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?php echo esc_attr($gmap_api);?>"></script>
 		    	<script type="text/javascript">
 					jQuery(window).load(function() {
 					jQuery('#map_address').gmap3({
 						map: {
-						    address:"<?php echo $address;?>",
+						    address:"<?php echo esc_js($address);?>",
 							options: {
-			              		zoom:<?php echo $zoom;?>,
+			              		zoom:<?php echo esc_js($zoom);?>,
 								draggable: true,
 								mapTypeControl: true,
 								mapTypeId: google.maps.MapTypeId.<?php echo esc_attr($maptype);?>,
@@ -54,8 +53,8 @@ Template Name: Contact
 						},
 						marker:{
 			            values:[
-			            		 {address: "<?php echo $address;?>",
-						 	    data:"<div class='mapinfo'>'<?php echo $address;?>'</div>",
+			            		 {address: "<?php echo esc_js($address);?>",
+						 	    data:"<div class='mapinfo'>'<?php echo esc_js($address);?>'</div>",
 						 	},
 			            ],
 			            options:{
@@ -90,10 +89,10 @@ Template Name: Contact
 			</script>
 		    <?php echo '<style type="text/css" media="screen">#map_address {height:'.esc_attr($mapheight).'px; margin-bottom:20px;}</style>';
     }
-
 	if(isset($_POST['submitted'])) {
 		if(isset($form_math) && $form_math == 'yes') {
-			if(md5($_POST['kad_captcha']) != $_POST['hval']) {
+			$math_answer = trim($_POST['kad_captcha']);
+			if(md5($math_answer) != $_POST['hval']) {
 				$kad_captchaError = __('Check your math.', 'virtue-toolkit');
 				$hasError = true;
 			}
@@ -127,6 +126,10 @@ Template Name: Contact
 	}
 
 	if(!isset($hasError)) {
+		$name = wp_filter_kses( $name );
+		$email = wp_filter_kses( $email );
+		$comments = wp_filter_kses( $comments );
+
 		if (isset($virtue['contact_email'])) {
 			$emailTo = $virtue['contact_email'];
 		} else {

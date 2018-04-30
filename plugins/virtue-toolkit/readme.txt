@@ -1,17 +1,17 @@
-=== Virtue / Pinnacle ToolKit ===
+=== Kadence Themes Toolkit ===
 Contributors: britner
 Tags: 
-Requires at least: 4.0
-Tested up to: 4.5
-Stable tag: 3.4
+Requires at least: 4.2
+Tested up to: 4.9.2
+Stable tag: 4.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Custom Portfolio and Shortcode functionality for Virtue and Pinnacle Wordpress Theme
+Custom Portfolio and Shortcode functionality for free Kadence WordPress Themes
 
 == Description ==
 
-Custom Portfolio and Shortcode functionality for Virtue and Pinnacle Wordpress Themes, by Kadence Themes
+Custom Portfolio and Shortcode functionality for free Kadence WordPress Themes, by Kadence Themes
 
 Not intended to work with any other themes.
 
@@ -31,7 +31,7 @@ Not intended to work with any other themes.
 
 * **Contact Form Page Template** - includes page template that has options for a google map and a contact form.
 
-* **Gallery Styling for Wordpress Gallery** - this allows the Kadence Theme to override the wordpress gallery with theme specific styling. You can turn this off in the theme options > misc settings.
+* **Gallery Styling for Wordpress Gallery** - this allows the Kadence Theme to override the WordPress gallery with theme specific styling. You can turn this off in the theme options > misc settings.
 
 * **Gallery Metaboxs for post and pages** - allows for a gallery to be added to a post for a post slider or page for page slider using the featured template.
 
@@ -42,6 +42,54 @@ Install the plugin into the `/wp-content/plugins/` folder, and activate it.
 
 
 == Changelog ==
+
+= 4.8 =
+* Small change in meta load.
+
+= 4.7 =
+* Fix issue with pagebuilder.
+
+= 4.6 =
+* Update: CMB.
+* Fix: issue with wrong fields showing.
+* Start moving image widget out of themes.
+
+= 4.5 =
+* Fix: issue of stripping out code.
+
+= 4.4 =
+* Update: New Welcome Page with helpful info.
+* Update: Add local jquery.validator
+* Update: Column shortcode gen.
+
+= 4.3 =
+* Update: add Icons
+* Update: Add local select js
+* Update: Ascend meta.
+* Fix: Image processing issue.
+
+= 4.2 =
+* Update: Fix for Photon
+
+= 4.1 =
+* Update: Add Kadence Image processing.
+* Update: Add profile meta boxes.
+* Update: Add extras for ascend support.
+
+= 4.0 =
+* Update: add support for ascend
+
+= 3.8 =
+* Update: Contact page template in 4.7
+
+= 3.7 =
+* Update: Contact page template in 4.7
+
+= 3.6 =
+* Update: Few Small updates
+
+= 3.5 =
+* fix: Img src set for gallery.
 
 = 3.4 =
 * fix: Img src set for gallery.

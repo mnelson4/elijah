@@ -12,7 +12,7 @@
  * @see     http://docs.woothemes.com/document/template-structure/
  * @author  WooThemes
  * @package WooCommerce/Templates
- * @version 2.5.0
+ * @version 3.3.0
  */
 
 // Exit if accessed directly
@@ -23,7 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <form role="search" method="get" id="searchform" class="form-search woocommerce-product-search" action="<?php echo esc_url( home_url( '/'  ) ); ?>">
-	<input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" class="search-query" placeholder="<?php _e( 'Search for products', 'pinnacle' ); ?>" />
-	<button type="submit" id="searchsubmit" class="search-icon"><i class="icon-search"></i></button>
+	<label class="screen-reader-text" for="woocommerce-product-search-field-<?php echo isset( $index ) ? absint( $index ) : 0; ?>"><?php _e( 'Search for:', 'pinnacle' ); ?></label>
+	<input type="search" value="<?php echo get_search_query(); ?>" name="s" id="woocommerce-product-search-field-<?php echo isset( $index ) ? absint( $index ) : 0; ?>" class="search-query" placeholder="<?php _e( 'Search for products', 'pinnacle' ); ?>" />
+	<button type="submit" class="search-icon"><i class="icon-search"></i></button>
 	<input type="hidden" name="post_type" value="product" />
 </form>

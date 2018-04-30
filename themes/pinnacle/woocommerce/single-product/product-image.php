@@ -4,13 +4,51 @@
  *
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version     2.0.14
+ * @version     3.3.2
  */
 
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 global $post, $woocommerce, $product, $pinnacle;
+$columns           = apply_filters( 'woocommerce_product_thumbnails_columns', 5 );
+$post_thumbnail_id = get_post_thumbnail_id( $post->ID );
+$full_size_image   = wp_get_attachment_image_src( $post_thumbnail_id, 'full' );
+$image_title      	= get_post_field( 'post_excerpt', $post_thumbnail_id );
+if(!empty($image_title)) {
+	$light_title  = $image_title;
+} else {
+	$light_title  = get_the_title($post_thumbnail_id);
+}
+$placeholder       = has_post_thumbnail() ? 'with-images' : 'without-images';
+$wrapper_classes   = apply_filters( 'woocommerce_single_product_image_gallery_classes', array(
+	'woocommerce-product-gallery',
+	'woocommerce-product-gallery--' . $placeholder,
+	'woocommerce-product-gallery--columns-' . absint( $columns ),
+	'images',
+	'kad-light-gallery',
+) );
+if ( version_compare( WC_VERSION, '3.0', '>' ) ) {
+	if(isset($pinnacle['product_gallery_slider']) && 1 == $pinnacle['product_gallery_slider']) {
+		$galleryslider = 'woo_product_slider_enabled';
+		$galslider = true;
+	} else {
+		$galleryslider = 'woo_product_slider_disabled';
+		$galslider = false;
+	}
+	if(isset($pinnacle['product_gallery_zoom']) && 1 == $pinnacle['product_gallery_zoom']) {
+		$galleryzoom = 'woo_product_zoom_enabled';
+		$galzoom = true;
+	} else {
+		$galleryzoom= 'woo_product_zoom_disabled';
+		$galzoom = false;
+	}
+} else {
+	$galleryslider = 'woo_product_slider_disabled';
+	$galslider = false;
+	$galleryzoom = 'woo_product_zoom_disabled';
+	$galzoom = false;
+}
 if(isset($pinnacle['product_simg_resize']) && $pinnacle['product_simg_resize'] == 0) {
 	$presizeimage = 0;
 } else {
@@ -19,40 +57,56 @@ if(isset($pinnacle['product_simg_resize']) && $pinnacle['product_simg_resize'] =
 	$productimgheight = $productimgwidth;	
 }
 ?>
-<div class="images kad-light-gallery">
-	<div class="product_image postclass">
+<div class="<?php echo esc_attr( implode( ' ', array_map( 'sanitize_html_class', $wrapper_classes ) ) ); ?>" data-columns="<?php echo esc_attr( $columns ); ?>">
+	<figure class="woocommerce-product-gallery__wrapper <?php echo esc_attr($galleryslider.' '.$galleryzoom);?>">
 	<?php
-		if ( has_post_thumbnail() ) {
-			$image_title 		= esc_attr( get_the_title( get_post_thumbnail_id() ) );
-			$image_link  		= wp_get_attachment_url( get_post_thumbnail_id() );
-			if($presizeimage == 1){
-					$product_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); 
-					$product_image_url = $product_image[0]; 
-					$image_url = aq_resize($product_image_url, $productimgwidth, $productimgheight, true);
-					if(empty($image_url)) {$image_url = $product_image_url;} 
-					$image = '<img width="'.esc_attr($productimgwidth).'" height="'.esc_attr($productimgheight).'" src="'.esc_attr($image_url).'" class="attachment-shop_single wp-post-image" title="'.esc_attr( get_the_title( get_post_thumbnail_id() ) ).'">';
-			} else {
-				$image = get_the_post_thumbnail( $post->ID, apply_filters( 'single_product_large_thumbnail_size', 'shop_single' ), array(
-					'title' => $image_title
-					) );
-			}
-			$attachment_count = count( $product->get_gallery_attachment_ids() );
-
-			if ( $attachment_count > 0 ) {
-				$gallery = '[product-gallery]';
-			} else {
-				$gallery = '';
-			}
-
-			echo apply_filters( 'woocommerce_single_product_image_html', sprintf( '<a href="%s" itemprop="image" class="woocommerce-main-image zoom" title="%s"  data-rel="lightbox">%s</a>', $image_link, $image_title, $image ), $post->ID );
-
-		} else {
-
-			echo apply_filters( 'woocommerce_single_product_image_html', sprintf( '<img src="%s" alt="'.__('Placeholder', 'pinnacle').'" />', woocommerce_placeholder_img_src() ), $post->ID );
-
+		if(! $galslider) {
+			echo '<div class="product_image postclass">';
 		}
-	?>
-	</div>
-	<?php do_action( 'woocommerce_product_thumbnails' ); ?>
 
+		$attributes = array(
+			'title'                   => $image_title,
+			'data-caption'            => get_post_field( 'post_excerpt', $post_thumbnail_id ),
+			'data-src'                => $full_size_image[0],
+			'data-large_image'        => $full_size_image[0],
+			'data-large_image_width'  => $full_size_image[1],
+			'data-large_image_height' => $full_size_image[2],
+		);
+		if ( has_post_thumbnail() ) {
+			if($presizeimage == 1){
+				$alt = esc_attr( get_post_meta(get_post_thumbnail_id(), '_wp_attachment_image_alt', true) );
+				if( !empty($alt) ) {
+					$alttag	= $alt;
+				} else {
+					$alttag	= $light_title;
+				}
+		        $html  = '<div data-thumb="' . get_the_post_thumbnail_url( $post->ID, 'shop_thumbnail' ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $full_size_image[0] ) . '" title="'.esc_attr($light_title).'">';
+				$html .= pinnacle_get_full_image_output($productimgwidth, $productimgheight, true, 'attachment-shop_single shop_single wp-post-image', $alttag, $post_thumbnail_id, false, false, false, $attributes);
+				$html .= '</a></div>';
+			} else {
+				$html  = '<div data-thumb="' . get_the_post_thumbnail_url( $post->ID, 'shop_thumbnail' ) . '" class="woocommerce-product-gallery__image"><a href="' . esc_url( $full_size_image[0] ) . '">';
+				$html .= get_the_post_thumbnail( $post->ID, 'shop_single', $attributes );
+				$html .= '</a></div>';
+			}
+		} else {
+			$html  = '<div class="woocommerce-product-gallery__image--placeholder">';
+			$html .= sprintf( '<img src="%s" alt="%s" class="wp-post-image" />', esc_url( wc_placeholder_img_src() ), esc_html__( 'Awaiting product image', 'pinnacle' ) );
+			$html .= '</div>';
+		}
+
+		echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', $html, get_post_thumbnail_id( $post->ID ) );
+		
+		if(! $galslider) {
+			echo '</div>';
+		}
+		if(! $galslider) {
+			echo '<div class="product_thumbnails thumbnails">';
+		}
+
+		do_action( 'woocommerce_product_thumbnails' ); 
+
+		if(! $galslider) {
+			echo '</div>';
+		}?>		
+	</figure>
 </div>

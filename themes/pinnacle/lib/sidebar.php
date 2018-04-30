@@ -40,3 +40,81 @@ class Kadence_Sidebar {
     return is_page_template($page_template);
   }
 }
+
+function kadence_sidebar_id() {
+    if(is_front_page()) {
+      global $pinnacle;
+        if (!empty($pinnacle['home_sidebar'])) {
+          $sidebar = $pinnacle['home_sidebar'];
+        } else  {
+          $sidebar = 'sidebar-primary';
+        } 
+    } elseif( class_exists('woocommerce') and (is_shop())) {
+        global $pinnacle;
+        if (!empty($pinnacle['shop_sidebar'])) {
+          $sidebar = $pinnacle['shop_sidebar'];
+          }
+        else  {
+          $sidebar = 'sidebar-primary';
+        } 
+    } elseif( class_exists('woocommerce') and (is_product_category() || is_product_tag())) {
+        global $pinnacle;
+        if (!empty($pinnacle['shop_cat_sidebar'])) {
+          $sidebar = $pinnacle['shop_cat_sidebar'];
+          }
+        else  {
+          $sidebar = 'sidebar-primary';
+        } 
+    } elseif( is_page() || is_single() ) {
+      global $post; $sidebar_name = get_post_meta( $post->ID, '_kad_sidebar_choice', true ); 
+      if (!empty($sidebar_name)) {
+          $sidebar = $sidebar_name;
+      } else {
+          $sidebar = 'sidebar-primary';
+      } 
+    } elseif (is_archive()) {
+      global $pinnacle; 
+      if(isset($pinnacle['blog_cat_sidebar'])) {
+          $sidebar = $pinnacle['blog_cat_sidebar'];
+      } else  {
+          $sidebar = 'sidebar-primary';
+        } 
+    }
+    elseif(is_category()) {
+      global $pinnacle; 
+      if(isset($pinnacle['blog_cat_sidebar'])) {
+          $sidebar = $pinnacle['blog_cat_sidebar'];
+      } else {
+          $sidebar = 'sidebar-primary';
+      } 
+    }
+    elseif (is_tag()) {
+      $sidebar = 'sidebar-primary';
+    }
+    elseif (is_post_type_archive()) {
+      $sidebar = 'sidebar-primary';
+    }
+     elseif (is_day()) {
+       $sidebar = 'sidebar-primary';
+     }
+     elseif (is_month()) {
+       $sidebar = 'sidebar-primary';
+     }
+     elseif (is_year()) {
+       $sidebar = 'sidebar-primary';
+     }
+     elseif (is_author()) {
+       $sidebar = 'sidebar-primary';
+    }
+    elseif (is_search()) {
+      global $pinnacle; 
+      if(isset($pinnacle['search_sidebar'])) {
+        $sidebar = $pinnacle['search_sidebar'];
+      } else {
+        $sidebar = 'sidebar-primary';
+      } 
+    } else {
+      $sidebar = 'sidebar-primary';
+    }
+    return apply_filters('kadence_sidebar_id', $sidebar);
+}

@@ -11,18 +11,20 @@ function wppb_email_handler( $output, $form_location, $field, $user_id, $field_c
 		$input_value = $field['default-value'];
 		
 	$input_value = ( isset( $request_data['email'] ) ? trim( $request_data['email'] ) : $input_value );
-	
+	// filter must be applied on the $input_value so that the value returned to the form can be corrected too
+	$input_value = apply_filters( 'wppb_before_processing_email_from_forms' , $input_value );
+
 	if ( $form_location != 'back_end' ){
 		$error_mark = ( ( $field['required'] == 'Yes' ) ? '<span class="wppb-required" title="'.wppb_required_field_error($field["field-title"]).'">*</span>' : '' );
 					
 		if ( array_key_exists( $field['id'], $field_check_errors ) )
 			$error_mark = '<img src="'.WPPB_PLUGIN_URL.'assets/images/pencil_delete.png" title="'.wppb_required_field_error($field["field-title"]).'"/>';
 
-		$extra_attr = apply_filters( 'wppb_extra_attribute', '', $field );
+		$extra_attr = apply_filters( 'wppb_extra_attribute', '', $field, $form_location );
 
         $output = '
 			<label for="email">'.$item_title.$error_mark.'</label>
-			<input class="text-input default_field_email" name="email" maxlength="'. apply_filters( 'wppb_maximum_character_length', 70 ) .'" type="email" id="email" value="'. esc_attr( $input_value ) .'" '. $extra_attr .' />';
+			<input class="text-input default_field_email '. apply_filters( 'wppb_fields_extra_css_class', '', $field ) .'" name="email" maxlength="'. apply_filters( 'wppb_maximum_character_length', 70 ) .'" type="email" id="email" value="'. esc_attr( $input_value ) .'" '. $extra_attr .' />';
         if( !empty( $item_description ) )
             $output .= '<span class="wppb-description-delimiter">'. $item_description .'</span>';
 
@@ -36,7 +38,8 @@ add_filter( 'wppb_output_form_field_default-e-mail', 'wppb_email_handler', 10, 6
 /* handle field validation */
 function wppb_check_email_value( $message, $field, $request_data, $form_location ){
 	global $wpdb;
-
+	// apply filter to allow stripping slashes if necessary
+	$request_data['email'] = apply_filters( 'wppb_before_processing_email_from_forms', $request_data['email'] );
 	if ( ( isset( $request_data['email'] ) && ( trim( $request_data['email'] ) == '' ) ) && ( $field['required'] == 'Yes' ) )
 		return wppb_required_field_error($field["field-title"]);
 
@@ -66,16 +69,24 @@ function wppb_check_email_value( $message, $field, $request_data, $form_location
             }
         }
 	}
-	
+
 	$users = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->users} WHERE user_email = %s", $request_data['email'] ) );
+
 	if ( !empty( $users ) ){
 		if ( $form_location == 'register' )
 			return __( 'This email is already in use.', 'profile-builder' ) .'<br/>'. __( 'Please try a different one!', 'profile-builder' );
 		
 		if ( $form_location == 'edit_profile' ){
-            if( isset( $_GET['edit_user'] ) && ! empty( $_GET['edit_user'] ) )
-                $current_user_id = $_GET['edit_user'];
-            else{
+            $url_parts = parse_url( $_SERVER['HTTP_REFERER'] );
+            if( isset( $url_parts['query'] ) ) {
+                parse_str( $url_parts['query'], $query );
+            }
+
+            if( isset( $_GET['edit_user'] ) && ! empty( $_GET['edit_user'] ) ) {
+                $current_user_id = absint( $_GET['edit_user'] );
+            } elseif( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $query['edit_user'] ) && ! empty( $query['edit_user'] ) ) {
+                $current_user_id = $query['edit_user'];
+            } else {
                 $current_user = wp_get_current_user();
                 $current_user_id = $current_user->ID;
             }
@@ -91,9 +102,12 @@ add_filter( 'wppb_check_form_field_default-e-mail', 'wppb_check_email_value', 10
 
 /* handle field save */
 function wppb_userdata_add_email( $userdata, $global_request ){
-	if ( isset( $global_request['email'] ) )
-		$userdata['user_email'] = sanitize_text_field( trim( $global_request['email'] ) );
-	
+	// apply filter to allow stripping slashes if necessary
+	if ( isset( $global_request['email'] ) ) {
+        $global_request['email'] = apply_filters( 'wppb_before_processing_email_from_forms', $global_request['email'] );
+        $userdata['user_email'] = sanitize_text_field( trim( $global_request['email'] ) );
+    }
+
 	return $userdata;
 }
 add_filter( 'wppb_build_userdata', 'wppb_userdata_add_email', 10, 2 );

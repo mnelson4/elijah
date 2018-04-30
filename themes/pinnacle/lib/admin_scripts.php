@@ -5,10 +5,10 @@
  */
 
 function pinnacle_admin_scripts() {
-  wp_register_style('kt_admin_css', get_template_directory_uri() . '/assets/css/kt_adminstyles.css', false, 100, false);
+  wp_register_style('kt_admin_css', get_template_directory_uri() . '/assets/css/kt_adminstyles.css', false, 155, false);
   wp_enqueue_style('kt_admin_css');
 
-  wp_register_script('kad_admin_js', get_template_directory_uri() . '/assets/js/kad_adminscripts.js', false, null, false);
+  wp_register_script('kad_admin_js', get_template_directory_uri() . '/assets/js/kad_adminscripts.js', false, 155, false);
   wp_enqueue_script('kad_admin_js');
 }
 

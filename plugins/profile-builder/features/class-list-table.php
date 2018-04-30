@@ -329,10 +329,10 @@ class PB_WP_List_Table {
 	 */
 	function current_action() {
 		if ( isset( $_REQUEST['action'] ) && -1 != $_REQUEST['action'] )
-			return $_REQUEST['action'];
+			return sanitize_text_field( $_REQUEST['action'] );
 
 		if ( isset( $_REQUEST['action2'] ) && -1 != $_REQUEST['action2'] )
-			return $_REQUEST['action2'];
+			return sanitize_text_field( $_REQUEST['action2'] );
 
 		return false;
 	}
@@ -412,7 +412,7 @@ class PB_WP_List_Table {
 				selected( $m, $year . $month, false ),
 				esc_attr( $arc_row->year . $month ),
 				/* translators: 1: month name, 2: 4-digit year */
-				sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year )
+				sprintf( __( '%1$s %2$d' ), esc_attr( $wp_locale->get_month( $month ) ), esc_attr( $year ) )
 			);
 		}
 ?>
@@ -722,12 +722,13 @@ class PB_WP_List_Table {
 			if ( in_array( $column_key, $hidden ) )
 				$style = 'display:none;';
 
-			$style = ' style="' . $style . '"';
-
-			if ( 'cb' == $column_key )
+			if ( 'cb' == $column_key ) {
 				$class[] = 'check-column';
-			elseif ( in_array( $column_key, array( 'posts', 'comments', 'links' ) ) )
+				$style .= ' padding: 10px 0 10px 3px;';
+			} elseif ( in_array( $column_key, array( 'posts', 'comments', 'links' ) ) )
 				$class[] = 'num';
+
+			$style = ' style="' . $style . '"';
 
 			if ( isset( $sortable[$column_key] ) ) {
 				list( $orderby, $desc_first ) = $sortable[$column_key];
@@ -872,7 +873,7 @@ class PB_WP_List_Table {
 		static $row_class = '';
 		$row_class = ( $row_class == '' ? ' class="alternate"' : '' );
 
-		echo '<tr' . $row_class . '>';
+        echo '<tr id="user-'. $item['ID'] .'" ' . $row_class . '>';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}

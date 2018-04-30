@@ -73,8 +73,9 @@ class wpp_list_unfonfirmed_email_table extends PB_WP_List_Table {
     function column_default($item, $column_name){
         switch($column_name){
             case 'email':
-            case 'registered':
                 return $item[$column_name];
+            case 'registered':
+                return date_i18n( "Y-m-d G:i:s", wppb_add_gmt_offset( strtotime( $item[$column_name] ) ) );
             case 'user-meta':
                 global $wpdb;
                 $sql_result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->base_prefix . "signups WHERE user_email = %s", $item['email'] ), ARRAY_A );
@@ -243,7 +244,7 @@ class wpp_list_unfonfirmed_email_table extends PB_WP_List_Table {
 		if ( current_user_can( 'delete_users' ) ){
 			if( 'delete' === $this->current_action() ) {
 				foreach ( $_GET['user'] as $user ){
-					$sql_result = $wpdb->query( $wpdb->prepare( "DELETE FROM ".$wpdb->base_prefix."signups WHERE user_email = %s", $user ) );
+					$sql_result = $wpdb->query( $wpdb->prepare( "DELETE FROM ".$wpdb->base_prefix."signups WHERE user_email = %s", sanitize_email( $user ) ) );
 					
 					if ( !$sql_result )
 						$this->wppb_process_bulk_action_message( sprintf( __( "%s couldn't be deleted", "profile-builder" ), $result->user_login ), get_bloginfo('url').'/wp-admin/users.php?page=unconfirmed_emails' );
@@ -254,7 +255,7 @@ class wpp_list_unfonfirmed_email_table extends PB_WP_List_Table {
 			
 			}elseif( 'confirm' === $this->current_action() ) {
 				foreach ( $_GET['user'] as $user ){
-					$sql_result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->base_prefix . "signups WHERE user_email = %s", $user ), ARRAY_A );
+					$sql_result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->base_prefix . "signups WHERE user_email = %s", sanitize_email( $user ) ), ARRAY_A );
 
 					if ( $sql_result )
 						wppb_manual_activate_signup( $sql_result['activation_key'] );
@@ -264,7 +265,7 @@ class wpp_list_unfonfirmed_email_table extends PB_WP_List_Table {
 				
 			}elseif( 'resend' === $this->current_action() ) {
 				foreach ( $_GET['user'] as $user ){
-					$sql_result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->base_prefix . "signups WHERE user_email = %s", $user ), ARRAY_A );
+					$sql_result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM " . $wpdb->base_prefix . "signups WHERE user_email = %s", sanitize_email( $user ) ), ARRAY_A );
 					
 					if ( $sql_result )
 						wppb_signup_user_notification( esc_sql( $sql_result['user_login'] ), esc_sql( $sql_result['user_email'] ), $sql_result['activation_key'], $sql_result['meta'] );
@@ -298,27 +299,58 @@ class wpp_list_unfonfirmed_email_table extends PB_WP_List_Table {
         global $wpdb;
 		
 		$this->dataArray = array();
-		$iterator = 0;
-		
-		$results = $wpdb->get_results("SELECT * FROM ".$wpdb->base_prefix."signups WHERE active = 0");
-		foreach ($results as $result){
-            /* since version 2.0.7 for multisite we add a 'registered_for_blog_id' meta in the registration process
-            so we can display only the users registered on that blog. Also for backwards compatibility we display the users that don't have that meta at all */
-            if( !empty(  $result->meta ) ){
-                $user_meta = maybe_unserialize( $result->meta );
-                if( empty( $user_meta['registered_for_blog_id'] ) || $user_meta['registered_for_blog_id'] == get_current_blog_id() ){
-                    $tempArray = array('ID' => $result->user_email, 'username' => $result->user_login, 'email' => $result->user_email, 'registered'  => $result->registered);
-                    array_push($this->dataArray, $tempArray);
-                    $iterator++;
-                }
-            }
-		} 
 
         /**
          * First, lets decide how many records per page to show
          */
         $per_page = apply_filters('wppb_email_confirmation_user_per_page_number', 20);
-        
+        /* determine offset */
+        if( !empty( $_REQUEST['paged'] ) ){
+            $offset = ( esc_attr( $_REQUEST['paged'] ) -1 ) * $per_page;
+        }
+        else
+            $offset = 0;
+
+        /* handle order and orderby attr */
+        if( !empty( $_REQUEST['orderby'] ) ){
+            $orderby = sanitize_text_field( $_REQUEST['orderby'] );
+            if( $orderby == 'username' )
+                $orderby = 'user_login';
+            elseif ( $orderby == 'email' )
+                $orderby = 'user_email';
+        }
+        else
+            $orderby = 'user_login';
+        if( !empty( $_REQUEST['order'] ) && $_REQUEST['order'] == 'desc' )
+            $order = "DESC";
+        else
+            $order = 'ASC';
+
+        /* handle the WHERE clause */
+        $where = "active = 0";
+        if( isset( $_REQUEST['s'] ) && !empty( $_REQUEST['s'] ) ){
+            $where .= " AND ( user_login LIKE '%".sanitize_text_field($_REQUEST['s'])."%' OR user_email LIKE '%".sanitize_text_field($_REQUEST['s'])."%' OR registered LIKE '%".sanitize_text_field($_REQUEST['s'])."%' )";
+        }
+        /* since version 2.0.7 for multisite we add a 'registered_for_blog_id' meta in the registration process
+            so we can display only the users registered on that blog. Also for backwards compatibility we display the users that don't have that meta at all */
+        if( is_multisite() ){
+            $where .= " AND ( meta NOT LIKE '%\"registered_for_blog_id\"%' OR meta LIKE '%\"registered_for_blog_id\";i:".get_current_blog_id()."%' )";
+        }
+		
+		$results = $wpdb->get_results("SELECT * FROM ".$wpdb->base_prefix."signups WHERE $where ORDER BY $orderby $order LIMIT $offset, $per_page");
+
+		foreach ($results as $result){
+            $tempArray = array('ID' => $result->user_email, 'username' => $result->user_login, 'email' => $result->user_email, 'registered'  => $result->registered);
+            array_push($this->dataArray, $tempArray);
+		}
+
+        /**
+         * REQUIRED for pagination. Let's check how many items are in our data array.
+         * In real-world use, this would be the total number of items in your database,
+         * without filtering. We'll need this later, so you should always include it
+         * in your own package classes.
+         */
+        $total_items = $wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->base_prefix."signups WHERE $where");
         
         /**
          * REQUIRED. Now we need to define our column headers. This includes a complete
@@ -358,49 +390,7 @@ class wpp_list_unfonfirmed_email_table extends PB_WP_List_Table {
          * be able to use your precisely-queried data immediately.
          */
         $data = $this->dataArray;
-                
-        
-        /**
-         * This checks for sorting input and sorts the data in our array accordingly.
-         * 
-         * In a real-world situation involving a database, you would probably want 
-         * to handle sorting by passing the 'orderby' and 'order' values directly 
-         * to a custom query. The returned data will be pre-sorted, and this array
-         * sorting technique would be unnecessary.
-         */
-        function usort_reorder($a,$b){
-            $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'username'; //If no sort, default to username
-            $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
-            $result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
-            return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
-        }
-        usort($data, 'usort_reorder');
 
-        /**
-         * REQUIRED for pagination. Let's figure out what page the user is currently 
-         * looking at. We'll need this later, so you should always include it in 
-         * your own package classes.
-         */
-        $current_page = $this->get_pagenum();
-        
-        /**
-         * REQUIRED for pagination. Let's check how many items are in our data array. 
-         * In real-world use, this would be the total number of items in your database, 
-         * without filtering. We'll need this later, so you should always include it 
-         * in your own package classes.
-         */
-        $total_items = count($data);
-        
-        
-        /**
-         * The PB_WP_List_Table class does not handle pagination for us, so we need
-         * to ensure that the data is trimmed to only the current page. We can use
-         * array_slice() to 
-         */
-        $data = array_slice($data,(($current_page-1)*$per_page),$per_page);
-        
-        
-        
         /**
          * REQUIRED. Now we can add our *sorted* data to the items property, where 
          * it can be used by the rest of the class.
@@ -468,7 +458,8 @@ function wppb_unconfirmed_email_address_custom_menu_page(){
         <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
         <form id="movies-filter" method="get">
             <!-- For plugins, we also need to ensure that the form posts back to our current page -->
-            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+            <?php $listTable->search_box( __( 'Search Users' ), 'user' ); ?>
+            <input type="hidden" name="page" value="<?php echo esc_attr( $_REQUEST['page'] ); ?>" />
             <!-- Now we can render the completed list table -->
             <?php $listTable->display() ?>
         </form>

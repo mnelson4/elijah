@@ -46,6 +46,7 @@ function peadig_eucookie_options() {
                 <?php esc_html_e('Support', 'eu-cookie-law'); ?>
             </a>
         </h1>
+        
 		<form method="post" action="options.php">
 			<?php settings_fields('peadig_eucookie_options'); ?>
 			<?php
@@ -152,7 +153,7 @@ function peadig_eucookie_options() {
                         'echo'                  => 0,
                         'name'                  => 'peadig_eucookie[boxlinkid]',
                         'id'                    => 'boxlinkid', 
-                        'show_option_none'      => '* '.__('Custome Message'), 
+                        'show_option_none'      => '* '.__('Custom Message'), 
                         'show_option_no_change' => null, 
                         'option_none_value'     => null, 
                     ); ?>

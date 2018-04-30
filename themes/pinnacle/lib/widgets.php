@@ -335,7 +335,7 @@ class kad_social_widget extends WP_Widget {
 <?php if(!empty($instance['facebook'])):?><a href="<?php echo esc_url($instance['facebook']); ?>" class="facebook_link" title="Facebook" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="Facebook"><i class="icon-facebook"></i></a><?php endif;?>
 <?php if(!empty($instance['twitter'])):?><a href="<?php echo esc_url($instance['twitter']); ?>" class="twitter_link" title="Twitter" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="Twitter"><i class="icon-twitter"></i></a><?php endif;?>
 <?php if(!empty($instance['instagram'])):?><a href="<?php echo esc_url($instance['instagram']); ?>" class="instagram_link" title="Instagram" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="Instagram"><i class="icon-instagram"></i></a><?php endif;?>
-<?php if(!empty($instance['googleplus'])):?><a href="<?php echo esc_url($instance['googleplus']); ?>" class="googleplus_link" rel="publisher" title="GooglePlus" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="GooglePlus"><i class="icon-google-plus"></i></a><?php endif;?>
+<?php if(!empty($instance['googleplus'])):?><a href="<?php echo esc_url($instance['googleplus']); ?>" class="googleplus_link" rel="publisher" title="GooglePlus" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="GooglePlus"><i class="icon-google-plus2"></i></a><?php endif;?>
 <?php if(!empty($instance['flickr'])):?><a href="<?php echo esc_url($instance['flickr']); ?>" class="flickr_link" title="Flickr" data-toggle="tooltip" target="_blank" data-placement="top" data-original-title="Flickr"><i class="icon-flickr"></i></a><?php endif;?>
 <?php if(!empty($instance['vimeo'])):?><a href="<?php echo esc_url($instance['vimeo']); ?>" class="vimeo_link" title="Vimeo" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="Vimeo"><i class="icon-play"></i></a><?php endif;?>
 <?php if(!empty($instance['youtube'])):?><a href="<?php echo esc_url($instance['youtube']); ?>" class="youtube_link" title="YouTube" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="YouTube"><i class="icon-youtube"></i></a><?php endif;?>
@@ -667,11 +667,11 @@ class kad_post_grid_widget extends WP_Widget {
 <?php
   }
 }
+// getting Ready to remove this widget from the theme, added to the toolkit.
+if( ! class_exists('kad_image_widget') ) {
+	class kad_image_widget extends WP_Widget{
 
-
-class kad_image_widget extends WP_Widget{
-
-  private static $instance = 0;
+  	private static $instance = 0;
     public function __construct() {
         $widget_ops = array('classname' => 'kadence_simple_image', 'description' => __('This allows for an image and a simple about text.', 'pinnacle'));
         parent::__construct('kadence_simple_image', __('Pinnacle: Image', 'pinnacle'), $widget_ops);
@@ -764,6 +764,6 @@ class kad_image_widget extends WP_Widget{
   </div>
     <?php
   }
-
+}
 
 }

@@ -80,7 +80,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
                     $nameBrackets = "[]";
                 }
 
-                $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : __( 'Select an item', 'redux-framework' );
+                $placeholder = ( isset( $this->field['placeholder'] ) ) ? esc_attr( $this->field['placeholder'] ) : __( 'Select an item', 'pinnacle' );
 
                 if ( isset( $this->field['select2'] ) ) { // if there are any let's pass them to js
                     $select2_params = json_encode( $this->field['select2'] );
@@ -131,7 +131,7 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
 
                 echo '</select>';
             } else {
-                echo '<strong>' . __( 'No items of this type were found.', 'redux-framework' ) . '</strong>';
+                echo '<strong>' . __( 'No items of this type were found.', 'pinnacle' ) . '</strong>';
             }
         } //function
 
@@ -154,6 +154,10 @@ if ( ! class_exists( 'ReduxFramework_select' ) ) {
         public function enqueue() {
             wp_enqueue_style( 'select2-css' );
 
+            if (isset($this->field['sortable']) && $this->field['sortable']) {
+                wp_enqueue_script('jquery-ui-sortable');
+            }
+            
             wp_enqueue_script(
                 'redux-field-select-js',
                 ReduxFramework::$_url . 'inc/fields/select/field_select' . Redux_Functions::isMin() . '.js',

@@ -36,7 +36,7 @@
                 $data = stripslashes($data);
 
                 if ($data != $this->value) {
-                    $this->field['msg'] = __( 'Unsafe strings were found in your CSS and have been filtered out.', 'redux-framework' );
+                    $this->field['msg'] = __( 'Unsafe strings were found in your CSS and have been filtered out.', 'pinnacle' );
                     $this->warning = $this->field;
                 }
 

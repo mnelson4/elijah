@@ -26,8 +26,8 @@ function wppb_basic_info_content() {
 
 ?>
 	<div class="wrap wppb-wrap wppb-info-wrap">
-		<div class="wppb-badge <?php echo $version; ?>"><?php printf( __( 'Version %s' ), PROFILE_BUILDER_VERSION ); ?></div>
-		<h1><?php printf( __( '<strong>Profile Builder </strong>' . $version . ' <small>v.</small>%s', 'profile-builder' ), PROFILE_BUILDER_VERSION ); ?></h1>
+		<div class="wppb-badge <?php echo $version; ?>"><span><?php printf( __( 'Version %s' ), PROFILE_BUILDER_VERSION ); ?></span></div>
+		<h1><?php printf( __( '<strong>Profile Builder </strong> %s', 'profile-builder' ), $version ); ?></h1>
 		<p class="wppb-info-text"><?php printf( __( 'The best way to add front-end registration, edit profile and login forms.', 'profile-builder' ) ); ?></p>
 		<hr />
 		<h2 class="wppb-callout"><?php _e( 'For Modern User Interaction', 'profile-builder' ); ?></h2>
@@ -65,6 +65,10 @@ function wppb_basic_info_content() {
 				<h3><?php _e( 'Email Confirmation', 'profile-builder' ); ?></h3>
 				<p><?php _e( 'Make sure users sign up with genuine emails. On registration users will receive a notification to confirm their email address.', 'profile-builder' ); ?></p>
 			</div>
+            <div>
+                <h3><?php _e( 'Content Restriction', 'profile-builder' ); ?></h3>
+                <p><?php _e( 'Restrict users from accessing certain pages, posts or custom post types based on user role or logged-in status.', 'profile-builder' ); ?></p>
+            </div>
 			<div>
 				<h3><?php _e( 'Minimum Password Length and Strength Meter', 'profile-builder' ); ?></h3>
 				<p><?php _e( 'Eliminate weak passwords altogether by setting a minimum password length and enforcing a certain password strength.', 'profile-builder' ); ?></p>
@@ -72,6 +76,10 @@ function wppb_basic_info_content() {
 			<div>
 				<h3><?php _e( 'Login with Email or Username', 'profile-builder' ); ?></h3>
 				<p><?php _e( 'Allow users to log in with their email or username when accessing your site.', 'profile-builder' ); ?></p>
+			</div>
+			<div style="clear:left;">
+				<h3><?php _e( 'Roles Editor', 'profile-builder' ); ?></h3>
+				<p><?php _e( 'Add, remove, clone and edit roles and also capabilities for these roles.', 'profile-builder' ); ?></p>
 			</div>
 		</div>
 
@@ -87,24 +95,34 @@ function wppb_basic_info_content() {
 				<h3><?php _e( 'Customize Your Forms The Way You Want (*)', 'profile-builder' ); ?></h3>
 				<p><?php _e( 'With Extra Profile Fields you can create the exact registration form your project needs.', 'profile-builder' ); ?></p>
 				<?php if ($version == 'Free'){ ?>
-					<p><a href="http://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-extrafields&utm_campaign=PBFree" class="wppb-button-free"><?php _e( 'Extra Profile Fields are available in Hobbyist or PRO versions', 'profile-builder' ); ?></a></p>
+					<p><a href="https://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-extrafields&utm_campaign=PBFree" class="wppb-button-free"><?php _e( 'Extra Profile Fields are available in Hobbyist or PRO versions', 'profile-builder' ); ?></a></p>
 				<?php } else {?>
 					<p><a href="admin.php?page=manage-fields" class="button"><?php _e( 'Get started with extra fields', 'profile-builder' ); ?></a></p>
 				<?php } ?>
-				<ul>
+				<ul style="float: left; margin-right: 50px;">
 					<li><?php _e( 'Avatar Upload', 'profile-builder' ); ?></li>
 					<li><?php _e( 'Generic Uploads', 'profile-builder' ); ?></li>
 					<li><?php _e( 'Agree To Terms Checkbox', 'profile-builder' ); ?></li>
 					<li><?php _e( 'Datepicker', 'profile-builder' ); ?> </li>
+                    <li><?php _e( 'Timepicker', 'profile-builder' ); ?> </li>
+                    <li><?php _e( 'Colorpicker', 'profile-builder' ); ?> </li>
 					<li><?php _e( 'reCAPTCHA', 'profile-builder' ); ?></li>
 					<li><?php _e( 'Country Select', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Currency Select', 'profile-builder' ); ?></li>
 					<li><?php _e( 'Timezone Select', 'profile-builder' ); ?></li>
-					<li><?php _e( 'Input / Hidden Input', 'profile-builder' ); ?></li>
-					<li><?php _e( 'Checkbox', 'profile-builder' ); ?></li>
-					<li><?php _e( 'Select', 'profile-builder' ); ?></li>
-					<li><?php _e( 'Radio Buttons', 'profile-builder' ); ?></li>
-					<li><?php _e( 'Textarea', 'profile-builder' ); ?></li>
 				</ul>
+
+                <ul style="float: left;">
+                    <li><?php _e( 'Input / Hidden Input', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Number', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Checkbox', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Select', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Radio Buttons', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Textarea', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Validation', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'Map', 'profile-builder' ); ?></li>
+                    <li><?php _e( 'HTML', 'profile-builder' ); ?></li>
+                </ul>
 			</div>
 			<div>
 				<img src="<?php echo WPPB_PLUGIN_URL; ?>assets/images/pb_fields.png" alt="Profile Builder Extra Fields" class="wppb-fields-image" />
@@ -118,7 +136,7 @@ function wppb_basic_info_content() {
 			    <p><a href="admin.php?page=profile-builder-modules" class="button"><?php _e( 'Enable your modules', 'profile-builder' ); ?></a></p>
             <?php endif; ?>
 			<?php if ($version == 'Free'){ ?>
-				<p><a href="http://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-modules&utm_campaign=PBFree" class="wppb-button-free"><?php _e( 'Find out more about PRO Modules', 'profile-builder' ); ?></a></p>
+				<p><a href="https://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-modules&utm_campaign=PBFree" class="wppb-button-free"><?php _e( 'Find out more about PRO Modules', 'profile-builder' ); ?></a></p>
 			<?php }?>
 		</div>
 		<div class="wppb-row wppb-3-col">
@@ -148,6 +166,10 @@ function wppb_basic_info_content() {
 				<h3><?php _e( 'Multiple Edit-profile Forms', 'profile-builder' ); ?></h3>
 				<p><?php _e( 'Allow different user roles to edit their specific information. Set up multiple edit-profile forms with different fields for certain user roles.', 'profile-builder' ); ?></p>
 			</div>
+			<div>
+				<h3><?php _e( 'Repeater Fields', 'profile-builder' ); ?></h3>
+				<p><?php _e( 'Set up a repeating group of fields on register and edit profile forms. Limit the number of repeated groups for each user role.', 'profile-builder' ); ?></p>
+			</div>
 		</div>
 
 		<?php
@@ -156,7 +178,7 @@ function wppb_basic_info_content() {
 		<hr/>
 		<div class="wrap wppb-wrap wppb-1-3-col">
 			<div>
-				<a href="<?php echo admin_url('options.php?page=profile-builder-pms-promo'); ?>"><img src="<?php echo plugins_url( '../assets/images/basic_info_pms_cross_promo.png', __FILE__ ); ?>" alt="paid member subscriptions"/></a>
+				<a href="<?php echo admin_url('options.php?page=profile-builder-pms-promo'); ?>"><img src="<?php echo plugins_url( '../assets/images/pb-pms-cross-promotion.png', __FILE__ ); ?>" alt="paid member subscriptions"/></a>
 			</div>
 			<div>
 				<h3>Paid user profiles with Profile Builder and Paid Member Subscriptions</h3>
@@ -166,12 +188,24 @@ function wppb_basic_info_content() {
 
 			</div>
 		</div>
+		<div class="wrap wppb-wrap wppb-1-3-col">
+			<div>
+				<a href="https://wordpress.org/plugins/translatepress-multilingual/" target="_blank"><img src="<?php echo plugins_url( '../assets/images/pb-trp-cross-promotion.png', __FILE__ ); ?>" alt="TranslatePress Logo"/></a>
+			</div>
+			<div>
+				<h3>Easily translate your entire WordPress website</h3>
+				<p>Translate your Profile Builder forms with a WordPress translation plugin that anyone can use.</p>
+				<p>It offers a simpler way to translate WordPress sites, with full support for WooCommerce and site builders.</p>
+				<p><a href="https://wordpress.org/plugins/translatepress-multilingual/" class="button" target="_blank">Find out how</a></p>
+
+			</div>
+		</div>
 		<hr/>
 		<div>
 			<h3>Extra Notes</h3>
 			<ul>
-				<li><?php printf( __( ' * only available in the %1$sHobbyist and Pro versions%2$s.', 'profile-builder' ) ,'<a href="http://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-extranotes&utm_campaign=PB'.$version.'" target="_blank">', '</a>' );?></li>
-				<li><?php printf( __( '** only available in the %1$sPro version%2$s.', 'profile-builder' ), '<a href="http://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-extranotes&utm_campaign=PB'.$version.'" target="_blank">', '</a>' );?></li>
+				<li><?php printf( __( ' * only available in the %1$sHobbyist and Pro versions%2$s.', 'profile-builder' ) ,'<a href="https://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-extranotes&utm_campaign=PB'.$version.'" target="_blank">', '</a>' );?></li>
+				<li><?php printf( __( '** only available in the %1$sPro version%2$s.', 'profile-builder' ), '<a href="https://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=basicinfo-extranotes&utm_campaign=PB'.$version.'" target="_blank">', '</a>' );?></li>
 			</ul>
 		</div>
 	</div>

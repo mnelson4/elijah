@@ -2,7 +2,11 @@
 
 	 global $pinnacle; 
 			if(isset($pinnacle['mobile_switch']) && $pinnacle['mobile_switch'] == '1') {
-		 		$m_home_header = $pinnacle['choose_mobile_slider'];
+		 		if(isset($pinnacle['choose_mobile_slider']) && !empty($pinnacle['choose_mobile_slider'])) {
+		 			$m_home_header = $pinnacle['choose_mobile_slider'];
+		 		} else {
+		 			$m_home_header = "";
+		 		}
 				if ($m_home_header == "flex") {
 					get_template_part('templates/mobile_home/mobileflex', 'slider');
 				} else if ($m_home_header == "pagetitle") {
@@ -11,8 +15,11 @@
 					get_template_part('templates/mobile_home/mobilevideo', 'block');
 				}
 			}
-			$home_header = $pinnacle['choose_home_header'];
-			if(empty($home_header)) {$home_header = "pagetitle";}
+			if(isset($pinnacle['choose_home_header']) && !empty($pinnacle['choose_home_header']))  {
+				$home_header = $pinnacle['choose_home_header'];
+			} else {
+				$home_header = "pagetitle";
+			}
 			if ($home_header == "flex") {
 					get_template_part('templates/home/flex', 'slider');
 			} else if ($home_header == "carousel") {

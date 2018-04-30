@@ -6,7 +6,7 @@
 				    if(!empty($text)) {
 				     	echo '<h3 class="sectiontitle">'.esc_html($text).'</h3>';
 				 	} else {
-				 		echo '<h3 class="sectiontitle">'.__('Recent Projects', 'virtue').'</h3>';
+				 		echo '<h3 class="sectiontitle">'.__('Recent Projects', 'pinnacle').'</h3>';
 				 	} 
       				if(isset($pinnacle['portfolio_style_default'])) {
 		      			$pstyleclass = $pinnacle['portfolio_style_default'];

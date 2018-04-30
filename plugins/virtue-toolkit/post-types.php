@@ -1,6 +1,6 @@
 <?php
 // Custom post types
-function kad_portfolio_post_init() {
+function kadence_toolkit_portfolio_post_init() {
   $portfoliolabels = array(
     'name' =>  __('Portfolio', 'virtue-toolkit'),
     'singular_name' => __('Portfolio Item', 'virtue-toolkit'),
@@ -57,20 +57,20 @@ function kad_portfolio_post_init() {
 
   register_post_type( 'portfolio', $portargs );
 }
-add_action( 'init', 'kad_portfolio_post_init', 1 );
-function kad_portfolio_permalink_init(){
-global $wp_rewrite;
-$port_rewrite = apply_filters('kadence_portfolio_permalink_slug', 'portfolio');
-$portfolio_structure = '/'.$port_rewrite.'/%portfolio%';
-$wp_rewrite->add_rewrite_tag("%portfolio%", '([^/]+)', "portfolio=");
-$wp_rewrite->add_permastruct('portfolio', $portfolio_structure, false);
+add_action( 'init', 'kadence_toolkit_portfolio_post_init', 1 );
+function kadence_toolkit_portfolio_permalink_init(){
+	global $wp_rewrite;
+	$port_rewrite = apply_filters('kadence_portfolio_permalink_slug', 'portfolio');
+	$portfolio_structure = '/'.$port_rewrite.'/%portfolio%';
+	$wp_rewrite->add_rewrite_tag("%portfolio%", '([^/]+)', "portfolio=");
+	$wp_rewrite->add_permastruct('portfolio', $portfolio_structure, false);
 }
-add_action( 'init', 'kad_portfolio_permalink_init', 2 );
+add_action( 'init', 'kadence_toolkit_portfolio_permalink_init', 2 );
 
 // Add filter to plugin init function
-add_filter('post_type_link', 'kad_portfolio_permalink', 10, 3);   
+add_filter('post_type_link', 'kadence_toolkit_portfolio_permalink', 10, 3);   
 
-function kad_portfolio_permalink($permalink, $post_id, $leavename) {
+function kadence_toolkit_portfolio_permalink($permalink, $post_id, $leavename) {
     $post = get_post($post_id);
     $rewritecode = array(
         '%year%',

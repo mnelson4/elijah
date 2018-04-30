@@ -11,9 +11,9 @@
 
             public static function get_url( $handle ) {
                 if ( $handle == 'select2-js' && file_exists( self::$dir . 'vendor/select2/select2' . Redux_Functions::isMin() . '.js' ) ) {
-                    return self::$url . 'vendor/select2/select2.js';
+                    return get_template_directory_uri() . '/themeoptions/options_assets/extensions/vendor_support/vendor/select2/select2.min.js';
                 } elseif ( $handle == 'select2-css' && file_exists( self::$dir . 'vendor/select2/select2.css' )  ) {
-                    return self::$url . 'vendor/select2/select2.css';
+                    return get_template_directory_uri() . '/themeoptions/options_assets/extensions/vendor_support/vendor/select2/select2.css';
                 }
             }
         }

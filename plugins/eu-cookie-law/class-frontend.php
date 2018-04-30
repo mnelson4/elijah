@@ -2,16 +2,17 @@
 
     $euCookieSet = 0;
 
-add_action( 'send_headers', 'eucookie_headers' );
-function eucookie_headers() {
+add_action( 'send_headers', function() {
 	if ( isset($_GET['nocookie']) ) {
         setcookie('euCookie', '', 1, '/');
         global $euCookieSet;
         $euCookieSet = 0;
+        wp_redirect( esc_url( remove_query_arg( 'nocookie' ) ) );
+        exit();
     }
-}
+});
 
-function eucookie_scripts() {
+add_action('wp_head', function() {
     
     global $euCookieSet;
     global $deleteCookieUrlCheck;
@@ -48,8 +49,7 @@ function eucookie_scripts() {
     );
     wp_localize_script('eucookielaw-scripts','eucookielaw_data',$eclData);
     
-}
-add_action('wp_head', 'eucookie_scripts');
+});
 
 function ecl_isSearchEngine(){
     $engines  = array(
@@ -122,11 +122,9 @@ function get_expire_timer() {
     return $multi *  eucookie_option('lengthnum');
 }
     
-function peadig_eucookie_bar() {
+add_action('wp_footer', function() {
     
-	if ( cookie_accepted()  ) {
-        return;
-    }
+	if ( cookie_accepted()  ) { return; }
     
     $target = '';
     if ( eucookie_option('boxlinkid') == 'C') {
@@ -138,31 +136,18 @@ function peadig_eucookie_bar() {
     } else {
         $link = '#';
     }
-?>
-        <!-- Eu Cookie Law <?php echo get_option( 'ecl_version_number' ); ?> -->
-        <div
-            class="pea_cook_wrapper pea_cook_<?php echo eucookie_option('position'); ?>"
-            style="
-                color:<?php echo ecl_frontstyle('fontcolor'); ?>;
-                background: rgb(<?php echo ecl_frontstyle('backgroundcolor'); ?>);
-                background: rgba(<?php echo ecl_frontstyle('backgroundcolor'); ?>,0.85);
-            ">
-            <p><?php echo eucookie_option('barmessage'); ?> <a style="color:<?php echo eucookie_option('fontcolor'); ?>;" href="<?php echo $link; ?>" <?php echo $target; ?>id="fom"><?php echo eucookie_option('barlink'); ?></a> <button id="pea_cook_btn" class="pea_cook_btn" href="#"><?php echo eucookie_option('barbutton'); ?></button></p>
-        </div>
-        <div class="pea_cook_more_info_popover">
-            <div
-                 class="pea_cook_more_info_popover_inner"
-                 style="
-                    color:<?php echo ecl_frontstyle('fontcolor'); ?>;
-                    background-color: rgba(<?php echo ecl_frontstyle('backgroundcolor'); ?>,0.9);
-                    ">
-             <p><?php echo eucookie_option('boxcontent'); ?></p>
-                <p><a style="color:<?php echo eucookie_option('fontcolor'); ?>;" href="#" id="pea_close"><?php echo eucookie_option('closelink'); ?></a></p>
-			</div>
-        </div>
-<?php
-}
-add_action('wp_footer', 'peadig_eucookie_bar', 1000);
+
+    $return = '<!-- Eu Cookie Law '.get_option( 'ecl_version_number' ).' -->';
+    $return .= '<div class="pea_cook_wrapper pea_cook_'.eucookie_option('position').'" style="color:'.ecl_frontstyle('fontcolor').';background:rgb('.ecl_frontstyle('backgroundcolor').');background: rgba('.ecl_frontstyle('backgroundcolor').',0.85);">';
+    $return .= '<p>'.eucookie_option('barmessage').' <a style="color:'.eucookie_option('fontcolor').';" href="'.$link.'" '.$target.'id="fom">'.eucookie_option('barlink').'</a> <button id="pea_cook_btn" class="pea_cook_btn" href="#">'.eucookie_option('barbutton').'</button></p>';
+    $return .= '</div>';
+    echo apply_filters( 'eu_cookie_law_frontend_banner', $return );
+
+    $return = '<div class="pea_cook_more_info_popover"><div class="pea_cook_more_info_popover_inner" style="color:'.ecl_frontstyle('fontcolor').';background-color: rgba('.ecl_frontstyle('backgroundcolor').',0.9);">';
+    $return .= '<p>'.eucookie_option('boxcontent').'</p><p><a style="color:'.eucookie_option('fontcolor').';" href="#" id="pea_close">'.eucookie_option('closelink').'</a></p>';
+    $return .= '</div></div>';
+    echo apply_filters( 'eu_cookie_law_frontend_popup', $return );
+}, 1000);
 
 function generate_cookie_notice_text($height, $width, $text) {
     return '<div class="eucookie" style="color:'.ecl_frontstyle('fontcolor').'; background: rgba('.ecl_frontstyle('backgroundcolor').',0.85) url(\''.plugins_url('img/block.png', __FILE__).'\') no-repeat; background-position: -30px -20px; width:'.$width.';height:'.$height.';"><span>'.$text.'</span></div><div class="clear"></div>';    
@@ -171,7 +156,8 @@ function generate_cookie_notice_text($height, $width, $text) {
 function generate_cookie_notice($height, $width) {
     return generate_cookie_notice_text($height, $width, eucookie_option('bhtmlcontent') );
 }
-function eu_cookie_shortcode( $atts, $content = null ) {
+
+add_shortcode( 'cookie', function ( $atts, $content = null ) {
     extract(shortcode_atts(
         array(
             'height' => '',
@@ -187,20 +173,18 @@ function eu_cookie_shortcode( $atts, $content = null ) {
         if (!$height) { $height = pulisci($content,'height='); }
         return generate_cookie_notice($height, $width);
     }
-}
-add_shortcode( 'cookie', 'eu_cookie_shortcode' );
+} );
 
 
 //add_filter( 'the_content', 'ecl_erase', 11); 
 //add_filter( 'widget_text','ecl_erase', 11 ); 
 
-function ecl_buffer_start() { ob_start("ecl_callback"); } 
+function ecl_buffer_start() { ob_start(); }
 function ecl_buffer_end() {
-	$contents = ob_get_contents();
-	ob_end_clean();
-	echo $contents;
+    $contents = ecl_erase(ob_get_contents());
+    ob_end_clean();
+    echo $contents;
 }
-function ecl_callback($buffer) { return ecl_erase($buffer); }
 
 add_action('wp_head', 'ecl_buffer_start'); 
 add_action('wp_footer', 'ecl_buffer_end'); 
@@ -283,8 +267,8 @@ function eu_cookie_list_shortcode( $atts ) {
     echo '<h3>Active Cookies</h3>
     <table style="width:100%; word-break:break-all;">
         <tr>
-            <th>Nome</th>
-            <th>Valore</th> 
+            <th>'.__('Name', 'eu-cookie-law').'</th>
+            <th>'.__('Value', 'eu-cookie-law').'</th> 
         </tr>';
     foreach ($_COOKIE as $key=>$val) {
 

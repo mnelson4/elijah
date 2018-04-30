@@ -10,7 +10,7 @@ global $wp_scripts;
 <title><?php _e("Insert Columns", 'virtue-toolkit'); ?></title>
  <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
 <script language="javascript" type="text/javascript" src="<?php echo get_option('siteurl') ?>/wp-includes/js/tinymce/tiny_mce_popup.js"></script>
-<script language="javascript" type="text/javascript" src="<?php echo get_option('siteurl'); ?>/wp-includes/js/tinymce/utils/form_utils.js"></script>
+<script language="javascript" type="text/javascript" src="<?php echo site_url(); ?>/wp-includes/js/tinymce/utils/form_utils.js"></script>
 <base target="_self" />
 <?php wp_print_scripts(); ?>
 <script type="text/javascript">
@@ -27,7 +27,7 @@ var ButtonDialog = {
 		tinyMCEPopup.execCommand('mceRemoveNode', false, null);
 		 
 		// set up variables to contain our input values
-		var coutput = jQuery('#icon-dialog select#columnoutput').val(); 		 
+		var coutput = 2; 		 
 		 
 		var output = '';
 		
@@ -153,13 +153,6 @@ tinyMCEPopup.onInit.add(ButtonDialog.init, ButtonDialog);
         	<div>
             <p>Choose a Column Layout:</p>
             </div>
-            <div class="option-row">
-				<label for="column-option">Choose Column Output:</label>
-				<select name="column-one" id="columnoutput">
-					<option value="2">Shortcodes</option>
-                	<option value="1">Visual Aid</option>
-                    </select>
-			</div>
 			<div class="option-row">
 				<label for="2column">Two Column</label>
 				<input type="radio" name="column" value="2column" id="2column">

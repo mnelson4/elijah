@@ -4,7 +4,16 @@ load_theme_textdomain('pinnacle', get_template_directory() . '/languages');
 define( 'OPTIONS_PATH', get_template_directory_uri() . '/themeoptions/options_assets/' );
 $alt_stylesheet_path = LAYOUT_PATH;
 $alt_stylesheets = array(); 
-if ( is_dir($alt_stylesheet_path) ) {if ($alt_stylesheet_dir = opendir($alt_stylesheet_path) ) {while ( ($alt_stylesheet_file = readdir($alt_stylesheet_dir)) !== false ) {if(stristr($alt_stylesheet_file, ".css") !== false) {$alt_stylesheets[$alt_stylesheet_file] = $alt_stylesheet_file;}}}}
+if ( is_dir($alt_stylesheet_path) ) {
+    if ($alt_stylesheet_dir = opendir($alt_stylesheet_path) ) {
+        while ( ($alt_stylesheet_file = readdir($alt_stylesheet_dir)) !== false ) {
+            if(stristr($alt_stylesheet_file, ".css") !== false) {
+                $alt_stylesheets[$alt_stylesheet_file] = $alt_stylesheet_file;
+            }
+        }
+        closedir($alt_stylesheet_dir);
+    }
+}
 
 // BEGIN Config
 
@@ -48,8 +57,8 @@ if ( ! class_exists( 'Redux' ) ) {
         'disable_tracking'     => true,
         'customizer_only'      => true,
         'save_defaults'        => false,
-        'intro_text'           => 'Upgrade to <a href="http://www.kadencethemes.com/product/pinnacle-premium-wordpress-theme/" target="_blank" >Pinnacle Premium!</a> More great features! Over 50 more theme options, premium sliders and carousels, breadcrumbs, custom post types and much much more!',           
-        'footer_credit'        => __('Thank you for using the Virtue Theme by <a href="http://kadencethemes.com/" target="_blank">Kadence Themes</a>.', 'pinnacle'),
+        'intro_text'           => 'Upgrade to <a href="https://www.kadencethemes.com/product/pinnacle-premium-wordpress-theme/?utm_source=themeoptions&utm_medium=banner&utm_campaign=pinnacle_premium" target="_blank" >Pinnacle Premium!</a> More great features! Over 50 more theme options, premium sliders and carousels, breadcrumbs, custom post types and much much more!',           
+        'footer_credit'        => __('Thank you for using the Pinnacle Theme by <a href="https://kadencethemes.com/" target="_blank">Kadence Themes</a>.', 'pinnacle'),
         'hints'                => array(
             'icon'          => 'icon-question',
             'icon_position' => 'right',
@@ -105,7 +114,7 @@ if ( ! class_exists( 'Redux' ) ) {
     'id' => 'site_header',
     'header' => '',
     'desc' => "<div class='redux-info-field'><h3>".__('Welcome to Pinnacle Theme Options', 'pinnacle')."</h3>
-            <p>".__('This theme was developed by', 'pinnacle')." <a href=\"http://kadencethemes.com/\" target=\"_blank\">Kadence Themes</a></p>
+            <p>".__('This theme was developed by', 'pinnacle')." <a href=\"https://kadencethemes.com/\" target=\"_blank\">Kadence Themes</a></p>
             <p>".__('For theme documentation visit', 'pinnacle').": <a href=\"http://docs.kadencethemes.com/pinnacle/\" target=\"_blank\">docs.kadencethemes.com/pinnacle/</a>
             <br />
             ".__('For support please visit', 'pinnacle').": <a href=\"https://wordpress.org/support/theme/pinnacle\" target=\"_blank\">https://wordpress.org/support/theme/pinnacle</a></p></div>",
@@ -299,6 +308,12 @@ Redux::setSection( $opt_name, array(
             'customizer' => true,
             'width' => 'width:60%',
             ),
+    array(
+            'id'=>'info_pagetitle_settings_notice',
+            'type' => 'info',
+            'customizer' => true,
+            'desc' => __('*NOTE: Make sure Virtue/Pinnacle Toolkit plugin is activated* <br>Go to Apperance > Theme Options > Page Title settings for all settings', 'pinnacle'),
+            ),
     ),
 )
 );
@@ -423,6 +438,12 @@ Redux::setSection( $opt_name, array(
     'desc' => "<div class='redux-info-field'><h3>".__('Home Page Slider Options', 'pinnacle')."</h3></div>",
     'fields' => array(
         array(
+            'id'=>'info_home_slider_settings_notice',
+            'type' => 'info',
+            'customizer' => true,
+            'desc' => __('*NOTE: Make sure Virtue/Pinnacle Toolkit plugin is activated* <br>Go to Apperance > Theme Options > Home Slider for all Home slider settings', 'pinnacle'),
+            ),
+        array(
             'id'=>'choose_home_header',
             'type' => 'select',
             'title' => __('Choose a Home Image Slider', 'pinnacle'), 
@@ -430,12 +451,12 @@ Redux::setSection( $opt_name, array(
             'options' => array('none' => __('None', 'pinnacle'),'pagetitle' => __('Page Title', 'pinnacle'),'flex' => __('Flex Slider', 'pinnacle'),'carousel' => __('Carousel Slider', 'pinnacle'),'latest' => __('Latest Posts', 'pinnacle'), 'video' => __('Video', 'pinnacle')),
             'default' => 'pagetitle',
             'width' => 'width:60%',
-            'customizer' => false,
+            'customizer' => true,
             ),
         array(
             'id'=>'hs_behindheader',
             'type' => 'switch', 
-            'customizer' => false,
+            'customizer' => true,
             'title' => __('Place behind Header', 'pinnacle'),
             'subtitle'=> __('This enabled the transparent header on the home page.', 'pinnacle'),
             "default" => 1,
@@ -443,7 +464,7 @@ Redux::setSection( $opt_name, array(
         array(
             'id'=>'home_page_title',
             'type' => 'textarea',
-            'customizer' => false,
+            'customizer' => true,
             'title' => __('Home Page Title', 'pinnacle'), 
             'validate' => 'html',
             'default' => 'Welcome to [site-name]',
@@ -452,7 +473,7 @@ Redux::setSection( $opt_name, array(
         array(
             'id'=>'home_page_sub_title',
             'type' => 'textarea',
-            'customizer' => false,
+            'customizer' => true,
             'title' => __('Home Page SubTitle', 'pinnacle'), 
             'subtitle' => __('optional text below home page title', 'pinnacle'),
             'validate' => 'html',
@@ -462,7 +483,7 @@ Redux::setSection( $opt_name, array(
         array(
             'id'=>'home_page_title_ptop',
             'type' => 'slider', 
-            'customizer' => false,
+            'customizer' => true,
             'title' => __('Home Page Title Padding Top', 'pinnacle'),
             "default"       => "110",
             "min"       => "5",
@@ -473,7 +494,7 @@ Redux::setSection( $opt_name, array(
         array(
             'id'=>'home_page_title_pbottom',
             'type' => 'slider', 
-            'customizer' => false,
+            'customizer' => true,
             'title' => __('Home Page Title Padding Bottom', 'pinnacle'),
             "default"       => "110",
             "min"       => "5",
@@ -1143,6 +1164,12 @@ Redux::setSection( $opt_name, array(
             'default' => '3',
             'required' => array('home_post_summery','=',array('grid')),
             ),
+         array(
+            'id'=>'info_home_layout_settings_notice',
+            'type' => 'info',
+            'customizer' => true,
+            'desc' => __('*NOTE: Make sure Virtue/Pinnacle Toolkit plugin is activated* <br>Go to Apperance > Theme Options > Home Layout for all home layout settings', 'pinnacle'),
+            ),
 
     ),
 )
@@ -1378,6 +1405,18 @@ Redux::setSection( $opt_name, array(
             'required' => array('single_product_header_title','=','custom'),
             ),
         array(
+            'id'=>'product_gallery_slider',
+            'type' => 'switch', 
+            'title' => __('Enable woocommerce slider for product gallery? (must be woocommerce 3.0+)', 'pinnacle'),
+            "default" => 0,
+        ),
+        array(
+            'id'=>'product_gallery_zoom',
+            'type' => 'switch', 
+            'title' => __('Enable woocommerce hover zoom for product gallery? (must be woocommerce 3.0+)', 'pinnacle'),
+            "default" => 0,
+        ), 
+        array(
             'id'=>'product_tabs',
             'type' => 'switch', 
             'customizer' => false,
@@ -1438,7 +1477,7 @@ Redux::setSection( $opt_name, array(
             'options' => array('p_primarystyle' => __('Primary Color Style', 'pinnacle'), 'p_lightstyle' => __('Light Style', 'pinnacle'), 'p_darkstyle' => __('Dark Style', 'pinnacle')),
             ),
           array(
-            'id'=>'info_product_ph_defaults',
+            'id'=>'info_portfolio_ph_defaults',
             'type' => 'info',
             'customizer' => false,
             'desc' => __('Single Portfolio Page Header', 'pinnacle'),
@@ -1461,7 +1500,7 @@ Redux::setSection( $opt_name, array(
         array(
             'id'=>'single_portfolio_header_title',
             'type' => 'select',
-            'title' => __('Product Default Title Text', 'pinnacle'), 
+            'title' => __('Portfolio Default Title Text', 'pinnacle'), 
             'options' => array('category' => __('Category of Portfolio', 'pinnacle'), 'posttitle' => __('Portfolio Title', 'pinnacle'), 'custom' => __('Custom', 'pinnacle')),
             'width' => 'width:60%',
             'customizer' => false,
@@ -1714,6 +1753,13 @@ Redux::setSection( $opt_name, array(
             'width' => 'width:60%',
             'customizer' => true,
             'default' => 'no',
+            ),
+        array(
+            'id'=>'post_summery_default_image',
+            'type' => 'media', 
+            'url'=> true,
+            'title' => __('Default post summary feature Image', 'pinnacle'),
+            'subtitle' => __('Replace theme default feature image for posts without a featured image', 'pinnacle'),
             ),
         array(
             'id'=>'post_carousel_default',
@@ -2015,7 +2061,7 @@ Redux::setSection( $opt_name, array(
       array(
         'id'        => 'menu_background',
         'type'      => 'background',
-        'output'    => array('.navclass'),
+        'output'    => array('.kad-primary-nav > ul'),
         'customizer' => false,
         'title'     => __('Menu Background', 'pinnacle'),
         ),
@@ -2082,6 +2128,12 @@ Redux::setSection( $opt_name, array(
     'title' => __('Typography', 'pinnacle'),
     'desc' => "<div class='redux-info-field'><h3>".__('Header Font Options', 'pinnacle')."</h3></div>",
     'fields' => array(
+        array(
+            'id'=>'info_typography_settings_notice',
+            'type' => 'info',
+            'customizer' => true,
+            'desc' => __('*NOTE: Make sure Virtue/Pinnacle Toolkit plugin is activated* <br>Go to Apperance > Theme Options > Typography settings for all Typography settings', 'pinnacle'),
+            ),
       array(
             'id'=>'font_h1',
             'type' => 'typography', 
@@ -2279,6 +2331,12 @@ Redux::setSection( $opt_name, array(
     'title' => __('Menu Settings', 'pinnacle'),
     'desc' => "<div class='redux-info-field'><h3>".__('Primary Menu Options', 'pinnacle')."</h3></div>",
     'fields' => array(
+        array(
+            'id'=>'info_menu_settings_notice',
+            'type' => 'info',
+            'customizer' => true,
+            'desc' => __('*NOTE: Make sure Virtue/Pinnacle Toolkit plugin is activated* <br>Go to Apperance > Theme Options > Menu settings for all menu settings', 'pinnacle'),
+            ),
       array(
             'id'=>'font_primary_menu',
             'type' => 'typography', 
@@ -2444,6 +2502,19 @@ Redux::setSection( $opt_name, array(
             'subtitle' => __('You must have virtue/pinnacle toolkit installed to use.', 'pinnacle'),
             "default" => 1,
             ),
+        array(
+            'id'=>'info_gmaps',
+            'type' => 'info',
+            'desc' => __('Theme Google Maps', 'pinnacle'),
+            ),
+        array(
+            'id'=>'google_map_api',
+            'type' => 'text',
+            'title' => __('Google Map API', 'pinnacle'),
+            'subtitle' => __('For best performance add your own API for google maps.', 'pinnacle'),
+            'description' =>'<a target="_blank" href="https://developers.google.com/maps/documentation/javascript/get-api-key">Get an API code Here</a>',
+            'default' => ''
+            ),  
         ),
     )
     );
@@ -2484,7 +2555,7 @@ Redux::setSection( $opt_name, array(
 
 function kadence_override_redux_icons_css() {
   wp_dequeue_style( 'redux-admin-css' );
-  wp_register_style('pinncale-redux-custom-css', get_template_directory_uri() . '/themeoptions/options_assets/css/style.css', false, 123);    
+  wp_register_style('pinncale-redux-custom-css', get_template_directory_uri() . '/themeoptions/options_assets/css/style.css', false, 134);    
   wp_enqueue_style('pinncale-redux-custom-css');
   wp_dequeue_style( 'select2-css' );
   wp_dequeue_script( 'select2-js' );

@@ -79,7 +79,7 @@
             public function add_section() {
                 $this->parent->sections[] = array(
                     'id' => 'options-object',
-                    'title' => __( 'Options Object', 'redux-framework' ),
+                    'title' => __( 'Options Object', 'pinnacle' ),
                     'heading' => '',
                     'icon' => 'el el-info-circle',
                     'customizer' => false,

@@ -10,15 +10,16 @@ function wppb_password_handler( $output, $form_location, $field, $user_id, $fiel
 		if ( array_key_exists( $field['id'], $field_check_errors ) )
 			$error_mark = '<img src="'.WPPB_PLUGIN_URL.'assets/images/pencil_delete.png" title="'.wppb_required_field_error($field["field-title"]).'"/>';
 
-		$extra_attr = apply_filters( 'wppb_extra_attribute', '', $field );
+		$extra_attr = apply_filters( 'wppb_extra_attribute', '', $field, $form_location );
 
         $output = '
 			<label for="passw1">' . $item_title.$error_mark . '</label>
-			<input class="text-input" name="passw1" maxlength="'. apply_filters( 'wppb_maximum_character_length', 70 ) .'" type="password" id="passw1" value="" autocomplete="off" '. $extra_attr .'/>';
-        if( !empty( $item_description ) )
-            $output .= '<span class="wppb-description-delimiter">'.$item_description.' '.wppb_password_length_text().'</span>';
+			<input class="text-input '. apply_filters( 'wppb_fields_extra_css_class', '', $field ) .'" name="passw1" maxlength="'. apply_filters( 'wppb_maximum_character_length', 70 ) .'" type="password" id="passw1" value="" autocomplete="off" '. $extra_attr .'/>';
+
+        if( ! empty( $item_description ) )
+            $output .= '<span class="wppb-description-delimiter">'. $item_description .' '. wppb_password_length_text() .' '. wppb_password_strength_description() .'</span>';
         else
-            $output .= '<span class="wppb-description-delimiter">'.wppb_password_length_text().'</span>';
+            $output .= '<span class="wppb-description-delimiter">'. wppb_password_length_text() .' '. wppb_password_strength_description() .'</span>';
 
         /* if we have active the password strength checker */
         $output .= wppb_password_strength_checker_html();

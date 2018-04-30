@@ -1,12 +1,12 @@
 === EU Cookie Law ===
 Contributors: alexmoss, Milmor, pleer, ShaneJones
-Version:	2.9.3
+Version:	2.13
 Stable tag:	trunk
 Author:		Alex Moss, Marco Milesi, Peadig, Shane Jones
 Author URI:   https://profiles.wordpress.org/milmor/
 Tags: eu cookie, cookies, law, analytics, european, italia, garante, privacy, eu cookie law, italy, cookie, consent, europe
-Requires at least: 3.8
-Tested up to: 4.6
+Requires at least: 4.4
+Tested up to: 4.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,7 @@ https://www.youtube.com/watch?v=6f2qxC3GZJ8
 Demo: [www.sanpellegrinoterme.gov.it](http://www.sanpellegrinoterme.gov.it)
 
 = Features =
+* **GDPR** compliance under review
 * **Customizable banner** (color, position, strings)
 * Consent by **Clicking, Scrolling and Navigation**
 * Set your page, popup or custom URL for Cookie Policy
@@ -45,7 +46,7 @@ Simply install the plugin and follow the instructions on the Settings page.
 
 = Cookie block =
 You can lock cookies using `[cookie]` and `[/cookie]` shortcodes in every post, page and widget. You can use php functions too:
-`if ( function_exists('cookie_accepted') && cookie_accepted() ) {
+`if ( !function_exists('cookie_accepted') || cookie_accepted() ) {
     // Your code
 }`
 
@@ -118,7 +119,7 @@ The plugin offers an exclusive function that allows you to block **iframes, embe
 
 To exclude a page from the filter set a custom post field **eucookielaw_exclude** to **1**. Just enable "Custom Fields" in "Screen Options" and in the "Custom Fields" box type the name, the value, and hit "Add Custom Field".
 
-If you want to exclude a <script>, you can type between <script> and </script> the string **eucookielaw_exclude**.
+If you want to exclude a script, you can type between `<script>` and `</script>` the string **eucookielaw_exclude**.
 Ex. add **class="eucookielaw_exclude"** or a comment.
 
 = Cache =
@@ -155,6 +156,26 @@ Click on the translations link to open the translation editor and adjust the str
 9. Fully customizable
 
 == Changelog ==
+
+= 2.13 24.04.2018 =
+* **Fixed** bug with WordPress default Youtube embeds. Thanks to @rfmcomposer + @bitmed
+* **Added** better php check to block cookies in our faq - improvement by @rfmcomposer
+
+= 2.12 23.04.2018 =
+* **GDPR**: we are working to give You the best plugin to comply GDPR. Expect news soon! Please note that we already have a shortcode you can use to let users revoke the consent (see faq) and the accept button could already be considered as an "active consent" with 1) cookie block enabled 2) scroll and navigation consent disabled
+* **Fixed** typo
+
+= 2.11 24.11.2017 =
+* Checked and confirmed WP 4.9 compatibility
+
+= 2.10 05.01.2017 =
+* **Added** filter eu_cookie_law_frontend_banner to change banner design with WordPress actions
+* **Added** filter eu_cookie_law_frontend_popup to change popup box design with WordPress actions
+* **Fixed** problem with "nocookie" url parameter in cookie-control shortcode causing bugs in accept/revoke (#reported by Carlo Di Somma, Web Napoli Agency)
+* **Enhanced** performance
+
+= 2.9.4 18.12.2016 =
+* Minor changes and WP 4.7 compatibility check
 
 = 2.9.3 06.07.2016 =
 * Minor changes and WP 4.6 compatibility check

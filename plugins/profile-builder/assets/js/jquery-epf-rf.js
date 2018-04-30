@@ -9,7 +9,17 @@ function wppb_rf_epf_change_id( field, container_name, fieldObj ) {
     buttonInContainer.removeAttr('onclick');
 
 	jQuery.post( ajaxurl ,  { action:"wppb_handle_rf_epf_id_change", field:field }, function(response) {
-		jQuery( '#id', fieldObj.parent().parent().parent() ).val( response );
+
+        /**
+         * since version 2.0.2 we have the id directly on the option in the select so this ajax function is a little
+        redundant but can't be sure of the impact on other features so we will just add this
+         */
+        id = fieldObj.find(":selected").attr( 'data-id' );
+        if( !id ){
+            id = response;
+        }
+
+		jQuery( '#id', fieldObj.parent().parent().parent() ).val( id );
         buttonInContainer.attr('onclick', buttonInContainer.attr("tempclick") );
         buttonInContainer.removeAttr('tempclick');
 
@@ -139,7 +149,7 @@ function wppb_rf_epf_delete_all_fields(event, delete_all_button_id, nonce) {
         jQuery.post( ajaxurl, { action: "wppb_rf_epf_delete_all_fields", meta: meta, id: post_id, _ajax_nonce: nonce }, function(response) {
 
             /* refresh the list */
-            jQuery.post( wckAjaxurl, { action: "wck_refresh_list"+meta, meta: meta, id: post_id}, function(response) {
+            jQuery.post( wppbWckAjaxurl, { action: "wck_refresh_list"+meta, meta: meta, id: post_id}, function(response) {
                 jQuery('#container_'+meta).replaceWith(response);
                 $tableParent = jQuery('#container_'+meta);
 

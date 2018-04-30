@@ -117,7 +117,7 @@ class Theme_My_Login_Security extends Theme_My_Login_Abstract {
 	 * @access public
 	 */
 	public function template_redirect() {
-		if ( $this->get_option( 'private_site' ) ) {
+		if ( $private_site = apply_filters( 'tml_enforce_private_site', $this->get_option( 'private_site' ) ) ) {
 			if ( ! ( is_user_logged_in() || Theme_My_Login::is_tml_page() ) ) {
 				$redirect_to = apply_filters( 'tml_security_private_site_redirect', wp_login_url( $_SERVER['REQUEST_URI'], true ) );
 				wp_safe_redirect( $redirect_to );
@@ -212,7 +212,8 @@ class Theme_My_Login_Security extends Theme_My_Login_Abstract {
 	 */
 	public function authenticate( $user, $username, $password ) {
 		// Make sure user exists
-		if ( ! $userdata = get_user_by( 'login', $username ) )
+		$field = is_email( $username ) ? 'email' : 'login';
+		if ( ! $userdata = get_user_by( $field, $username ) )
 			return $user;
 
 		// Current time
@@ -620,4 +621,3 @@ endif;
 
 if ( is_admin() )
 	include_once( dirname( __FILE__ ) . '/admin/security-admin.php' );
-

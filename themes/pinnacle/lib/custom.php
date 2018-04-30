@@ -17,20 +17,75 @@ if ( is_plugin_active('qtranslate/qtranslate.php') ) {
     add_filter('woocommerce_cart_item_name', 'qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage', 0);
 }
 
-function pinnacle_img_placeholder() {
-  return apply_filters('kadence_placeholder_image', get_template_directory_uri() . '/assets/img/post_standard.jpg');
+function kt_get_srcset($width,$height,$url,$id) {
+  if(empty($id) || empty($url)) {
+    return;
+  }
+  $image_meta = get_post_meta( $id, '_wp_attachment_metadata', true );
+
+  if(empty($image_meta['file'])){
+    return;
+  }
+  // If possible add in our images on the fly sizes
+    $ext = substr($image_meta['file'], strrpos($image_meta['file'], "."));
+    $pathflyfilename = str_replace($ext,'-'.$width.'x'.$height.'' . $ext, $image_meta['file']);
+    $retina_w = $width*2;
+    $retina_h = $height*2;
+    $pathretinaflyfilename = str_replace($ext, '-'.$retina_w.'x'.$retina_h . $ext, $image_meta['file']);
+    $flyfilename = basename($image_meta['file'], $ext) . '-'.$width.'x'.$height.'' . $ext;
+    $retinaflyfilename = basename($image_meta['file'], $ext) . '-'.$retina_w.'x'.$retina_h . $ext;
+
+  $upload_info = wp_upload_dir();
+  $upload_dir = $upload_info['basedir'];
+
+  $flyfile = trailingslashit($upload_dir).$pathflyfilename;
+  $retinafile = trailingslashit($upload_dir).$pathretinaflyfilename;
+  if(empty($image_meta['sizes']) ){ $image_meta['sizes'] = array();}
+    if (file_exists($flyfile)) {
+      $kt_add_imagesize = array(
+        'kt_on_fly' => array( 
+          'file'=> $flyfilename,
+          'width' => $width,
+          'height' => $height,
+          'mime-type' => isset($image_meta['sizes']['thumbnail']) ? $image_meta['sizes']['thumbnail']['mime-type'] : '',
+          )
+      );
+      $image_meta['sizes'] = array_merge($image_meta['sizes'], $kt_add_imagesize);
+    }
+    if (file_exists($retinafile)) {
+        $kt_add_imagesize_retina = array(
+        'kt_on_fly_retina' => array( 
+          'file'=> $retinaflyfilename,
+          'width' => 2 * $width,
+          'height' => 2 * $height,
+          'mime-type' => isset($image_meta['sizes']['thumbnail']) ? $image_meta['sizes']['thumbnail']['mime-type'] : '',
+          )
+        );
+        $image_meta['sizes'] = array_merge($image_meta['sizes'], $kt_add_imagesize_retina);
+    }
+    if(function_exists ( 'wp_calculate_image_srcset') ){
+      $output = wp_calculate_image_srcset(array( $width, $height), $url, $image_meta, $id);
+    } else {
+      $output = '';
+    }
+    return $output;
 }
-function pinnacle_img_placeholder_cat() {
-  return apply_filters('kadence_placeholder_image', get_template_directory_uri() . '/assets/img/placement.jpg');
+function kt_get_srcset_output($width,$height,$url,$id) {
+    $img_srcset = kt_get_srcset( $width, $height, $url, $id);
+    if(!empty($img_srcset) ) {
+      $output = 'srcset="'.esc_attr($img_srcset).'" sizes="(max-width: '.esc_attr($width).'px) 100vw, '.esc_attr($width).'px"';
+    } else {
+      $output = '';
+    }
+    return $output;
 }
-function pinnacle_img_placeholder_small() {
-  return apply_filters('kadence_placeholder_image_small', get_template_directory_uri() . '/assets/img/post_standard-60x60.jpg');
-}
+
+
 function pinnacle_lightbox_text() {
   $loading_text = __('Loading...', 'pinnacle');
   $of_text = __('of', 'pinnacle');
   $error_text = __('The Image could not be loaded.','pinnacle');
-  echo  '<script type="text/javascript">var light_error = "'.$error_text.'", light_of = "%curr% '.$of_text.' %total%", light_load = "'.$loading_text.'";</script>';
+  echo  '<script type="text/javascript">var light_error = "'.esc_attr($error_text).'", light_of = "%curr% '.esc_attr($of_text).' %total%", light_load = "'.esc_attr($loading_text).'";</script>';
 }
 add_action('wp_head', 'pinnacle_lightbox_text');
 
@@ -505,112 +560,3 @@ function pinnacle_adjacent_post_link_plus($args = '', $format = '%link &raquo;',
 
   return true;
 }
-//REv Slider
-
-//User Addon
-add_action( 'show_user_profile', 'pinnacle_show_extra_profile_fields' );
-add_action( 'edit_user_profile', 'pinnacle_show_extra_profile_fields' );
-
-function pinnacle_show_extra_profile_fields( $user ) { ?>
-
-<h3>Extra profile information</h3>
-
-<table class="form-table">
-  <tr>
-    <th><label for="twitter"><?php _e('Occupation', 'pinnacle');?></label></th>
-    <td>
-      <input type="text" name="occupation" id="occupation" value="<?php echo esc_attr( get_the_author_meta( 'occupation', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Occupation.', 'pinnacle');?></span>
-    </td>
-  </tr>
-  <tr>
-    <th><label for="twitter">Twitter</label></th>
-    <td>
-      <input type="text" name="twitter" id="twitter" value="<?php echo esc_attr( get_the_author_meta( 'twitter', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Twitter username.', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="facebook">Facebook</label></th>
-    <td>
-      <input type="text" name="facebook" id="facebook" value="<?php echo esc_attr( get_the_author_meta( 'facebook', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Facebook url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="google">Google Plus</label></th>
-    <td>
-      <input type="text" name="google" id="google" value="<?php echo esc_attr( get_the_author_meta( 'google', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Google Plus url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="youtube">Youtube</label></th>
-    <td>
-      <input type="text" name="youtube" id="youtube" value="<?php echo esc_attr( get_the_author_meta( 'youtube', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your YouTube url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="flickr">Flickr</label></th>
-    <td>
-      <input type="text" name="flickr" id="flickr" value="<?php echo esc_attr( get_the_author_meta( 'flickr', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Flickr url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="vimeo">Vimeo</label></th>
-    <td>
-      <input type="text" name="vimeo" id="vimeo" value="<?php echo esc_attr( get_the_author_meta( 'vimeo', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Vimeo url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="linkedin">Linkedin</label></th>
-    <td>
-      <input type="text" name="linkedin" id="linkedin" value="<?php echo esc_attr( get_the_author_meta( 'linkedin', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Linkedin url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="dribbble">Dribbble</label></th>
-    <td>
-      <input type="text" name="dribbble" id="dribbble" value="<?php echo esc_attr( get_the_author_meta( 'dribbble', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Dribbble url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-    <tr>
-    <th><label for="pinterest">Pinterest</label></th>
-    <td>
-      <input type="text" name="pinterest" id="pinterest" value="<?php echo esc_attr( get_the_author_meta( 'pinterest', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Pinterest url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-  <tr>
-    <th><label for="instagram">Instagram</label></th>
-    <td>
-      <input type="text" name="instagram" id="instagram" value="<?php echo esc_attr( get_the_author_meta( 'instagram', $user->ID ) ); ?>" class="regular-text" /><br />
-      <span class="description"><?php _e('Please enter your Instagram url. (be sure to include http://)', 'pinnacle'); ?></span>
-    </td>
-  </tr>
-</table>
-<?php }
-add_action( 'personal_options_update', 'pinnacle_save_extra_profile_fields' );
-add_action( 'edit_user_profile_update', 'pinnacle_save_extra_profile_fields' );
-
-function pinnacle_save_extra_profile_fields( $user_id ) {
-    if ( !current_user_can( 'edit_user', $user_id ) )
-        return false;
-  update_user_meta( $user_id, 'occupation', $_POST['occupation'] );
-    update_user_meta( $user_id, 'twitter', $_POST['twitter'] );
-  update_user_meta( $user_id, 'facebook', $_POST['facebook'] );
-  update_user_meta( $user_id, 'google', $_POST['google'] );
-  update_user_meta( $user_id, 'youtube', $_POST['youtube'] );
-  update_user_meta( $user_id, 'flickr', $_POST['flickr'] );
-  update_user_meta( $user_id, 'vimeo', $_POST['vimeo'] );
-  update_user_meta( $user_id, 'linkedin', $_POST['linkedin'] );
-  update_user_meta( $user_id, 'dribbble', $_POST['dribbble'] );
-  update_user_meta( $user_id, 'pinterest', $_POST['pinterest'] );
-  update_user_meta( $user_id, 'instagram', $_POST['instagram'] );
-}
-

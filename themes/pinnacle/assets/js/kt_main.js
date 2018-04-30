@@ -159,8 +159,13 @@ jQuery(document).ready(function ($) {
 	$('.init-masonry').each(function(){
     	var masonrycontainer = $(this),
     	masonry_selector = $(this).data('masonry-selector');
+       if($('body.rtl').length){
+        var iso_rtl = false;
+      } else {
+        var iso_rtl = true;
+      }
     	masonrycontainer.imagesLoadedn( function(){
-			masonrycontainer.masonry({itemSelector: masonry_selector});
+			masonrycontainer.masonry({itemSelector: masonry_selector, isOriginLeft: iso_rtl});
 		});
 	});
 		 //init carousel

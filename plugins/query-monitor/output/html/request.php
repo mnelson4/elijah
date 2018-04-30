@@ -1,18 +1,9 @@
 <?php
-/*
-Copyright 2009-2015 John Blackbourn
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-*/
+/**
+ * Request data output for HTML pages.
+ *
+ * @package query-monitor
+ */
 
 class QM_Output_Html_Request extends QM_Output_Html {
 
@@ -25,9 +16,10 @@ class QM_Output_Html_Request extends QM_Output_Html {
 
 		$data = $this->collector->get_data();
 
-		echo '<div class="qm qm-half" id="' . esc_attr( $this->collector->id() ) . '">';
-		echo '<table cellspacing="0">';
-		echo '<tbody>';
+		$db_queries = QM_Collectors::get( 'db_queries' );
+
+		echo '<div class="qm qm-non-tabular" id="' . esc_attr( $this->collector->id() ) . '">';
+		echo '<div class="qm-boxed qm-boxed-wrap">';
 
 		foreach ( array(
 			'request'       => __( 'Request', 'query-monitor' ),
@@ -35,120 +27,146 @@ class QM_Output_Html_Request extends QM_Output_Html {
 			'matched_query' => __( 'Matched Query', 'query-monitor' ),
 			'query_string'  => __( 'Query String', 'query-monitor' ),
 		) as $item => $name ) {
-
-			if ( !isset( $data['request'][$item] ) ) {
+			if ( is_admin() && ! isset( $data['request'][ $item ] ) ) {
 				continue;
 			}
 
-			if ( ! empty( $data['request'][$item] ) ) {
-				if ( in_array( $item, array( 'request', 'matched_query', 'query_string' ) ) ) {
-					$value = self::format_url( $data['request'][$item] );
+			if ( ! empty( $data['request'][ $item ] ) ) {
+				if ( in_array( $item, array( 'request', 'matched_query', 'query_string' ), true ) ) {
+					$value = self::format_url( $data['request'][ $item ] );
 				} else {
-					$value = esc_html( $data['request'][$item] );
+					$value = esc_html( $data['request'][ $item ] );
 				}
 			} else {
-				$value = '<em>' . __( 'none', 'query-monitor' ) . '</em>';
+				$value = '<em>' . esc_html__( 'none', 'query-monitor' ) . '</em>';
 			}
 
-			echo '<tr>';
-			echo '<td valign="top">' . $name . '</td>';
-			echo '<td valign="top" colspan="2">' . $value . '</td>';
-			echo '</tr>';
+			echo '<div class="qm-section">';
+			echo '<h2>' . esc_html( $name ) . '</h2>';
+			echo '<p class="qm-ltr"><code>' . $value . '</code></p>'; // WPCS: XSS ok.
+			echo '</div>';
 		}
 
-		$rowspan = isset( $data['qvars'] ) ? count( $data['qvars'] ) : 1;
+		echo '</div>';
 
-		echo '<tr>';
-		echo '<td rowspan="' . $rowspan . '">' . __( 'Query Vars', 'query-monitor' ) . '</td>';
+		echo '<div class="qm-boxed qm-boxed-wrap">';
 
-		if ( !empty( $data['qvars'] ) ) {
+		if ( ! empty( $data['matching_rewrites'] ) ) {
+			echo '<div class="qm-section">';
+			echo '<h2>' . esc_html__( 'All Matching Rewrite Rules', 'query-monitor' ) . '</h2>';
+			echo '<table>';
 
-			$first = true;
+			foreach ( $data['matching_rewrites'] as $rule => $query ) {
+				$query = str_replace( 'index.php?', '', $query );
 
-			foreach( $data['qvars'] as $var => $value ) {
+				echo '<tr>';
+				echo '<td class="qm-ltr"><code>' . esc_html( $rule ) . '</code></td>';
+				echo '<td class="qm-ltr"><code>';
+				echo self::format_url( $query ); // WPCS: XSS ok.
+				echo '</code></td>';
+				echo '</tr>';
+			}
 
-				if ( !$first ) {
-					echo '<tr>';
-				}
+			echo '</table>';
+			echo '</div>';
+		}
 
-				if ( isset( $data['plugin_qvars'][$var] ) ) {
-					echo "<td valign='top'><span class='qm-current'>{$var}</span></td>";
+		echo '<div class="qm-section">';
+		echo '<h2>';
+		esc_html_e( 'Query Vars', 'query-monitor' );
+
+		if ( $db_queries ) {
+			$db_queries_data = $db_queries->get_data();
+			if ( ! empty( $db_queries_data['dbs']['$wpdb']->has_main_query ) ) {
+				printf(
+					' <a href="#" class="qm-filter-trigger" data-qm-target="db_queries-wpdb" data-qm-filter="caller" data-qm-value="qm-main-query">%s</a>',
+					esc_html__( 'View Main Query', 'query-monitor' )
+				);
+			}
+		}
+
+		echo '</h2>';
+
+		if ( ! empty( $data['qvars'] ) ) {
+
+			echo '<table>';
+
+			foreach ( $data['qvars'] as $var => $value ) {
+
+				echo '<tr>';
+
+				if ( isset( $data['plugin_qvars'][ $var ] ) ) {
+					echo '<td class="qm-ltr"><span class="qm-current">' . esc_html( $var ) . '</span></td>';
 				} else {
-					echo "<td valign='top'>{$var}</td>";
+					echo '<td class="qm-ltr">' . esc_html( $var ) . '</td>';
 				}
 
 				if ( is_array( $value ) or is_object( $value ) ) {
-					echo '<td valign="top"><pre>';
-					print_r( $value );
+					echo '<td class="qm-ltr"><pre>';
+					echo esc_html( print_r( $value, true ) );
 					echo '</pre></td>';
 				} else {
-					$value = esc_html( $value );
-					echo "<td valign='top'>{$value}</td>";
+					echo '<td class="qm-ltr qm-wrap">' . esc_html( $value ) . '</td>';
 				}
 
 				echo '</tr>';
 
-				$first = false;
-
 			}
+			echo '</table>';
 
 		} else {
 
-			echo '<td colspan="2"><em>' . __( 'none', 'query-monitor' ) . '</em></td>';
-			echo '</tr>';
+			echo '<p><em>' . esc_html__( 'none', 'query-monitor' ) . '</em></p>';
 
 		}
 
-		if ( !empty( $data['multisite'] ) ) {
-
-			$rowspan = count( $data['multisite'] );
-
-			echo '<tr>';
-			echo '<td rowspan="' . $rowspan . '">' . __( 'Multisite', 'query-monitor' ) . '</td>';
-
-			$first = true;
-
-			foreach( $data['multisite'] as $var => $value ) {
-
-				if ( !$first ) {
-					echo '<tr>';
-				}
-
-				echo "<td valign='top'>{$var}</td>";
-
-				echo '<td valign="top"><pre>';
-				print_r( $value );
-				echo '</pre></td>';
-
-				echo '</tr>';
-
-				$first = false;
-
-			}
-		}
-
-		if ( !empty( $data['queried_object'] ) ) {
-
-			$vars = get_object_vars( $data['queried_object'] );
-
-			echo '<tr>';
-			echo '<td valign="top">' . __( 'Queried Object', 'query-monitor' ) . '</td>';
-			echo '<td valign="top" colspan="2" class="qm-has-inner">';
-			echo '<div class="qm-inner-toggle">' . $data['queried_object_title'] . ' (' . get_class( $data['queried_object'] ) . ' object) (<a href="#" class="qm-toggle" data-on="' . esc_attr__( 'Show', 'query-monitor' ) . '" data-off="' . esc_attr__( 'Hide', 'query-monitor' ) . '">' . __( 'Show', 'query-monitor' ) . '</a>)</div>';
-
-			echo '<div class="qm-toggled">';
-			self::output_inner( $vars );
-			echo '</div>';
-
-			echo '</td>';
-			echo '</tr>';
-
-		}
-
-		echo '</tbody>';
-		echo '</table>';
 		echo '</div>';
 
+		echo '<div class="qm-section">';
+		echo '<h2>' . esc_html__( 'Queried Object', 'query-monitor' ) . '</h2>';
+
+		if ( ! empty( $data['queried_object'] ) ) {
+			printf( // WPCS: XSS ok.
+				'<p>%1$s (%2$s)</p>',
+				esc_html( $data['queried_object']['title'] ),
+				esc_html( get_class( $data['queried_object']['data'] ) )
+			);
+		} else {
+			echo '<p><em>' . esc_html__( 'none', 'query-monitor' ) . '</em></p>';
+		}
+
+		echo '</div>';
+
+		echo '<div class="qm-section">';
+		echo '<h2>' . esc_html__( 'Current User', 'query-monitor' ) . '</h2>';
+
+		if ( ! empty( $data['user']['data'] ) ) {
+			printf( // WPCS: XSS ok.
+				'<p>%1$s</p>',
+				esc_html( $data['user']['title'] )
+			);
+		} else {
+			echo '<p><em>' . esc_html__( 'none', 'query-monitor' ) . '</em></p>';
+		}
+
+		echo '</div>';
+
+		if ( ! empty( $data['multisite'] ) ) {
+			echo '<div class="qm-section">';
+			echo '<h2>' . esc_html__( 'Multisite', 'query-monitor' ) . '</h2>';
+
+			foreach ( $data['multisite'] as $var => $value ) {
+				printf( // WPCS: XSS ok.
+					'<p>%1$s</p>',
+					esc_html( $value['title'] )
+				);
+			}
+
+			echo '</div>';
+		}
+
+		echo '</div>';
+		echo '</div>';
 	}
 
 	public function admin_menu( array $menu ) {
@@ -158,10 +176,14 @@ class QM_Output_Html_Request extends QM_Output_Html {
 
 		$title = ( empty( $count ) )
 			? __( 'Request', 'query-monitor' )
+			/* translators: %s: Number of additional query variables */
 			: __( 'Request (+%s)', 'query-monitor' );
 
 		$menu[] = $this->menu( array(
-			'title' => sprintf( $title, number_format_i18n( $count ) )
+			'title' => esc_html( sprintf(
+				$title,
+				number_format_i18n( $count )
+			) ),
 		) );
 		return $menu;
 

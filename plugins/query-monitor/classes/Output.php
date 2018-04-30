@@ -1,25 +1,37 @@
 <?php
-/*
-Copyright 2009-2015 John Blackbourn
+/**
+ * Abstract output handler.
+ *
+ * @package query-monitor
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+if ( ! class_exists( 'QM_Output' ) ) {
+abstract class QM_Output {
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	protected $collector;
+	protected $timer;
 
-*/
+	public function __construct( QM_Collector $collector ) {
+		$this->collector = $collector;
+	}
 
-if ( ! interface_exists( 'QM_Output' ) ) {
-interface QM_Output {
+	abstract public function get_output();
 
-	public function __construct( QM_Collector $collector );
+	public function output() {
+		// nothing
+	}
 
-	public function output();
+	public function get_collector() {
+		return $this->collector;
+	}
+
+	final public function get_timer() {
+		return $this->timer;
+	}
+
+	final public function set_timer( QM_Timer $timer ) {
+		$this->timer = $timer;
+	}
 
 }
 }

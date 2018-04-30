@@ -42,12 +42,12 @@
                     }
                 }
                 $('select.font-icons').select2({
-                            formatResult: addIconToSelect,
-                            formatSelection: addIconToSelect,
-                            width: '93%',
-                            triggerChange: true,
-                            allowClear: true,
-                        });
+                    formatResult: addIconToSelect,
+                    formatSelection: addIconToSelect,
+                    width: '93%',
+                    triggerChange: true,
+                    allowClear: true,
+                });
 
                 el.find( '.redux-slides-remove' ).live(
                     'click', function() {
@@ -77,7 +77,7 @@
 
                 el.find( '.kad_redux-icon-add' ).click(
                     function() {
-                        
+                         $('select.font-icons').select2("destroy");
                         var newSlide = $( this ).prev().find( '.redux-slides-accordion-group:last' ).clone( true );
 
                         var slideCount = $( newSlide ).find( '.slide-title' ).attr( "name" ).match( /[0-9]+(?!.*[0-9])/ );
@@ -109,14 +109,13 @@
                         $( newSlide ).find( '.icon-link-target input[type="checkbox"]' ).attr("checked", false);
                         $( newSlide ).find( 'h3' ).text( '' ).append( '<span class="redux-slides-header">' + content_new_title + '</span><span class="ui-accordion-header-icon ui-icon ui-icon-plus"></span>' );
                         $( this ).prev().append( newSlide );
-                          $("select.font-icons").each(function(){ $("select.font-icons").select2({
-                            formatResult: addIconToSelect,
-                            formatSelection: addIconToSelect,
-                            width: '93%',
-                            triggerChange: true,
-                             allowClear: true,
-                        });
-                      });
+                           $('select.font-icons').select2({
+	                            formatResult: addIconToSelect,
+	                            formatSelection: addIconToSelect,
+	                            width: '93%',
+	                            triggerChange: true,
+	                            allowClear: true,
+	                        });
                     }
                 );
 

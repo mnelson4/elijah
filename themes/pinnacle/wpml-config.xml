@@ -163,5 +163,6 @@
             <key name="post_header_title_text" />
             <key name="post_header_subtitle_text" />
             <key name="footer_text" />
+        </key>
     </admin-texts>    
 </wpml-config>

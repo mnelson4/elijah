@@ -25,9 +25,170 @@ function wppb_add_ons_content() {
     $version = ( ( PROFILE_BUILDER == 'Profile Builder Pro' ) ? 'Pro' : $version );
     $version = ( ( PROFILE_BUILDER == 'Profile Builder Hobbyist' ) ? 'Hobbyist' : $version );
 
+    $wppb_add_ons = wppb_add_ons_get_remote_content();
+    $wppb_get_all_plugins = get_plugins();
+    $wppb_get_active_plugins = get_option('active_plugins');
+    $ajax_nonce = wp_create_nonce("wppb-activate-addon");
+
     ?>
 
     <div class="wrap wppb-add-on-wrap">
+
+
+
+
+        <div>
+            <h2><?php _e( 'Recommended Plugins', 'profile-builder' ) ?></h2>
+
+
+            <?php
+            $trp_add_on_exists = 0;
+            $trp_add_on_is_active = 0;
+            $trp_add_on_is_network_active = 0;
+            // Check to see if add-on is in the plugins folder
+            foreach ($wppb_get_all_plugins as $wppb_plugin_key => $wppb_plugin) {
+                if( strtolower($wppb_plugin['Name']) == strtolower( 'TranslatePress - Multilingual' ) && strpos(strtolower($wppb_plugin['AuthorName']), strtolower('Cozmoslabs')) !== false) {
+                    $trp_add_on_exists = 1;
+                    if (in_array($wppb_plugin_key, $wppb_get_active_plugins)) {
+                        $trp_add_on_is_active = 1;
+                    }
+                    // Consider the add-on active if it's network active
+                    if (is_plugin_active_for_network($wppb_plugin_key)) {
+                        $trp_add_on_is_network_active = 1;
+                        $trp_add_on_is_active = 1;
+                    }
+                    $plugin_file = $wppb_plugin_key;
+                }
+            }
+            ?>
+            <div class="plugin-card wppb-recommended-plugin wppb-add-on">
+                <div class="plugin-card-top">
+                    <a target="_blank" href="https://wordpress.org/plugins/translatepress-multilingual/">
+                        <img src="<?php echo plugins_url( '../assets/images/trp-recommended.png', __FILE__ ); ?>" width="100%">
+                    </a>
+                    <h3 class="wppb-add-on-title">
+                        <a target="_blank" href="https://wordpress.org/plugins/translatepress-multilingual/">TranslatePress</a>
+                    </h3>
+                    <h3 class="wppb-add-on-price"><?php  _e( 'Free', 'profile-builder' ) ?></h3>
+                    <p class="wppb-add-on-description">
+                        <?php _e( 'Translate your Profile Builder forms with a WordPress translation plugin that anyone can use. It offers a simpler way to translate WordPress sites, with full support for WooCommerce and site builders.', 'profile-builder' ) ?>
+                        <a href="<?php admin_url();?>plugin-install.php?tab=plugin-information&plugin=translatepress-multilingual&TB_iframe=true&width=772&height=875" class="thickbox" aria-label="More information about TranslatePress - Multilingual" data-title="TranslatePress - Multilingual"><?php _e( 'More Details' ); ?></a>
+                    </p>
+                </div>
+                <div class="plugin-card-bottom wppb-add-on-compatible">
+                    <?php
+                    if ($trp_add_on_exists) {
+
+                        // Display activate/deactivate buttons
+                        if (!$trp_add_on_is_active) {
+                            echo '<a class="wppb-add-on-activate right button button-secondary" href="' . $plugin_file . '" data-nonce="' . $ajax_nonce . '">' . __('Activate', 'profile-builder') . '</a>';
+
+                            // If add-on is network activated don't allow deactivation
+                        } elseif (!$trp_add_on_is_network_active) {
+                            echo '<a class="wppb-add-on-deactivate right button button-secondary" href="' . $plugin_file . '" data-nonce="' . $ajax_nonce . '">' . __('Deactivate', 'profile-builder') . '</a>';
+                        }
+
+                        // Display message to the user
+                        if( !$trp_add_on_is_active ){
+                            echo '<span class="dashicons dashicons-no-alt"></span><span class="wppb-add-on-message">' . __('Plugin is <strong>inactive</strong>', 'profile-builder') . '</span>';
+                        } else {
+                            echo '<span class="dashicons dashicons-yes"></span><span class="wppb-add-on-message">' . __('Plugin is <strong>active</strong>', 'profile-builder') . '</span>';
+                        }
+
+                    } else {
+                        // handles the in-page download
+                        $wppb_paid_link_class = 'button-secondary';
+                        $wppb_paid_link_text = __('Install Now', 'profile-builder');
+
+                        echo '<a class="right install-now button ' . $wppb_paid_link_class . '" href="'. wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=translatepress-multilingual'), 'install-plugin_translatepress-multilingual') .'" data-add-on-slug="translatepress-multilingual" data-add-on-name="TranslatePress - Multilingual" data-nonce="' . $ajax_nonce . '">' . $wppb_paid_link_text . '</a>';
+                        echo '<span class="dashicons dashicons-yes"></span><span class="wppb-add-on-message">' . __('Compatible with your version of Profile Builder.', 'profile-builder') . '</span>';
+
+                    }
+                    ?>
+                    <div class="spinner"></div>
+                    <span class="wppb-add-on-user-messages wppb-error-manual-install"><?php printf(__('Could not install plugin. Retry or <a href="%s" target="_blank">install manually</a>.', 'profile-builder'), esc_url( 'https://www.wordpress.org/plugins/translatepress-multilingual' )) ?></a>.</span>
+                </div>
+            </div>
+
+
+
+            <?php
+            $pms_add_on_exists = 0;
+            $pms_add_on_is_active = 0;
+            $pms_add_on_is_network_active = 0;
+            // Check to see if add-on is in the plugins folder
+            foreach ($wppb_get_all_plugins as $wppb_plugin_key => $wppb_plugin) {
+                if( strtolower($wppb_plugin['Name']) == strtolower( 'Paid Member Subscriptions' ) && strpos(strtolower($wppb_plugin['AuthorName']), strtolower('Cozmoslabs')) !== false) {
+                    $pms_add_on_exists = 1;
+                    if (in_array($wppb_plugin_key, $wppb_get_active_plugins)) {
+                        $pms_add_on_is_active = 1;
+                    }
+                    // Consider the add-on active if it's network active
+                    if (is_plugin_active_for_network($wppb_plugin_key)) {
+                        $pms_add_on_is_network_active = 1;
+                        $pms_add_on_is_active = 1;
+                    }
+                    $plugin_file = $wppb_plugin_key;
+                }
+            }
+            ?>
+            <div class="plugin-card wppb-recommended-plugin wppb-add-on">
+                <div class="plugin-card-top">
+                    <a target="_blank" href="http://wordpress.org/plugins/paid-member-subscriptions/">
+                        <img src="<?php echo plugins_url( '../assets/images/pms-recommended.png', __FILE__ ); ?>" width="100%">
+                    </a>
+                    <h3 class="wppb-add-on-title">
+                        <a target="_blank" href="http://wordpress.org/plugins/paid-member-subscriptions/">Paid Member Subscriptions</a>
+                    </h3>
+                    <h3 class="wppb-add-on-price"><?php  _e( 'Free', 'profile-builder' ) ?></h3>
+                    <p class="wppb-add-on-description">
+                        <?php _e( 'Accept user payments, create subscription plans and restrict content on your membership site.', 'profile-builder' ) ?>
+                        <a href="<?php admin_url();?>plugin-install.php?tab=plugin-information&plugin=paid-member-subscriptions&TB_iframe=true&width=772&height=875" class="thickbox" aria-label="More information about Paid Member Subscriptions - membership & content restriction" data-title="Paid Member Subscriptions - membership & content restriction"><?php _e( 'More Details' ); ?></a>
+                    </p>
+                </div>
+                <div class="plugin-card-bottom wppb-add-on-compatible">
+                    <?php
+                    if ($pms_add_on_exists) {
+
+                        // Display activate/deactivate buttons
+                        if (!$pms_add_on_is_active) {
+                            echo '<a class="wppb-add-on-activate right button button-secondary" href="' . $plugin_file . '" data-nonce="' . $ajax_nonce . '">' . __('Activate', 'profile-builder') . '</a>';
+
+                            // If add-on is network activated don't allow deactivation
+                        } elseif (!$pms_add_on_is_network_active) {
+                            echo '<a class="wppb-add-on-deactivate right button button-secondary" href="' . $plugin_file . '" data-nonce="' . $ajax_nonce . '">' . __('Deactivate', 'profile-builder') . '</a>';
+                        }
+
+                        // Display message to the user
+                        if( !$pms_add_on_is_active ){
+                            echo '<span class="dashicons dashicons-no-alt"></span><span class="wppb-add-on-message">' . __('Plugin is <strong>inactive</strong>', 'profile-builder') . '</span>';
+                        } else {
+                            echo '<span class="dashicons dashicons-yes"></span><span class="wppb-add-on-message">' . __('Plugin is <strong>active</strong>', 'profile-builder') . '</span>';
+                        }
+
+                    } else {
+                        // handles the in-page download
+                        $wppb_paid_link_class = 'button-secondary';
+                        $wppb_paid_link_text = __('Install Now', 'profile-builder');
+
+                        echo '<a class="right install-now button ' . $wppb_paid_link_class . '" href="'. wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=paid-member-subscriptions'), 'install-plugin_paid-member-subscriptions') .'" data-add-on-slug="paid-member-subscriptions" data-add-on-name="Paid Member Subscriptions" data-nonce="' . $ajax_nonce . '">' . $wppb_paid_link_text . '</a>';
+                        echo '<span class="dashicons dashicons-yes"></span><span class="wppb-add-on-message">' . __('Compatible with your version of Profile Builder.', 'profile-builder') . '</span>';
+
+                    }
+                    ?>
+                    <div class="spinner"></div>
+                    <span class="wppb-add-on-user-messages wppb-error-manual-install"><?php printf(__('Could not install plugin. Retry or <a href="%s" target="_blank">install manually</a>.', 'profile-builder'), esc_url( 'http://www.wordpress.org/plugins/paid-member-subscriptions' )) ?></a>.</span>
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
+
+        <div class="clear"></div>
 
         <h2><?php _e( 'Add-Ons', 'profile-builder' ); ?></h2>
 
@@ -49,10 +210,6 @@ function wppb_add_ons_content() {
         <div id="the-list">
 
         <?php
-
-            $wppb_add_ons = wppb_add_ons_get_remote_content();
-            $wppb_get_all_plugins = get_plugins();
-            $wppb_get_active_plugins = get_option('active_plugins');
 
             if( $wppb_add_ons === false ) {
 
@@ -98,7 +255,12 @@ function wppb_add_ons_content() {
                     echo '</a>';
                     echo '</h3>';
 
-                    echo '<h3 class="wppb-add-on-price">' . $wppb_add_on['price'] . '</h3>';
+                    //echo '<h3 class="wppb-add-on-price">' . $wppb_add_on['price'] . '</h3>';
+                    if( $wppb_add_on['type'] == 'paid' )
+                        echo '<h3 class="wppb-add-on-price">' . __( 'Available in Hobbyist and Pro Versions', 'profile-builder' ) . '</h3>';
+                    else
+                        echo '<h3 class="wppb-add-on-price">' . __( 'Available in All Versions', 'profile-builder' ) . '</h3>';
+
                     echo '<p class="wppb-add-on-description">' . $wppb_add_on['description'] . '</p>';
 
                     echo '</div>';
@@ -114,8 +276,6 @@ function wppb_add_ons_content() {
 
                         // PB version type does match
                         if (in_array(strtolower($version), $wppb_add_on['product_version_type'])) {
-
-                            $ajax_nonce = wp_create_nonce("wppb-activate-addon");
 
                             if ($wppb_add_on_exists) {
 
@@ -139,17 +299,12 @@ function wppb_add_ons_content() {
 
                                 // If we're on a multisite don't add the wpp-add-on-download class to the button so we don't fire the js that
                                 // handles the in-page download
-                                if (is_multisite()) {
-                                    ($wppb_add_on['paid']) ? $wppb_paid_link_class = 'button-primary' : $wppb_paid_link_class = 'button-secondary';
-                                    ($wppb_add_on['paid']) ? $wppb_paid_link_text = __('Buy Now', 'profile-builder') : $wppb_paid_link_text = __('Download Now', 'profile-builder');
-                                } else {
-                                    ($wppb_add_on['paid']) ? $wppb_paid_link_class = 'button-primary' : $wppb_paid_link_class = 'button-secondary wppb-add-on-download';
-                                    ($wppb_add_on['paid']) ? $wppb_paid_link_text = __('Buy Now', 'profile-builder') : $wppb_paid_link_text = __('Install Now', 'profile-builder');
-                                }
+                                ($wppb_add_on['paid']) ? $wppb_paid_link_class = 'button-primary' : $wppb_paid_link_class = 'button-secondary';
+                                ($wppb_add_on['paid']) ? $wppb_paid_link_text = __('Learn More', 'profile-builder') : $wppb_paid_link_text = __('Download Now', 'profile-builder');
 
-                                ($wppb_add_on['paid']) ? $wppb_paid_href_utm_text = '?utm_source=wpbackend&utm_medium=clientsite&utm_content=add-on-page-buy-button&utm_campaign=PB' . $version : $wppb_paid_href_utm_text = '&utm_source=wpbackend&utm_medium=clientsite&utm_content=add-on-page&utm_campaign=PB' . $version;
+                                ($wppb_add_on['paid']) ? $wppb_paid_href_utm_text = '?utm_source=wpbackend&utm_medium=clientsite&utm_content=add-on-page-buy-button&utm_campaign=PB' . $version : $wppb_paid_href_utm_text = '?utm_source=wpbackend&utm_medium=clientsite&utm_content=add-on-page&utm_campaign=PB' . $version;
 
-                                echo '<a target="_blank" class="right button ' . $wppb_paid_link_class . '" href="' . $wppb_add_on['download_url'] . $wppb_paid_href_utm_text . '" data-add-on-slug="profile-builder-' . $wppb_add_on['slug'] . '" data-add-on-name="' . $wppb_add_on['name'] . '" data-nonce="' . $ajax_nonce . '">' . $wppb_paid_link_text . '</a>';
+                                echo '<a target="_blank" class="right button ' . $wppb_paid_link_class . '" href="' . $wppb_add_on['url'] . $wppb_paid_href_utm_text . '" data-add-on-slug="profile-builder-' . $wppb_add_on['slug'] . '" data-add-on-name="' . $wppb_add_on['name'] . '" data-nonce="' . $ajax_nonce . '">' . $wppb_paid_link_text . '</a>';
                                 echo '<span class="dashicons dashicons-yes"></span><span class="wppb-add-on-message">' . __('Compatible with your version of Profile Builder.', 'profile-builder') . '</span>';
 
                             }
@@ -159,7 +314,7 @@ function wppb_add_ons_content() {
                             // PB version type does not match
                         } else {
 
-                            echo '<a target="_blank" class="button button-secondary right" href="http://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=add-on-page-upgrade-button&utm_campaign=PB' . $version . '">' . __('Upgrade Profile Builder', 'profile-builder') . '</a>';
+                            echo '<a target="_blank" class="button button-secondary right" href="https://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=add-on-page-upgrade-button&utm_campaign=PB' . $version . '">' . __('Upgrade Profile Builder', 'profile-builder') . '</a>';
                             echo '<span class="dashicons dashicons-no-alt"></span><span class="wppb-add-on-message">' . __('Not compatible with Profile Builder', 'profile-builder') . ' ' . $version . '</span>';
 
                         }
@@ -185,85 +340,7 @@ function wppb_add_ons_content() {
         ?>
         </div>
 
-        <div class="clear"></div>
-        <div>
-            <h2><?php _e( 'Recommended Plugins', 'profile-builder' ) ?></h2>
-            <?php
-            $pms_add_on_exists = 0;
-            $pms_add_on_is_active = 0;
-            $pms_add_on_is_network_active = 0;
-            // Check to see if add-on is in the plugins folder
-            foreach ($wppb_get_all_plugins as $wppb_plugin_key => $wppb_plugin) {
-                if( strtolower($wppb_plugin['Name']) == strtolower( 'Paid Member Subscriptions' ) && strpos(strtolower($wppb_plugin['AuthorName']), strtolower('Cozmoslabs')) !== false) {
-                    $pms_add_on_exists = 1;
-                    if (in_array($wppb_plugin_key, $wppb_get_active_plugins)) {
-                        $pms_add_on_is_active = 1;
-                    }
-                    // Consider the add-on active if it's network active
-                    if (is_plugin_active_for_network($wppb_plugin_key)) {
-                        $pms_add_on_is_network_active = 1;
-                        $pms_add_on_is_active = 1;
-                    }
-                    $plugin_file = $wppb_plugin_key;
-                }
-            }
-            ?>
-            <div class="plugin-card wppb-recommended-plugin wppb-add-on">
-                <div class="plugin-card-top">
-                    <a target="_blank" href="http://wordpress.org/plugins/paid-member-subscriptions/">
-                        <img src="<?php echo plugins_url( '../assets/images/pms_recommended.jpg', __FILE__ ); ?>" width="100%">
-                    </a>
-                    <h3 class="wppb-add-on-title">
-                        <a target="_blank" href="http://wordpress.org/plugins/paid-member-subscriptions/">Paid Member Subscriptions</a>
-                    </h3>
-                    <h3 class="wppb-add-on-price"><?php  _e( 'Free', 'profile-builder' ) ?></h3>
-                    <p class="wppb-add-on-description">
-                        <?php _e( 'Accept user payments, create subscription plans and restrict content on your membership site.', 'profile-builder' ) ?>
-                        <a href="<?php admin_url();?>plugin-install.php?tab=plugin-information&plugin=paid-member-subscriptions&TB_iframe=true&width=772&height=875" class="thickbox" aria-label="More information about Paid Member Subscriptions - membership & content restriction" data-title="Paid Member Subscriptions - membership & content restriction"><?php _e( 'More Details' ); ?></a>
-                    </p>
-                </div>
-                <div class="plugin-card-bottom wppb-add-on-compatible">
-                   <?php
-                   if ($pms_add_on_exists) {
 
-                       // Display activate/deactivate buttons
-                       if (!$pms_add_on_is_active) {
-                           echo '<a class="wppb-add-on-activate right button button-secondary" href="' . $plugin_file . '" data-nonce="' . $ajax_nonce . '">' . __('Activate', 'profile-builder') . '</a>';
-
-                           // If add-on is network activated don't allow deactivation
-                       } elseif (!$pms_add_on_is_network_active) {
-                           echo '<a class="wppb-add-on-deactivate right button button-secondary" href="' . $plugin_file . '" data-nonce="' . $ajax_nonce . '">' . __('Deactivate', 'profile-builder') . '</a>';
-                       }
-
-                       // Display message to the user
-                       if( !$pms_add_on_is_active ){
-                           echo '<span class="dashicons dashicons-no-alt"></span><span class="wppb-add-on-message">' . __('Plugin is <strong>inactive</strong>', 'profile-builder') . '</span>';
-                       } else {
-                           echo '<span class="dashicons dashicons-yes"></span><span class="wppb-add-on-message">' . __('Plugin is <strong>active</strong>', 'profile-builder') . '</span>';
-                       }
-
-                   } else {
-
-                       // If we're on a multisite don't add the wpp-add-on-download class to the button so we don't fire the js that
-                       // handles the in-page download
-                       if (is_multisite()) {
-                           $wppb_paid_link_class = 'button-secondary';
-                           $wppb_paid_link_text = __('Download Now', 'profile-builder' );
-                       } else {
-                           $wppb_paid_link_class = 'button-secondary wppb-add-on-download';
-                           $wppb_paid_link_text = __('Install Now', 'profile-builder');
-                       }
-
-                       echo '<a target="_blank" class="right button ' . $wppb_paid_link_class . '" href="https://downloads.wordpress.org/plugin/paid-member-subscriptions.zip" data-add-on-slug="paid-member-subscriptions" data-add-on-name="Paid Member Subscriptions" data-nonce="' . $ajax_nonce . '">' . $wppb_paid_link_text . '</a>';
-                       echo '<span class="dashicons dashicons-yes"></span><span class="wppb-add-on-message">' . __('Compatible with your version of Profile Builder.', 'profile-builder') . '</span>';
-
-                   }
-                    ?>
-                    <div class="spinner"></div>
-                    <span class="wppb-add-on-user-messages wppb-error-manual-install"><?php printf(__('Could not install plugin. Retry or <a href="%s" target="_blank">install manually</a>.', 'profile-builder'), esc_url( 'http://www.wordpress.org/plugins/paid-member-subscriptions' )) ?></a>.</span>
-                </div>
-            </div>
-        </div>
 
     </div>
     <?php
@@ -277,7 +354,7 @@ function wppb_add_ons_content() {
  */
 function wppb_add_ons_get_remote_content() {
 
-    $response = wp_remote_get('http://www.cozmoslabs.com/wp-content/plugins/cozmoslabs-products-add-ons/profile-builder-add-ons.json');
+    $response = wp_remote_get('https://www.cozmoslabs.com/wp-content/plugins/cozmoslabs-products-add-ons/profile-builder-add-ons.json');
 
     if( is_wp_error($response) ) {
         return false;
@@ -304,8 +381,8 @@ function wppb_add_on_activate() {
     check_ajax_referer( 'wppb-activate-addon', 'nonce' );
     if( current_user_can( 'manage_options' ) ){
         // Setup variables from POST
-        $wppb_add_on_to_activate = $_POST['wppb_add_on_to_activate'];
-        $response = $_POST['wppb_add_on_index'];
+        $wppb_add_on_to_activate = sanitize_text_field( $_POST['wppb_add_on_to_activate'] );
+        $response = filter_var( $_POST['wppb_add_on_index'], FILTER_SANITIZE_NUMBER_INT );
 
         if( !empty( $wppb_add_on_to_activate ) && !is_plugin_active( $wppb_add_on_to_activate )) {
             activate_plugin( $wppb_add_on_to_activate );
@@ -328,8 +405,8 @@ function wppb_add_on_deactivate() {
     check_ajax_referer( 'wppb-activate-addon', 'nonce' );
     if( current_user_can( 'manage_options' ) ){
         // Setup variables from POST
-        $wppb_add_on_to_deactivate = $_POST['wppb_add_on_to_deactivate'];
-        $response = $_POST['wppb_add_on_index'];
+        $wppb_add_on_to_deactivate = sanitize_text_field( $_POST['wppb_add_on_to_deactivate'] );
+        $response = filter_var( $_POST['wppb_add_on_index'], FILTER_SANITIZE_NUMBER_INT );
 
         if( !empty( $wppb_add_on_to_deactivate ))
             deactivate_plugins( $wppb_add_on_to_deactivate );
@@ -344,66 +421,14 @@ add_action( 'wp_ajax_wppb_add_on_deactivate', 'wppb_add_on_deactivate' );
 
 
 /*
- * Function that downloads and unzips the .zip file returned from Cozmoslabs
- *
- * @since v.2.1.0
- */
-function wppb_add_on_download_zip_file() {
-
-    check_ajax_referer( 'wppb-activate-addon', 'nonce' );
-
-    // Set the response to success and change it later if needed
-    $response = $_POST['wppb_add_on_index'];
-    $add_on_index = $response;
-
-    // Setup variables from POST
-    $wppb_add_on_download_url = $_POST['wppb_add_on_download_url'];
-    $wppb_add_on_zip_name = $_POST['wppb_add_on_zip_name'];
-
-    if( strpos( $wppb_add_on_download_url, 'http://www.cozmoslabs.com/' ) === false && strpos( $wppb_add_on_download_url, 'https://downloads.wordpress.org/' )  === false )
-        wp_die();
-
-    // Get .zip file
-    $remote_response = wp_remote_get( $wppb_add_on_download_url, array( 'timeout' => 500000) );
-    if( is_wp_error( $remote_response ) ) {
-        $response = 'error-' . $add_on_index;
-    } else {
-        $file_contents = $remote_response['body'];
-    }
-
-
-    // Put the file in the plugins directory
-    if( isset( $file_contents ) ) {
-        if( file_put_contents( WP_PLUGIN_DIR . '/' . $wppb_add_on_zip_name, $file_contents ) === false ) {
-            $response = 'error-' . $add_on_index;
-        }
-    }
-
-
-    // Unzip the file
-    if( $response != 'error' ) {
-        WP_Filesystem();
-        if( unzip_file( WP_PLUGIN_DIR . '/' . $wppb_add_on_zip_name , WP_PLUGIN_DIR ) ) {
-            // Remove the zip file after we are all done
-            unlink( WP_PLUGIN_DIR . '/' . $wppb_add_on_zip_name );
-        } else {
-            $response = 'error-' . $add_on_index;
-        }
-    }
-
-    echo $response;
-    wp_die();
-}
-add_action( 'wp_ajax_wppb_add_on_download_zip_file', 'wppb_add_on_download_zip_file' );
-
-
-/*
  * Function that retrieves the data of the newly added plugin
  *
  * @since v.2.1.0
  */
 function wppb_add_on_get_new_plugin_data() {
-    $wppb_add_on_name = $_POST['wppb_add_on_name'];
+	if(isset( $_POST['wppb_add_on_name'] ) ){
+    	$wppb_add_on_name = sanitize_text_field( $_POST['wppb_add_on_name'] );
+	}
 
     $wppb_get_all_plugins = get_plugins();
     foreach( $wppb_get_all_plugins as $wppb_plugin_key => $wppb_plugin ) {

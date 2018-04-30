@@ -17,12 +17,17 @@
 .redux-container #redux-intro-text a {
   color: #fff;
 }
-.rAds {
+.rAds, .rAds img, .rAds a {
     display: none !important;
+    opacity: 0 !important;
 }
-#redux_rAds {
+#redux_rAds, #redux_rAds a, #redux_rAds img {
     display: none !important;
+    opacity: 0 !important;
 }
+#info-info_menu_settings_notice, #info-info_typography_settings_notice, #info-info_home_slider_settings_notice, #info-info_home_layout_settings_notice, #info-info_pagetitle_settings_notice{display:none;}
+#customize-controls #info-info_pagetitle_settings_notice, #customize-controls #info-info_menu_settings_notice, #customize-controls #info-info_typography_settings_notice, #customize-controls #info-info_home_slider_settings_notice, #customize-controls #info-info_home_layout_settings_notice{display:block;}
+
 .redux-container #redux-header .display_header .redux-dev-mode-notice-container {
   display: none !important;
 }
@@ -41,6 +46,10 @@
   -ms-transition: .1s linear all;
   -o-transition: .1s linear all;
   transition: .1s linear all;
+}
+.redux-main .redux-typography-container .clearfix {
+    clear: both;
+    display: block;
 }
 .wp-core-ui #redux_save:hover, .wp-core-ui .redux-container .button-primary:hover, .wp-core-ui #redux_save:focus, .wp-core-ui .redux-container .button-primary:focus {
 background:#00afdb;

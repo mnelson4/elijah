@@ -93,13 +93,10 @@ function wppb_get_unconfirmed_email_number(){
 	
 
 function wppb_handle_email_confirmation_cases() {
-	global $current_user;
 	global $wpdb;
-	
-	//die($current_user);
-	$url = trim($_POST['URL']);
-	$todo = trim($_POST['todo']);
-	$user_email = trim($_POST['user_email']);
+
+	$todo = sanitize_text_field($_POST['todo']);
+	$user_email = sanitize_email($_POST['user_email']);
 	
 	if ( current_user_can( 'delete_users' ) )
 		if ( ( $todo != '' ) && ( $user_email != '' ) ){
@@ -163,68 +160,53 @@ function wppb_add_meta_to_user_on_activation( $user_id, $password, $meta ){
 		update_user_meta( $user_id, 'jabber', $meta['jabber'] );
 	if( !empty( $meta['description'] ) )
 		update_user_meta( $user_id, 'description', $meta['description'] );
-	
+
 	if( !empty( $meta['role'] ) )
 		$user->set_role( $meta['role'] ); //update the users role (s)he registered for
-	
+
+    if( !empty( $meta['first_name'] ) && !empty( $meta['last_name'] ) )
+        wp_update_user(array('ID' => $user_id, 'display_name' => $meta['first_name'].' '.$meta['last_name'] ));
+    else if( !empty( $meta['nickname'] ) )
+        wp_update_user(array('ID' => $user_id, 'display_name' => $meta['nickname'] ));
+
 	//copy the data from the meta fields (custom fields)
-	$manage_fields = get_option( 'wppb_manage_fields', 'not_set' );
+	$manage_fields = apply_filters( 'wppb_form_fields', get_option( 'wppb_manage_fields', 'not_set' ), array( 'meta' => $meta, 'user_id' => $user_id, 'context' => 'user_activation' ) );
 	if ( $manage_fields != 'not_set' ){
 		foreach ( $manage_fields as $key => $value){
 			switch ( $value['field'] ) {
-				case 'Input':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}						
-				case 'Input (Hidden)':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Checkbox':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Checkbox (Terms and Conditions)':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Radio':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Select':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Select (Country)':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Select (Multiple)':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Select (Timezone)':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
-				case 'Datepicker':{
-					if ( isset( $meta[$value['meta-name']] ) )
-						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
-					break;
-				}
+				case 'Input':
+				case 'Input (Hidden)':
+				case 'Checkbox':
+				case 'Checkbox (Terms and Conditions)':
+				case 'Radio':
+				case 'Select':
+				case 'Select (Country)':
+				case 'Select (Multiple)':
+				case 'Select (Timezone)':
+				case 'Datepicker':
 				case 'Textarea':{
 					if ( isset( $meta[$value['meta-name']] ) )
 						update_user_meta( $user_id, $value['meta-name'], trim( $meta[$value['meta-name']] ) );
+					break;
+				}
+				case 'Timepicker':{
+					if ( isset( $meta[$value['meta-name']] ) ) {
+						$time = $meta[$value['meta-name']];
+						if( !empty( $time['hours'] ) && !empty( $time['minutes'] ) ) {
+							update_user_meta( $user_id, $value['meta-name'], $time['hours'] . ':' . $time['minutes'] );
+						}
+
+					}
+					break;
+				}
+				case 'Map':{
+					if ( isset( $meta[$value['meta-name']] ) ) {
+						// Add new markers
+						if( is_array( $meta[$value['meta-name']] ) ) {
+							foreach( $meta[$value['meta-name']] as $key => $position )
+								update_user_meta( $user_id, $value['meta-name'] . '_' . $key, $position );
+						}
+					}
 					break;
 				}
 				case 'Upload':{
@@ -232,6 +214,12 @@ function wppb_add_meta_to_user_on_activation( $user_id, $password, $meta ){
                         if( !empty( $meta[$value['meta-name']] ) ) {
                             if (is_numeric($meta[$value['meta-name']])) {
                                 update_user_meta($user_id, $value['meta-name'], trim($meta[$value['meta-name']]));
+
+                                // use this to update the post author to the correct user
+                                wp_update_post( array(
+                                    'ID'            => trim( $meta[$value['meta-name']] ),
+                                    'post_author'   => $user_id
+                                ) );
                             } else {
                                 $wp_upload_array = wp_upload_dir(); // Array of key => value pairs
 
@@ -304,12 +292,27 @@ function wppb_add_meta_to_user_on_activation( $user_id, $password, $meta ){
                         break;
                     }
 				}
-                default:
-                    do_action( 'wppb_add_meta_on_user_activation_'.Wordpress_Creation_Kit_PB::wck_generate_slug( $value['field'] ), $user_id, $password, $meta );
+				case 'Default - Blog Details':{
+					if ( is_multisite() && isset( $meta['wppb_create_new_site_checkbox'] ) && $meta['wppb_create_new_site_checkbox'] == 'yes' ) {
+						$blog_url = $meta['wppb_blog_url'];
+						$blog_title = $meta['wppb_blog_title'];
+
+						$privacy['public'] = ( isset( $meta['wppb_blog_privacy'] ) && 'Yes' == $meta['wppb_blog_privacy'] ) ? true : false;
+						$blog_details = wpmu_validate_blog_signup( $blog_url, $blog_title );
+						if ( empty($blog_details['errors']->errors['blogname']) && empty($blog_details['errors']->errors['blog_title'])) {
+							wpmu_create_blog( $blog_details['domain'], $blog_details['path'], $blog_details['blog_title'], $user_id, $privacy );
+						}
+					}
+				}
+                default: {
+					if ( isset( $meta[$value['meta-name']] ) ) {
+						update_user_meta($user_id, $value['meta-name'], $meta[$value['meta-name']]);
+					}
+					do_action('wppb_add_meta_on_user_activation_' . Wordpress_Creation_Kit_PB::wck_generate_slug($value['field']), $user_id, $password, $meta, $value);
+				}
 			}
 		}
 	}
-
     do_action( 'wppb_add_other_meta_on_user_activation', $user_id, $meta );
 }
 
@@ -328,7 +331,7 @@ function wppb_signup_user( $username, $user_email, $meta = '' ) {
 	$meta = serialize( $meta );
 
 	// change User Registered date and time according to timezone selected in WordPress settings
-	$wppb_get_date = wppb_get_date_by_timezone();
+	$wppb_get_date = wppb_get_register_date();
 
 	if( isset( $wppb_get_date ) ) {
 		$wppb_user_registered = $wppb_get_date;
@@ -373,8 +376,9 @@ function wppb_signup_user_notification( $user, $user_email, $activation_key, $me
 		$admin_email = 'support@' . $_SERVER['SERVER_NAME'];
 		
 	$from_name = apply_filters ( 'wppb_signup_user_notification_email_from_field', get_bloginfo( 'name' ) );
-	
-	$message_headers = apply_filters ( 'wppb_signup_user_notification_from', "From: \"{$from_name}\" <{$admin_email}>\n" . "Content-Type: text/plain; charset=\"" . get_option('blog_charset') . "\"\n" );
+
+	//we don't use this anymore do we ?
+	/*$message_headers = apply_filters ( 'wppb_signup_user_notification_from', "From: \"{$from_name}\" <{$admin_email}>\n" . "Content-Type: text/plain; charset=\"" . get_option('blog_charset') . "\"\n" );*/
 
 	if( isset( $wppb_general_settings['activationLandingPage'] ) && ( trim( $wppb_general_settings['activationLandingPage'] ) != '' ) ) {
 		$registration_page_url = add_query_arg( array('activation_key' => $activation_key), get_permalink( $wppb_general_settings['activationLandingPage'] ) );
@@ -460,6 +464,8 @@ function wppb_manual_activate_signup( $activation_key ) {
                     $meta['user_pass'] = wp_hash_password( $meta['user_pass'] );
 
                 $wpdb->update( $wpdb->users, array('user_pass' => $meta['user_pass'] ), array('ID' => $user_id) );
+				//This is required so that the APC cached data is updated with the new password. Thanks to @foliovision
+				wp_cache_delete( $user_id, 'users' );
             }
 			
 			wppb_notify_user_registration_email( get_bloginfo( 'name' ), $user_login, $user_email, 'sending', $password, ( isset( $wppb_general_settings['adminApproval'] ) ? $wppb_general_settings['adminApproval'] : 'no' ) );
@@ -556,8 +562,10 @@ function wppb_notify_user_registration_email( $bloginfo, $user_name, $email, $se
 		$message_content = apply_filters( 'wppb_register_admin_email_message_without_admin_approval', $message_content, $email, $password, $message_from, 'wppb_admin_emailc_default_registration_email_content' );
 	}
 
-	if ( trim( $message_content ) != '' )
-		wppb_mail( get_option('admin_email'), $message_subject, $message_content, $message_from, $message_context );
+	if ( trim( $message_content ) != '' ){
+		$admin_email = apply_filters('wppb_send_to_admin_email', get_option('admin_email'), get_user_by( 'email', $email ), $message_context);
+		wppb_mail( $admin_email, $message_subject, $message_content, $message_from, $message_context );
+	}
 
 		
 	
@@ -566,12 +574,18 @@ function wppb_notify_user_registration_email( $bloginfo, $user_name, $email, $se
 		$user_message_from = apply_filters( 'wppb_register_from_email_message_user_email', $bloginfo );
 
 		$user_message_subject = sprintf( __( '[%1$s] Your new account information', 'profile-builder' ), $user_message_from, $user_name, $password );
-		$user_message_subject = apply_filters( 'wppb_register_user_email_subject_without_admin_approval', $user_message_subject, $email, $password, $user_message_subject, 'wppb_user_emailc_default_registration_email_subject' );
+		$user_message_subject = apply_filters( 'wppb_register_user_email_subject_without_admin_approval', $user_message_subject, $email, $password, $user_message_from, 'wppb_user_emailc_default_registration_email_subject' );
 
         if ( $password === NULL ) {
             $password = __( 'Your selected password at signup', 'profile-builder' );
         }
-		$user_message_content = sprintf( __( 'Welcome to %1$s!<br/><br/><br/>Your username is:%2$s and password:%3$s', 'profile-builder' ), $user_message_from, $user_name, $password );
+
+		$send_password = apply_filters( 'wppb_send_password_in_default_email_message', false );
+		if( !$send_password )
+			$user_message_content = sprintf( __( 'Welcome to %1$s!<br/><br/><br/>Your username is:%2$s', 'profile-builder' ), $user_message_from, $user_name );
+		else
+			$user_message_content = sprintf( __( 'Welcome to %1$s!<br/><br/><br/>Your username is:%2$s and password:%3$s', 'profile-builder' ), $user_message_from, $user_name, $password );
+
         if ( $password === __( 'Your selected password at signup', 'profile-builder' ) ) {
             $password = NULL;
         }

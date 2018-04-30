@@ -1,18 +1,9 @@
 <?php
-/*
-Copyright 2009-2015 John Blackbourn
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-*/
+/**
+ * Abstract dispatcher.
+ *
+ * @package query-monitor
+ */
 
 if ( ! class_exists( 'QM_Dispatcher' ) ) {
 abstract class QM_Dispatcher {
@@ -20,29 +11,59 @@ abstract class QM_Dispatcher {
 	public function __construct( QM_Plugin $qm ) {
 		$this->qm = $qm;
 
-		if ( !defined( 'QM_COOKIE' ) ) {
+		if ( ! defined( 'QM_COOKIE' ) ) {
 			define( 'QM_COOKIE', 'query_monitor_' . COOKIEHASH );
 		}
+
+		add_action( 'init', array( $this, 'init' ) );
 
 	}
 
 	abstract public function is_active();
 
+	final public function should_dispatch() {
+
+		$e = error_get_last();
+
+		# Don't dispatch if a fatal has occurred:
+		if ( ! empty( $e ) and ( $e['type'] & ( E_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR ) ) ) {
+			return false;
+		}
+
+		# Allow users to disable this dispatcher
+		if ( ! apply_filters( "qm/dispatch/{$this->id}", true ) ) {
+			return false;
+		}
+
+		return $this->is_active();
+
+	}
+
+	public function get_outputters( $outputter_id ) {
+		$collectors = QM_Collectors::init();
+		$collectors->process();
+
+		$this->outputters = apply_filters( "qm/outputter/{$outputter_id}", array(), $collectors );
+
+		return $this->outputters;
+	}
+
 	public function init() {
+		// @TODO should be abstract?
 		// nothing
 	}
 
-	public function before_output() {
+	protected function before_output() {
 		// nothing
 	}
 
-	public function after_output() {
+	protected function after_output() {
 		// nothing
 	}
 
 	public function user_can_view() {
 
-		if ( !did_action( 'plugins_loaded' ) ) {
+		if ( ! did_action( 'plugins_loaded' ) ) {
 			return false;
 		}
 
@@ -50,13 +71,13 @@ abstract class QM_Dispatcher {
 			return true;
 		}
 
-		return $this->user_verified();
+		return self::user_verified();
 
 	}
 
-	public function user_verified() {
-		if ( isset( $_COOKIE[QM_COOKIE] ) ) {
-			return $this->verify_cookie( stripslashes( $_COOKIE[QM_COOKIE] ) );
+	public static function user_verified() {
+		if ( isset( $_COOKIE[QM_COOKIE] ) ) { // @codingStandardsIgnoreLine
+			return self::verify_cookie( wp_unslash( $_COOKIE[QM_COOKIE] ) ); // @codingStandardsIgnoreLine
 		}
 		return false;
 	}

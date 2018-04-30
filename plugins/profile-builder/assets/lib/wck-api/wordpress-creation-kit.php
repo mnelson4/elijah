@@ -92,8 +92,6 @@ class Wordpress_Creation_Kit_PB{
 		add_action("wp_ajax_wck_update_meta".$this->args['meta_name'], array( &$this, 'wck_update_meta') );
 		add_action("wp_ajax_wck_show_update".$this->args['meta_name'], array( &$this, 'wck_show_update_form') );
 		add_action("wp_ajax_wck_refresh_list".$this->args['meta_name'], array( &$this, 'wck_refresh_list') );
-		add_action("wp_ajax_wck_refresh_entry".$this->args['meta_name'], array( &$this, 'wck_refresh_entry') );
-		add_action("wp_ajax_wck_add_form".$this->args['meta_name'], array( &$this, 'wck_add_form') );
 		add_action("wp_ajax_wck_remove_meta".$this->args['meta_name'], array( &$this, 'wck_remove_meta') );
 		add_action("wp_ajax_wck_reorder_meta".$this->args['meta_name'], array( &$this, 'wck_reorder_meta') );
 
@@ -107,13 +105,7 @@ class Wordpress_Creation_Kit_PB{
             add_action('wp_insert_post', array($this, 'wck_single_metabox_redirect_if_errors'), 10, 2);
             /* if we have any $_GET errors alert them with js so we have consistency */
             add_action('admin_print_footer_scripts', array($this, 'wck_single_metabox_errors_display') );
-        }
-
-        /* hook to add a side metabox with the Syncronize translation button */
-		add_action('add_meta_boxes', array( &$this, 'wck_add_sync_translation_metabox' ) );
-		
-		/* ajax hook the syncronization function */
-		add_action("wp_ajax_wck_sync_translation", array( &$this, 'wck_sync_translation_ajax' ) );		
+        }	
 		
 	}
 	
@@ -132,9 +124,9 @@ class Wordpress_Creation_Kit_PB{
 			}
 			else{				
 				if( !empty( $_GET['post'] ) )
-					$post_id = $_GET['post'];
+					$post_id = filter_var( $_GET['post'], FILTER_SANITIZE_NUMBER_INT );
 				else if( !empty( $_POST['post_ID'] ) )
-					$post_id = $_POST['post_ID'];
+					$post_id = filter_var( $_POST['post_ID'], FILTER_SANITIZE_NUMBER_INT );
 				else 
 					$post_id = '';
 					
@@ -260,6 +252,9 @@ class Wordpress_Creation_Kit_PB{
 		if( file_exists( dirname( __FILE__ ).'/fields/'.$details['type'].'.php' ) ){
 			require( dirname( __FILE__ ).'/fields/'.$details['type'].'.php' );
 		}
+
+        // Add a filter that allows us to add support for custom field types, not just the ones defined in fields (wck api)
+        $element .=  apply_filters('wck_output_form_field_customtype_' . $details['type'], '', $value, $details, $single_prefix);
 		
 		if( !empty( $details['description'] ) ){
 			$element .= '<p class="description">'. $details['description'].'</p>';
@@ -298,7 +293,7 @@ class Wordpress_Creation_Kit_PB{
             if ($this->args['context'] == 'post_meta')
                 $results = get_post_meta($post_id, $meta, true);
             else if ($this->args['context'] == 'option')
-                $results = get_option($meta);
+                $results = get_option( apply_filters( 'wck_option_meta' , $meta ));
 
             /* Filter primary used for CFC/OPC fields in order to show/hide fields based on type */
             $wck_update_container_css_class = apply_filters("wck_add_form_class_{$meta}", '', $meta, $results );
@@ -341,6 +336,7 @@ class Wordpress_Creation_Kit_PB{
                 <?php } ?>
             </ul>
 		</div>
+		<script>wck_set_to_widest( '.field-label', '<?php echo $meta ?>' );</script>
 		<?php
 	}
 	
@@ -361,10 +357,10 @@ class Wordpress_Creation_Kit_PB{
 		if( $this->args['context'] == 'post_meta' )
 			$results = get_post_meta($id, $meta, true);
 		else if ( $this->args['context'] == 'option' )
-			$results = get_option( $meta );		
+			$results = get_option( apply_filters( 'wck_option_meta' , $meta ) );		
 		
 		/* Filter primary used for CFC/OPC fields in order to show/hide fields based on type */
-		$wck_update_container_css_class = " class='update_container_$meta'";
+		$wck_update_container_css_class = " class='wck_update_container update_container_$meta'";
 		$wck_update_container_css_class = apply_filters("wck_update_container_class_{$meta}", $wck_update_container_css_class, $meta, $results, $element_id );
 		
 		$form = '';
@@ -395,8 +391,8 @@ class Wordpress_Creation_Kit_PB{
 				}
 			}
 			$form .= '<li style="overflow:visible;">';
-			$form .= '<a href="javascript:void(0)" class="button-primary" onclick=\'updateMeta("'.esc_js($meta).'", "'.esc_js($id).'", "'.esc_js($element_id).'", "'.esc_js($update_nonce).'")\'><span>'. __( apply_filters( 'wck_save_changes_button', 'Save Changes', $meta ), 'profile-builder' ) .'</span></a>';
-			$form .= '<a href="javascript:void(0)" class="button-secondary" style="margin-left:10px;" onclick=\'removeUpdateForm("'. esc_js( 'update_container_'.$meta.'_'.$element_id ). '" )\'><span>'. __( apply_filters( 'wck_cancel_button', 'Cancel', $meta ), 'profile-builder' ) .'</span></a>';
+			$form .= '<a href="javascript:void(0)" class="button-primary" onclick=\'updateMeta("'.esc_js($meta).'", "'.esc_js($id).'", "'.esc_js($element_id).'", "'.esc_js($update_nonce).'")\'><span>'. apply_filters( 'wck_save_changes_button', __( 'Save Changes', 'profile-builder' ), $meta ) .'</span></a>';
+			$form .= '<a href="javascript:void(0)" class="button-secondary" style="margin-left:10px;" onclick=\'removeUpdateForm("'. esc_js( 'update_container_'.$meta.'_'.$element_id ). '" )\'><span>'. apply_filters( 'wck_cancel_button', __(   'Cancel', 'profile-builder' ), $meta ) .'</span></a>';
 			$form .= '</li>';			
 			
 			$form .= '</ul>';
@@ -425,9 +421,9 @@ class Wordpress_Creation_Kit_PB{
 		if( $this->args['context'] == 'post_meta' || $this->args['context'] == '' )
 			$results = get_post_meta($id, $meta, true);
 		else if ( $this->args['context'] == 'option' )
-			$results = get_option( $meta );
+			$results = get_option( apply_filters( 'wck_option_meta' , $meta ) );
 		
-		$list = '';	
+		$list = '';
 		$list .= '<table id="container_'.esc_attr($meta).'" class="mb-table-container widefat';
 		
 		if( $this->args['single'] ) $list .= ' single';
@@ -448,7 +444,7 @@ class Wordpress_Creation_Kit_PB{
 		}
 		$list .= apply_filters( 'wck_metabox_content_footer_'.$meta , '', $id );
 		$list .= '</table>';
-		
+
 		$list = apply_filters('wck_metabox_content_'.$meta, $list, $id);
 		return $list;
 	}
@@ -460,12 +456,13 @@ class Wordpress_Creation_Kit_PB{
 
 		$wck_element_class = '';
 		$wck_element_class = apply_filters( "wck_element_class_{$meta}", $wck_element_class, $meta, $results, $element_id );
-		
+
 		$list = '';
-		$list .= '<tr id="element_'.$element_id.'" ' . $wck_element_class . '>'; 
-		$list .= '<td style="text-align:center;vertical-align:middle;" class="wck-number">'. $entry_nr .'</td>'; 
+		$list .= '<tr id="element_'.$element_id.'" ' . $wck_element_class . '>';
+		$list .= apply_filters( 'wck_add_content_before_columns', '', $list, $meta );
+		$list .= '<td style="text-align:center;vertical-align:middle;" class="wck-number">'. $entry_nr .'</td>';
 		$list .= '<td class="wck-content"><ul>' . "\r\n";
-		
+
 		$j = 0;				
 		
 		if( !empty( $fields ) ){
@@ -503,7 +500,7 @@ class Wordpress_Creation_Kit_PB{
 									$details['type'] = 'nested-repeater';
 									
 				$list .= '<li class="row-'. esc_attr( Wordpress_Creation_Kit_PB::wck_generate_slug( $details['title'], $details ) ) .'" data-type="'.$details['type'].'"><strong>'.$details['title'].': </strong>'.$display_value.' </li>' . "\r\n";
-				
+
 				$list = apply_filters( "wck_after_listed_{$meta}_element_{$j}", $list, $element_id, $value );
 
 				$j++;
@@ -520,16 +517,22 @@ class Wordpress_Creation_Kit_PB{
 		}
 		$list .= '</ul>';
 
+		$list = apply_filters( 'wck_after_content_element', $list, $meta, $id, $results, $element_id );
 		/* check if we have nested repeaters */
 		if( function_exists( 'wck_nr_check_for_nested_repeaters' ) ){
 			if( wck_nr_check_for_nested_repeaters( $fields ) === true ){
 				$list .= wck_nr_handle_repeaters( $meta, $id, $fields, $results, $element_id );
 			}
 		}
+		
+		if( $element_id === 0 ){
+			$list .= "<script>wck_set_to_widest( 'strong', '". $meta ."' );</script>";
+		}
 
 		$list .= '</td>';				
 		$list .= '<td style="text-align:center;vertical-align:middle;" class="wck-edit"><a href="javascript:void(0)" class="button-secondary"  onclick=\'showUpdateFormMeta("'.esc_js($meta).'", "'.esc_js($id).'", "'.esc_js($element_id).'", "'.esc_js($edit_nonce).'")\' title="'. __( 'Edit this item', 'profile-builder' ) .'">'. apply_filters( 'wck_edit_button', __('Edit','wck'), $meta ) .'</a></td>';
 		$list .= '<td style="text-align:center;vertical-align:middle;" class="wck-delete"><a href="javascript:void(0)" class="mbdelete" onclick=\'removeMeta("'.esc_js($meta).'", "'.esc_js($id).'", "'.esc_js($element_id).'", "'.esc_js($delete_nonce).'")\' title="'. __( 'Delete this item', 'profile-builder' ) .'">'. apply_filters( 'wck_delete_button', __( 'Delete', 'wck' ), $meta) .'</a></td>';
+		$list .= apply_filters( 'wck_add_content_after_columns', '', $list, $meta );
 
 		$list .= "</tr> \r\n";
 
@@ -618,9 +621,9 @@ class Wordpress_Creation_Kit_PB{
 				
 				/* only add on profile builder custom post types */
 				if( !empty( $_GET['post'] ) )
-					$post_id = $_GET['post'];
+					$post_id = filter_var( $_GET['post'], FILTER_SANITIZE_NUMBER_INT );
 				else if( !empty( $_POST['post_ID'] ) )
-					$post_id = $_POST['post_ID'];
+					$post_id = filter_var( $_POST['post_ID'], FILTER_SANITIZE_NUMBER_INT );
 				else 
 					$post_id = '';
 				if( !empty( $post_id ) ){
@@ -641,7 +644,7 @@ class Wordpress_Creation_Kit_PB{
 	
 	/* our own ajaxurl */
 	function wck_print_ajax_url(){
-		echo '<script type="text/javascript">var wckAjaxurl = "'. admin_url('admin-ajax.php') .'";</script>';
+		echo '<script type="text/javascript">var wppbWckAjaxurl = "'. apply_filters( 'wck_ajax_url', admin_url('admin-ajax.php') ) .'";</script>';
 	}
 	
 	
@@ -657,8 +660,8 @@ class Wordpress_Creation_Kit_PB{
 			wp_enqueue_style( 'thickbox' );
 		}
 		
-		wp_enqueue_script('wordpress-creation-kit', plugins_url('/wordpress-creation-kit.js', __FILE__), array('jquery', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ) );
-		wp_register_style('wordpress-creation-kit-css', plugins_url('/wordpress-creation-kit.css', __FILE__));
+		wp_enqueue_script('wordpress-creation-kit', plugins_url('/wordpress-creation-kit.js', __FILE__), array('jquery', 'jquery-ui-draggable', 'jquery-ui-droppable', 'jquery-ui-sortable' ), PROFILE_BUILDER_VERSION );
+		wp_register_style('wordpress-creation-kit-css', plugins_url('/wordpress-creation-kit.css', __FILE__), array(), PROFILE_BUILDER_VERSION );
 		wp_enqueue_style('wordpress-creation-kit-css');
 
 		// wysiwyg		
@@ -712,23 +715,66 @@ class Wordpress_Creation_Kit_PB{
 		
 		return $errors;
 	}
+
+	/* Checks to see wether the current user can modify data */
+	function wck_verify_user_capabilities( $context, $meta = '', $id = 0 ) {
+
+		$return = true;
+
+		// Meta is an option
+		if( $context == 'option' && !current_user_can( 'manage_options' ) )
+			$return = false;
+
+		// Meta is post related
+		if( $context == 'post_meta' && is_user_logged_in() ) {
+			
+			// Current user must be able to edit posts
+			if( !current_user_can( 'edit_posts' ) )
+				$return = false;
+
+			// If the user can't edit others posts the current post must be his/hers
+			elseif( !current_user_can( 'edit_others_posts' ) ) {
+
+				$current_post = get_post( $id );
+				$current_user = wp_get_current_user();
+
+				if( $current_user->ID != $current_post->post_author )
+					$return = false;
+
+			}
+
+		}
+
+		// Return
+		if( $return )
+			return $return;
+		else
+			return array( 'error' => __( 'You are not allowed to do this.', 'wck' ), 'errorfields' => '' );
+
+	}
 	
 
 	/* ajax add a reccord to the meta */
 	function wck_add_meta(){
 		check_ajax_referer( "wck-add-meta" );
 		if( !empty( $_POST['meta'] ) )
-			$meta = $_POST['meta'];
+			$meta = sanitize_text_field( $_POST['meta'] );
 		else
 			$meta = '';
 		if( !empty( $_POST['id'] ) )
 			$id = absint($_POST['id']);
 		else 
 			$id = '';
-		if( !empty( $_POST['values'] ) )
-			$values = $_POST['values'];
+		if( !empty( $_POST['values'] ) && is_array( $_POST['values'] ) )
+			$values = array_map( 'wppb_sanitize_value', $_POST['values'] );
 		else
 			$values = array();
+
+		// Security checks
+		if( true !== ( $error = self::wck_verify_user_capabilities( $this->args['context'], $meta, $id ) ) ) {
+			header( 'Content-type: application/json' );
+			die( json_encode( $error ) );
+		}
 
 		$values = apply_filters( "wck_add_meta_filter_values_{$meta}", $values );
 
@@ -743,20 +789,30 @@ class Wordpress_Creation_Kit_PB{
 		if( $this->args['context'] == 'post_meta' )
 			$results = get_post_meta($id, $meta, true);
 		else if ( $this->args['context'] == 'option' )
-			$results = get_option( $meta );
+			$results = get_option( apply_filters( 'wck_option_meta' , $meta, $values ) );
+
+		/* we need an array here */
+		if( empty( $results ) && !is_array( $results ) )
+			$results = array();
 
         /* for single metaboxes owerwrite entries each time so we have a maximum of one */
         if( $this->args['single'] )
             $results = array( $values );
         else
             $results[] = $values;
-		
-		do_action( 'wck_before_add_meta', $meta, $id, $values );
+
+		/* make sure this does not output anything so it won't break the json response below
+		will keep it do_action for compatibility reasons
+		 */
+		ob_start();
+			do_action( 'wck_before_add_meta', $meta, $id, $values );
+		$wck_before_add_meta = ob_get_clean(); //don't output it
+
 		
 		if( $this->args['context'] == 'post_meta' )
 			update_post_meta($id, $meta, $results);
 		else if ( $this->args['context'] == 'option' )
-			update_option( $meta, wp_unslash( $results ) );
+			update_option( apply_filters( 'wck_option_meta' , $meta, $results ), wp_unslash( $results ) );
 		
 		/* if unserialize_fields is true add for each entry separate post meta for every element of the form  */
 		if( $this->args['unserialize_fields'] && $this->args['context'] == 'post_meta' ){
@@ -768,15 +824,20 @@ class Wordpress_Creation_Kit_PB{
 				}
 			}
 		}
+
+		$entry_list = $this->wck_refresh_list( $meta, $id );
+		$add_form = $this->wck_add_form( $meta, $id );
+
+		header( 'Content-type: application/json' );
+		die( json_encode( array( 'entry_list' => $entry_list, 'add_form' => $add_form ) ) );	
 		
-		exit;
 	}
 
 	/* ajax update a reccord in the meta */
 	function wck_update_meta(){
 		check_ajax_referer( "wck-update-entry" );
 		if( !empty( $_POST['meta'] ) )
-			$meta = $_POST['meta'];
+			$meta = sanitize_text_field( $_POST['meta'] );
 		else 
 			$meta = '';
 		if( !empty( $_POST['id'] ) )
@@ -784,12 +845,19 @@ class Wordpress_Creation_Kit_PB{
 		else 
 			$id = '';
 		if( isset( $_POST['element_id'] ) )
-			$element_id = $_POST['element_id'];	
+			$element_id = absint( $_POST['element_id'] );
 		else 
 			$element_id = 0;
-		if( !empty( $_POST['values'] ) )
-			$values = $_POST['values'];
+		if( !empty( $_POST['values'] ) && is_array( $_POST['values']) )
+			$values = array_map( 'wppb_sanitize_value', $_POST['values'] );
+		else
+			$values = array();
 		
+		// Security checks
+		if( true !== ( $error = self::wck_verify_user_capabilities( $this->args['context'], $meta, $id ) ) ) {
+			header( 'Content-type: application/json' );
+			die( json_encode( $error ) );
+		}
 		
 		$values = apply_filters( "wck_update_meta_filter_values_{$meta}", $values, $element_id );
 		
@@ -803,16 +871,22 @@ class Wordpress_Creation_Kit_PB{
 		if( $this->args['context'] == 'post_meta' )
 			$results = get_post_meta($id, $meta, true);
 		else if ( $this->args['context'] == 'option' )
-			$results = get_option( $meta );
+			$results = get_option( apply_filters( 'wck_option_meta' , $meta, $values, $element_id ) );
 		
 		$results[$element_id] = $values;
+
+		/* make sure this does not output anything so it won't break the json response below
+		will keep it do_action for compatibility reasons
+		 */
+		ob_start();
+			do_action( 'wck_before_update_meta', $meta, $id, $values, $element_id );
+		$wck_before_update_meta = ob_get_clean(); //don't output it
 		
-		do_action( 'wck_before_update_meta', $meta, $id, $values, $element_id );
 
 		if( $this->args['context'] == 'post_meta' )
 			update_post_meta($id, $meta, $results);
 		else if ( $this->args['context'] == 'option' )
-			update_option( $meta, wp_unslash( $results ) );
+			update_option( apply_filters( 'wck_option_meta' , $meta, $results, $element_id ), wp_unslash( $results ) );
 		
 		/* if unserialize_fields is true update the coresponding post metas for every element of the form  */
 		if( $this->args['unserialize_fields'] && $this->args['context'] == 'post_meta' ){
@@ -824,78 +898,72 @@ class Wordpress_Creation_Kit_PB{
 				}
 			}
 		}
-		
-		exit;
+
+		$entry_content = $this->wck_refresh_entry( $meta, $id, $element_id );		
+
+		header( 'Content-type: application/json' );
+		die( json_encode( array( 'entry_content' => $entry_content ) ) );
 	}
 
-	/* ajax to refresh the meta content */
-	function wck_refresh_list(){
+	/* ajax to refresh the meta content | or used in other function to return the */
+	/* this is used in Repeater Fields as an ajax action so we have to keep it dual purpose */
+	function wck_refresh_list( $meta = '', $id = '' ){
 		if( isset( $_POST['meta'] ) )
-			$meta = $_POST['meta'];
-		else 
-			$meta = '';
+			$meta = sanitize_text_field( $_POST['meta'] );
+		
 		if( isset( $_POST['id'] ) )
-			$id = absint($_POST['id']);
-		else 
-			$id = '';
-		echo self::wck_output_meta_content($meta, $id, $this->args['meta_array']);
+			$id = absint($_POST['id']);		
+
+		ob_start();			
+			echo self::wck_output_meta_content($meta, $id, $this->args['meta_array']);
+			do_action( "wck_refresh_list_{$meta}", $id );
+		$entry_list = ob_get_clean();
 		
-		do_action( "wck_refresh_list_{$meta}", $id );
-		
-		exit;
+		if( strpos( current_filter(), 'wp_ajax_wck_refresh_list') === 0 ){
+			echo $entry_list;			
+			exit;	
+		}
+		else{
+			return $entry_list;
+		}
 	}
 	
-	/* ajax to refresh an entry content */
-	function wck_refresh_entry(){
-		if( isset( $_POST['meta'] ) )
-			$meta = $_POST['meta'];
-		else 
-			$meta = '';
-		if( isset( $_POST['id'] ) )
-			$id = absint( $_POST['id'] );
-		else
-			$id = '';
-		if( isset( $_POST['element_id'] ) )
-			$element_id = $_POST['element_id'];
-		else
-			$element_id = '';
+	/* function that returns the content of an entry */
+	function wck_refresh_entry( $meta = '', $id = '', $element_id = '' ){
 		
 		if( $this->args['context'] == 'post_meta' )
 			$results = get_post_meta($id, $meta, true);
 		else if ( $this->args['context'] == 'option' )
-			$results = get_option( $meta );
-		
-		echo self::wck_output_entry_content( $meta, $id, $this->args['meta_array'], $results, $element_id );
-		
-		do_action( "wck_refresh_entry_{$meta}", $id );
-		
-		exit;
+			$results = get_option( apply_filters( 'wck_option_meta' , $meta, $element_id ) );
+
+		ob_start();
+			echo self::wck_output_entry_content( $meta, $id, $this->args['meta_array'], $results, $element_id );
+			do_action( "wck_refresh_entry_{$meta}", $id );
+		$entry_content = ob_get_clean();
+
+		return $entry_content;
 	}
 	
-	/* ajax to add the form for single */
-	function wck_add_form(){
-		if( !empty( $_POST['meta'] ) )
-			$meta = $_POST['meta'];
-		else
-			$meta = '';
-		if( !empty( $_POST['id'] ) )
-			$id = absint( $_POST['id'] );
-		else
-			$id = '';
-		$post = get_post($id);
-		self::create_add_form($this->args['meta_array'], $meta, $post );
-		do_action( "wck_ajax_add_form_{$meta}", $id );
+	/* function that returns the add the form for single */
+	function wck_add_form( $meta = '', $id = '' ){
 		
-		exit;
+		$post = get_post($id);
+
+		ob_start();			
+			self::create_add_form($this->args['meta_array'], $meta, $post );
+			do_action( "wck_ajax_add_form_{$meta}", $id );
+		$add_form = ob_get_clean();
+		
+		return $add_form;
 	}
 	
 
 	/* ajax to show the update form */
 	function wck_show_update_form(){
 		check_ajax_referer( "wck-edit-entry" );		
-		$meta = $_POST['meta'];
+		$meta = sanitize_text_field( $_POST['meta'] );
 		$id = absint($_POST['id']);
-		$element_id = $_POST['element_id'];
+		$element_id = absint( $_POST['element_id'] );
 
         do_action( "wck_before_adding_form_{$meta}", $id, $element_id );
 
@@ -911,7 +979,7 @@ class Wordpress_Creation_Kit_PB{
 	function wck_remove_meta(){
 		check_ajax_referer( "wck-delete-entry" );
 		if( !empty( $_POST['meta'] ) )
-			$meta = $_POST['meta'];
+			$meta = sanitize_text_field( $_POST['meta'] );
 		else 
 			$meta = '';
 		if( !empty( $_POST['id'] ) )
@@ -922,23 +990,34 @@ class Wordpress_Creation_Kit_PB{
 			$element_id = absint( $_POST['element_id'] );
 		else 
 			$element_id = '';
+
+		// Security checks
+		if( true !== ( $error = self::wck_verify_user_capabilities( $this->args['context'], $meta, $id ) ) ) {
+			header( 'Content-type: application/json' );
+			die( json_encode( $error ) );
+		}
 		
 		if( $this->args['context'] == 'post_meta' )
 			$results = get_post_meta($id, $meta, true);
 		else if ( $this->args['context'] == 'option' )
-			$results = get_option( $meta );
+			$results = get_option( apply_filters( 'wck_option_meta' , $meta, $element_id ) );
 		
 		$old_results = $results;
 		unset($results[$element_id]);
 		/* reset the keys for the array */
 		$results = array_values($results);
-		
-		do_action( 'wck_before_remove_meta', $meta, $id, $element_id );
+
+		/* make sure this does not output anything so it won't break the json response below
+		will keep it do_action for compatibility reasons
+		 */
+		ob_start();
+			do_action( 'wck_before_remove_meta', $meta, $id, $element_id );
+		$wck_before_remove_meta = ob_get_clean(); //don't output it
 		
 		if( $this->args['context'] == 'post_meta' )
 			update_post_meta($id, $meta, $results);
 		else if ( $this->args['context'] == 'option' )
-			update_option( $meta, wp_unslash( $results ) );
+			update_option( apply_filters( 'wck_option_meta' , $meta, $results, $element_id ), wp_unslash( $results ) );
 		
 		
 		
@@ -970,31 +1049,46 @@ class Wordpress_Creation_Kit_PB{
 			}
 		}
 
-		exit;
+		$entry_list = $this->wck_refresh_list( $meta, $id );
+		$add_form = $this->wck_add_form( $meta, $id );
+
+		header( 'Content-type: application/json' );
+		die( json_encode( array( 'entry_list' => $entry_list, 'add_form' => $add_form ) ) );
 	}
 
 
 	/* ajax to reorder records */
 	function wck_reorder_meta(){
 		if( !empty( $_POST['meta'] ) )
-			$meta = $_POST['meta'];
+			$meta = sanitize_text_field( $_POST['meta'] );
 		else 
 			$meta = '';
 		if( !empty( $_POST['id'] ) )
 			$id = absint($_POST['id']);
 		else 
 			$id = '';
-		if( !empty( $_POST['values'] ) )
-			$elements_id = $_POST['values'];
+		if( !empty( $_POST['values'] ) && is_array( $_POST['values'] ) )
+			$elements_id = array_map( 'absint', $_POST['values'] );
 		else 
 			$elements_id = array();
-		
-		do_action( 'wck_before_reorder_meta', $meta, $id, $elements_id );
+
+		// Security checks
+		if( true !== ( $error = self::wck_verify_user_capabilities( $this->args['context'], $meta, $id ) ) ) {
+			header( 'Content-type: application/json' );
+			die( json_encode( $error ) );
+		}
+
+		/* make sure this does not output anything so it won't break the json response below
+		will keep it do_action for compatibility reasons
+		 */
+		ob_start();
+			do_action( 'wck_before_reorder_meta', $meta, $id, $elements_id );
+		$wck_before_reorder_meta = ob_get_clean(); //don't output it
 		
 		if( $this->args['context'] == 'post_meta' )
 			$results = get_post_meta($id, $meta, true);
 		else if ( $this->args['context'] == 'option' )
-			$results = get_option( $meta );
+			$results = get_option( apply_filters( 'wck_option_meta' , $meta ) );
 		
 		$new_results = array();
 		if( !empty( $elements_id ) ){
@@ -1008,7 +1102,7 @@ class Wordpress_Creation_Kit_PB{
 		if( $this->args['context'] == 'post_meta' )
 			update_post_meta($id, $meta, $results);
 		else if ( $this->args['context'] == 'option' )
-			update_option( $meta, wp_unslash( $results ) );
+			update_option( apply_filters( 'wck_option_meta' , $meta, $results, $element_id ), wp_unslash( $results ) );
 		
 		
 		/* if unserialize_fields is true reorder all the coresponding post metas  */
@@ -1024,9 +1118,11 @@ class Wordpress_Creation_Kit_PB{
 				}
 			}
 			
-		}		
-		
-		exit;
+		}
+
+		$entry_list = $this->wck_refresh_list( $meta, $id );
+		header( 'Content-type: application/json' );
+		die( json_encode( array( 'entry_list' => $entry_list ) ) );
 	}
 
     /**
@@ -1036,9 +1132,18 @@ class Wordpress_Creation_Kit_PB{
     function wck_save_single_metabox( $post_id, $post ){
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
             return $post_id;
-        // check permissions
-        if ( !current_user_can( 'edit_page', $post_id ) )
-            return $post_id;
+
+        // Check the user's permissions.
+        if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] ) {
+            if ( ! current_user_can( 'edit_page', $post_id ) ) {
+                return $post_id;
+            }
+        } else {
+            if ( ! current_user_can( 'edit_post', $post_id ) ) {
+                return $post_id;
+            }
+        }
+
         /* only go through for metaboxes defined for this post type */
         if( get_post_type( $post_id ) != $this->args['post_type'] )
             return $post_id;
@@ -1049,7 +1154,7 @@ class Wordpress_Creation_Kit_PB{
                 if( strpos( $request_key, '_wckmetaname_' ) !== false && strpos( $request_key, '#wck' ) !== false ){
                     /* found it so now retrieve the meta_name from the key formatted _wckmetaname_actuaname#wck */
                     $request_key = str_replace( '_wckmetaname_', '', $request_key );
-                    $meta_name = str_replace( '#wck', '', $request_key );
+                    $meta_name = sanitize_text_field( str_replace( '#wck', '', $request_key ) );
                     /* we have it so go through only on the WCK object instance that has this meta_name */
                     if( $this->args['meta_name'] == $meta_name ){
 
@@ -1064,7 +1169,7 @@ class Wordpress_Creation_Kit_PB{
                                     if( $meta_field['type'] == 'checkbox' )
                                         $_POST[$single_field_name] = implode( ', ', $_POST[$single_field_name] );
 
-                                    $meta_values[Wordpress_Creation_Kit_PB::wck_generate_slug( $meta_field['title'], $meta_field )] = $_POST[$single_field_name];
+                                    $meta_values[Wordpress_Creation_Kit_PB::wck_generate_slug( $meta_field['title'], $meta_field )] = wppb_sanitize_value( $_POST[$single_field_name] );
                                 }
                                 else
                                     $meta_values[Wordpress_Creation_Kit_PB::wck_generate_slug( $meta_field['title'], $meta_field )] = '';
@@ -1139,9 +1244,11 @@ class Wordpress_Creation_Kit_PB{
         if( isset( $_GET['wckerrorfields'] ) && !empty( $_GET['wckerrorfields'] ) ){
             echo '<script type="text/javascript">';
             $field_names = explode( ',', urldecode( base64_decode( $_GET['wckerrorfields'] ) ) );
-            foreach( $field_names as $field_name ){
-                echo "jQuery( '.field-label[for=\"". esc_js( $field_name ) ."\"]' ).addClass('error');";
-            }
+			if( !empty( $field_names ) ) {
+				foreach ($field_names as $field_name) {
+					echo "jQuery( '.field-label[for=\"" . esc_js($field_name) . "\"]' ).addClass('error');";
+				}
+			}
             echo '</script>';
         }
 
@@ -1151,170 +1258,6 @@ class Wordpress_Creation_Kit_PB{
         }
     }
 
-    /* WPML Compatibility */
-
-	/**
-	 * Function that ads the side metabox with the Syncronize translation button. 
-	 * The meta box is only added if the lang attribute  is set and 
-	 * if any of the custom fields has the 'wckwpml' prefix.
-	 */
-	function wck_add_sync_translation_metabox(){
-		global $post;
-
-		if( isset( $_GET['lang'] ) && !empty( $post ) ){
-			
-			$has_wck_with_unserialize_fields = false;
-			$custom_field_keys = get_post_custom_keys( $post->ID );
-			if( !empty( $custom_field_keys ) ){
-				foreach( $custom_field_keys as $custom_field_key ){
-					$custom_field_key = explode( '_', $custom_field_key );
-					if( $custom_field_key[0] == 'wckwpml' ){
-						$has_wck_with_unserialize_fields = true;
-						break;
-					}
-				}
-			}
-			
-			if($has_wck_with_unserialize_fields){
-				add_meta_box( 'wck_sync_translation', __( 'Syncronize WCK', 'profile-builder' ), array( &$this, 'wck_add_sync_box' ), $post->post_type, 'side', 'low' );
-			}
-			
-		}			
-	}
-
-	/**
-	 * Callback for the add_meta_box function that ads the "Syncronize WCK Translation" button.
-	 */
-	function wck_add_sync_box(){
-		global $post;
-		?>	
-		<span id="wck_sync" class="button" onclick="wckSyncTranslation(<?php echo $post->ID; ?>)"><?php _e( 'Syncronize WCK Translation', 'profile-builder' ) ?></span>
-		<?php 
-	}
-
-
-
-	/**
-	 * Function that recreates the serialized metas from the individual meta fields.
-	 */
-	function wck_sync_translation_ajax(){		
-			if( !empty( $_POST['id'] ) ) 
-				$post_id = $_POST['id'];
-			else 
-				$post_id = '';
-			
-			/* get all the custom fields keys for the post */
-			$custom_field_keys = (array)get_post_custom_keys( $post_id );	
-			
-			/* initialize an array that will hold all the arrays for all the wck boxes */
-			$wck_array = array();		
-			
-			/* go through all the custom fields and if it is a custom field created automaticaly for the translation add it to the  $wck_array array*/
-			if( !empty( $custom_field_keys ) ){
-				foreach( $custom_field_keys as $cf ){
-					
-					$cf_name_array = explode( '_', $cf );
-					
-					/* a custom field added for the translation will have this form
-						'wckwpml_{meta name}_{field name}_{entry position}_{field position}'
-					*/
-					if( count( $cf_name_array ) >= 5 ){
-						
-						$cf_name = implode( '_', array_slice( $cf_name_array, 1, -3 ) );
-						
-						if( $cf_name_array[0] == 'wckwpml' ){
-							
-							$wck_key = $cf_name_array[ count($cf_name_array) -3 ];
-							$wck_position = $cf_name_array[ count($cf_name_array) -2 ];
-							$wck_field_position = $cf_name_array[ count($cf_name_array) -1 ];					
-							
-							/* "$wck_position - 1" is required because fields in wck by default start at 0 and the additional
-							translation fields start at 1 */
-							$wck_array[$cf_name][$wck_position - 1][$wck_field_position][$wck_key] = get_post_meta($post_id,$cf,true);
-							
-						}
-					}
-				}
-			}
-			
-			
-			
-			if( !empty( $wck_array ) ){
-				/* sort the array so that the entry order and fields order are synced */
-				self::deep_ksort( $wck_array );
-				
-				/* remove the field position level in the array because it was added just so we could keep the field 
-				order in place */
-				$wck_array = self::wck_reconstruct_array($wck_array);						
-				
-				/* add the translated meta to the post */
-				foreach( $wck_array as $wck_key => $wck_meta ){					
-					update_post_meta( $post_id, $wck_key, $wck_meta );					
-				}							
-				echo('syncsuccess');
-			}
-		
-		exit;
-	}
-
-	/**
-	 * Function that deep sorts a multy array by numeric key
-	 */ 
-	function deep_ksort(&$arr) {
-		ksort($arr);
-		if( !empty( $arr ) ){
-			foreach ($arr as &$a) {
-				if (is_array($a) && !empty($a)) {
-					self::deep_ksort($a);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Function that removes the field position level 
-	 */ 
-	function wck_reconstruct_array($wck_array){	
-		if( !empty( $wck_array ) ){
-			foreach( $wck_array as $wck_array_key => $wck_meta ){	
-				if( !empty( $wck_meta ) ){
-					foreach( $wck_meta as $wck_meta_key => $wck_entry ){
-						if( !empty( $wck_entry ) ){
-							foreach( $wck_entry as $wck_entry_key => $wck_field ){
-								$wck_array[$wck_array_key][$wck_meta_key][key($wck_field)] = current($wck_field);
-								unset($wck_array[$wck_array_key][$wck_meta_key][$wck_entry_key]);					
-							}
-						}
-					}
-				}
-			}
-		}
-		return $wck_array;
-	}
-	
-	
-	function wck_get_meta_boxes( $screen = null ){
-		global $wp_meta_boxes, $wck_objects;	
-			
-		if ( empty( $screen ) )
-			$screen = get_current_screen();
-		elseif ( is_string( $screen ) )
-			$screen = convert_to_screen( $screen );	
-		
-		$page = $screen->id;	
-		
-		$wck_meta_boxes = array();
-		
-		if( !empty( $wck_objects ) && !empty( $wp_meta_boxes[$page]['normal']['low'] ) ){
-			foreach( $wck_objects as $key => $wck_object ){
-				if( array_key_exists( $key, $wp_meta_boxes[$page]['normal']['low'] ) )
-					$wck_meta_boxes[] = $key;
-			}
-		}
-		
-		return $wck_meta_boxes;
-	}
-	
 	
 	/**
 	 * The function used to generate slugs in WCK
@@ -1330,6 +1273,10 @@ class Wordpress_Creation_Kit_PB{
         else
 		    $slug = rawurldecode( sanitize_title_with_dashes( remove_accents( $string ) ) );
 		return $slug;
+	}
+
+	static function wck_strip_script_tags(){
+
 	}
 }
 

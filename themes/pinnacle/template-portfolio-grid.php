@@ -38,16 +38,16 @@ get_template_part('templates/page', 'header');
 			}
 
 			if(!empty($pie) && $pie == "on") {
-				$showexcerpt = true;
+				$showexcerpt = 'true';
 			} else {
-				$showexcerpt = false;
+				$showexcerpt = 'false';
 			}
 
 
 			if (!empty($portfolio_lightbox) && $portfolio_lightbox == 'on'){
-				$plb = true;
+				$plb = 'true';
 			} else {
-				$plb = false;
+				$plb = 'false';
 			}
 
 			if(isset($portfolio_order)) {
@@ -56,7 +56,7 @@ get_template_part('templates/page', 'header');
 				$p_orderby = 'menu_order';
 			}
 
-			if($p_orderby == 'menu_order') {
+			if($p_orderby == 'menu_order' || $p_orderby == 'title') {
 				$p_order = 'ASC';
 			} else {
 				$p_order = 'DESC';
@@ -114,6 +114,16 @@ get_template_part('templates/page', 'header');
 			} else {
 				$slideheight = $slidewidth;
 			}
+			// Set global loop var
+        		global $kt_portfolio_loop;
+                  $kt_portfolio_loop = array(
+                 	'lightbox' => $plb,
+                 	'showexcerpt' => $showexcerpt,
+                 	'showtypes' => $portfolio_item_types,
+                 	'pstyleclass' => $pstyleclass,
+                 	'slidewidth' => $slidewidth,
+                 	'slideheight' => $slideheight,
+                 	);
 		?>
 	<div id="content" class="container">
    		<div class="row">
@@ -137,62 +147,10 @@ get_template_part('templates/page', 'header');
 								if ( $wp_query ) : 
 									while ( $wp_query->have_posts() ) : $wp_query->the_post(); ?>
 										<div class="<?php echo esc_attr($itemsize);?> p-item">
-					                		<div class="portfolio-item grid_item postclass kad-light-gallery kad_portfolio_fade_in">
-                        						<?php if (has_post_thumbnail( $post->ID ) ) {
-														$image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); 
-														$thumbnailURL = $image_url[0];
-														$image = aq_resize($thumbnailURL, $slidewidth, $slideheight, true);
-														if(empty($image)) {$image = $thumbnailURL;} ?>
-																<div class="portfolio-imagepadding">
-																	<div class="portfolio-hoverclass">
-																		<a href="<?php the_permalink() ?>" class="kt-portfoliolink">
-								                                       		<img src="<?php echo esc_url($image); ?>" alt="<?php the_title(); ?>" class="kad-lightboxhover">
-								                                       		<div class="portfolio-hoverover"></div>
-								                                       		<div class="portfolio-table">
-										                                       		<div class="portfolio-cell">
-										                                       			<?php if($pstyleclass == "padded_style" ) { ?>
-											                                       					<a href="<?php the_permalink() ?>" class="kad-btn kad-btn-primary"><?php echo __('View details', 'pinnacle');?></a>
-														                                       		<?php if($plb) {?>
-														                                       					<a href="<?php echo esc_url($thumbnailURL); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title();?>" data-rel="lightbox"><i class="icon-search"></i></a>
-														                                       		<?php } ?>
-														                                <?php } elseif($pstyleclass == "flat-no-margin" || $pstyleclass == "flat-w-margin" ) { ?>
-														                                       		<h5><?php the_title();?></h5>
-												                           							<?php if($portfolio_item_types == true) { 
-												                           									$terms = get_the_terms( $post->ID, 'portfolio-type' ); if ($terms) {?>
-												                           									 	<p class="cportfoliotag"><?php $output = array(); foreach($terms as $term){ $output[] = $term->name;} echo implode(', ', $output); ?></p> 
-												                           								<?php } 
-												                           							} 
-												                           							if($showexcerpt) {?>
-												                           							 	<p class="p_excerpt"><?php echo pinnacle_excerpt(16); ?></p> 
-												                           							<?php } ?>
-														                                       		<?php if($plb) {?>
-														                                       			<a href="<?php echo esc_url($thumbnailURL); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title();?>" data-rel="lightbox"><i class="icon-search"></i></a>
-														                                       		<?php }?>
-														                                <?php } ?>
-											                                       	</div>
-								                                       		</div>
-								                                   		</a>
-								                                   	</div>
-								                                </div>
-	                                					<?php $image = null; $thumbnailURL = null;?>
-                           						<?php } ?>
-
-	                           			<?php if($pstyleclass == "padded_style" ) { ?>
-							              		<a href="<?php the_permalink() ?>" class="portfoliolink">
-								              		<div class="piteminfo">   
-								                          	<h5><?php the_title();?></h5>
-								                           	<?php if($portfolio_item_types == true) {
-								                           		$terms = get_the_terms( $post->ID, 'portfolio-type' ); if ($terms) { ?>
-								                           		 	<p class="cportfoliotag"><?php $output = array(); foreach($terms as $term){ $output[] = $term->name;} echo implode(', ', $output); ?></p> 
-								                           		 <?php } 
-								                           	}
-								                          	if($showexcerpt == true) {?>
-								                          		<p><?php echo pinnacle_excerpt(16); ?></p> 
-								                          	<?php } ?>
-								                    </div>
-							                	</a>
-	                					<?php } ?>
-	                					</div>
+					                	<?php do_action('kadence_portfolio_loop_start');
+												get_template_part('templates/content', 'loop-portfolio'); 
+											  do_action('kadence_portfolio_loop_end');
+										?>
                     				</div>
 								<?php endwhile; else: ?>
 									<li class="error-not-found"><?php _e('Sorry, no portfolio entries found.', 'pinnacle');?></li>

@@ -1,7 +1,8 @@
 /**
  * Adds a button to select all / de-select all hierarchy terms under taxonomy hierarchy metabox
  */
- 
+
+window.SAT_LABELS = window.SAT_LABELS || {};
 
 (function( $ ) {
 	
@@ -13,7 +14,7 @@
 			var tax_id = $(this).attr('id');
 			var tax_name = tax_id.replace("taxonomy-", "");
 			$('#'+ tax_name +'-adder')
-				.prepend('<p><input type="button" data-tsl-tax="'+ tax_name +'" class="button tsl-select" value="'+ labels.select +'"><input type="button" data-tsl-tax="'+ tax_name +'" class="button tsl-deselect" value="'+ labels.deselect +'"></p>');
+				.prepend('<p><input type="button" data-tsl-tax="'+ tax_name +'" class="button tsl-select" value="'+ SAT_LABELS.select +'"><input type="button" data-tsl-tax="'+ tax_name +'" class="button tsl-deselect" value="'+ SAT_LABELS.deselect +'"></p>');
 			
 		});
 		

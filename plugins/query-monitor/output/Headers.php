@@ -1,23 +1,24 @@
 <?php
-/*
-Copyright 2009-2015 John Blackbourn
+/**
+ * Abstract output class for HTTP headers.
+ *
+ * @package query-monitor
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+abstract class QM_Output_Headers extends QM_Output {
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+	public function output() {
 
-*/
+		$id = $this->collector->id;
 
-abstract class QM_Output_Headers implements QM_Output {
+		foreach ( $this->get_output() as $key => $value ) {
+			if ( is_scalar( $value ) ) {
+				header( sprintf( 'X-QM-%s-%s: %s', $id, $key, $value ) );
+			} else {
+				header( sprintf( 'X-QM-%s-%s: %s', $id, $key, json_encode( $value ) ) );
+			}
+		}
 
-	public function __construct( QM_Collector $collector ) {
-		$this->collector = $collector;
 	}
 
 }

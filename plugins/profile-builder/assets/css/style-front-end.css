@@ -50,6 +50,7 @@
 	padding: 0;
 }
 .wppb-user-forms input[type="text"],
+.wppb-user-forms input[type="number"],
 .wppb-user-forms input[type="email"],
 .wppb-user-forms input[type="url"],
 .wppb-user-forms input[type="password"],
@@ -60,6 +61,7 @@
 	border-radius: 3px;
 }
 .wppb-user-forms input[type="text"]:focus,
+.wppb-user-forms input[type="number"]:focus,
 .wppb-user-forms input[type="email"]:focus,
 .wppb-user-forms input[type="url"]:focus,
 .wppb-user-forms input[type="password"]:focus,
@@ -68,6 +70,7 @@
 	color: #111;
 }
 .wppb-user-forms input[type="text"],
+.wppb-user-forms input[type="number"],
 .wppb-user-forms input[type="email"],
 .wppb-user-forms input[type="url"],
 .wppb-user-forms input[type="password"],
@@ -120,6 +123,11 @@
 .wppb-search-users-wrap{
     margin-bottom: 20px;
 }
+
+.wppb-user-forms .extra_field_heading {
+    margin-bottom: 0;
+}
+
 /*--------------------------------------------------------------
 3.0 Alignments
 --------------------------------------------------------------*/
@@ -136,12 +144,30 @@
     list-style:none;
 }
 
-.wppb-user-forms ul li,
 #wppb-login-wrap p,
 #select_user_to_edit_form p{
 	overflow:hidden;
 	margin:0;
 	padding-bottom:14px;
+}
+
+.wppb-user-forms ul li{
+    margin:0;
+    padding-bottom:14px;
+}
+
+.wppb-user-forms ul li:after{
+    content: "";
+    clear: both;
+    display: block;
+}
+
+.wppb-user-forms .wppb-input-hidden {
+    padding-bottom: 0;
+}
+
+.wppb-user-forms.wppb-user-role-administrator .wppb-input-hidden {
+    padding-bottom: 14px;
 }
 
 .wppb-user-forms .wppb-form-field > ul {
@@ -156,7 +182,7 @@
 	min-height:1px;
 }
 .wppb-form-field input,
-.wppb-form-field input[type="text"], .wppb-form-field input[type="email"], .wppb-form-field input[type="url"], .wppb-form-field input[type="password"], .wppb-form-field input[type="search"],
+.wppb-form-field input[type="text"], .wppb-form-field input[type="number"], .wppb-form-field input[type="email"], .wppb-form-field input[type="url"], .wppb-form-field input[type="password"], .wppb-form-field input[type="search"],
 .wppb-form-field select,
 .wppb-form-field textarea,
 .wppb-checkboxes,
@@ -165,6 +191,11 @@
 #wppb-login-wrap .login-password input{
 	width:69.9%;
 	float:left;
+}
+
+.wppb-form-field.wppb-timepicker select {
+    width: auto;
+    margin-right: 5px;
 }
 
 .wppb-user-forms .wppb-wysiwyg .wp-editor-wrap .wp-editor-tabs *{
@@ -194,6 +225,27 @@ input#send_credentials_via_email{
 	font-style:italic;
 }
 
+.wppb-form-field > span.custom_field_html {
+	font-style: normal;
+    font-size: 100%;
+}
+
+.wppb-form-field > span.select2-container {
+    font-style: normal;
+    font-size: 100%;
+    clear:none;
+}
+
+.wppb-form-field.wppb-timepicker > span.wppb-timepicker-separator {
+    display: inline-block;
+    float: left;
+    clear: none;
+    margin-left: 0;
+    margin-right: 5px;
+    font-size: 100%;
+    font-style: normal;
+}
+
 .wppb_upload_button{
     display:inline-block;
 }
@@ -209,6 +261,8 @@ input#send_credentials_via_email{
 	float:none;
 	min-width:0;
 	padding-left:5px;
+    width:auto;
+    display:inline-block;
 }
 
 .wppb-checkbox-terms-and-conditions input,
@@ -242,12 +296,45 @@ input#send_credentials_via_email{
 }
 
 
-.g-recaptcha{
+.wppb-recaptcha-element{
 	display: inline-block;
 }
-.g-recaptcha iframe{
+.wppb-recaptcha-element.wppb-invisible-recaptcha {
+    display: block !important;
+}
+.wppb-recaptcha-element iframe{
     margin-bottom: 0;
 }
+
+.wppb-form-field input.wppb-map-search-box {
+    position: absolute;
+    top: 10px !important;
+    height: 34px;
+    width: 50%;
+    min-width: 250px;
+    background: #fff;
+    border: 0;
+    border-radius: 1px;
+    padding: 0 10px;
+    box-shadow: 0 1px 1px 0 #c1c1c1;
+    font-family: 'Roboto', sans-serif;
+}
+
+.wppb-create-new-site{
+    width: 100%;
+}
+input#wppb_create_new_site_checkbox{
+    width: auto;
+    margin-right: 10px;
+    float: none;
+}
+label[for=wppb_create_new_site_checkbox]{
+    width:100%;
+}
+label[for=blog-privacy]{
+    width:100%;
+}
+
 
 /*--------------------------------------------------------------
 4.0 Errors & Notices
@@ -263,6 +350,18 @@ input#send_credentials_via_email{
     box-sizing: border-box;
     background: #ffebe8;
     border: 1px solid #C00;
+}
+
+#wppb_general_top_error_message,
+.wppb-error,
+.wppb-warning{
+    color:#222222;
+}
+
+#wppb_general_top_error_message a,
+.wppb-error a,
+.wppb-warning a{
+    color:#007acc;
 }
 
 .wppb-required{
@@ -309,6 +408,8 @@ input#send_credentials_via_email{
     vertical-align: middle;
     margin-top: -3px;
     padding-left:5px;
+    width: auto;
+    height: auto;
 }
 
 .wppb-form-field > span.wppb-form-error{
@@ -316,6 +417,18 @@ input#send_credentials_via_email{
     padding-top: 5px;
     border-top:1px dotted #c89797;
     font-size:100%;
+    margin-left: 0;
+}
+
+/* Remove global Blog Details Field error */
+#wppb-register-user .wppb-default-blog-details.wppb-field-error{
+    background-color: transparent !important;
+    border: 0px !important;
+}
+.wppb-default-blog-details > span.wppb-form-error{
+    display:none;
+}
+.wppb-blog-details-heading span {
     margin-left: 0;
 }
 
@@ -413,6 +526,117 @@ ul.wppb-profile li h3:first-child{
     padding-top:20px;
     border-top:1px solid #d2d2d2;
 }
+
+ul.wppb-faceted-list{
+    list-style: none;
+    margin:0 0 20px;
+}
+
+ul.wppb-faceted-list:after{
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+ul.wppb-faceted-list > li{
+    float:left;
+    margin-right: 15px;
+    max-width: 300px;
+}
+
+ul.wppb-faceted-list > li:first-child{
+    float:none;
+    clear:both;
+}
+
+.wppb-userlisting-container .wppb-faceted-list li h5{
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+ul.wppb-faceted-list label > *{
+    vertical-align: middle;
+}
+
+ul.wppb-faceted-list input[type="checkbox"]{
+    margin-right: 5px;
+}
+
+.wppb-userlisting-container.wppb-spinner{
+    position:relative;
+    opacity: 0.5
+}
+
+.wppb-userlisting-container.wppb-spinner:after{
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -16px;
+    margin-left: -16px;
+    display: block;
+    width: 32px;
+    height: 32px;
+    /*background: url('../images/ajax-loader.gif') no-repeat center;*/
+    z-index: 1000;
+}
+
+ul.wppb-faceted-list .hide-this{
+    display:none;
+}
+
+#wppb-remove-facets-container{
+    list-style: none;
+    margin: 0;
+}
+
+.wppb-remove-facet:before, .wppb-remove-all-facets:before {
+    content: "x";
+    display: inline-block;
+    border-right: 1px dotted #D3CCC9;
+    border-right: 1px dotted #6F6F6F;
+    padding-right: 5px;
+    margin-right: 5px;
+}
+
+.wppb-userlisting-container .wppb-ul-range-values{
+    padding: 5px 0;
+}
+
+.wppb-userlisting-container .wppb-facet-select-multiple{
+    height:auto;
+}
+
+.wppb-userlisting-container:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.wppb-float-left{
+    float:left;
+}
+
+.wppb-float-right{
+    float:right;
+}
+
+.wppb-facet-float-left{
+    float:left;
+    max-width:300px;
+}
+
+.wppb-facet-float-right{
+    float:right;
+    max-width:300px;
+}
+
 
 @media screen and ( max-width: 720px ) {
 
@@ -554,4 +778,11 @@ ul.wppb-profile li h3:first-child{
     font-style: italic;
     margin-left: 0;
     margin-bottom: 1.5em;
+}
+
+/**************************************************/
+/* This is very weird: if in  the css there is a rule on table of border-collapse:collapse; then on FFox and Edge the Media upload won't open
+/**************************************************/
+table{
+    border-collapse:separate;
 }

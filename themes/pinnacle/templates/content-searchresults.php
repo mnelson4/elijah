@@ -101,7 +101,7 @@
                       </a>
                       <?php get_template_part('templates/entry', 'meta-subhead'); ?>
                     </header>
-                    <div class="entry-content" itemprop="articleBody">
+                    <div class="entry-content" itemprop="description">
                         <?php the_excerpt(); ?>
                     </div>
                     <footer class="clearfix">

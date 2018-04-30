@@ -4,15 +4,17 @@ function wppb_description_handler( $output, $form_location, $field, $user_id, $f
 	$item_title = apply_filters( 'wppb_'.$form_location.'_description_item_title', wppb_icl_t( 'plugin profile-builder-pro', 'default_field_'.$field['id'].'_title_translation', $field['field-title'] ) );
 	$item_description = wppb_icl_t( 'plugin profile-builder-pro', 'default_field_'.$field['id'].'_description_translation', $field['description'] );
 	$input_value = '';
-	if( $form_location == 'edit_profile' )
-		$input_value = get_the_author_meta( 'description', $user_id );
+	if( $form_location == 'edit_profile' ) {
+		$profileuser = get_userdata( $user_id );
+		$input_value =	$profileuser->description;
+	}
 	
 	if ( trim( $input_value ) == '' )
 		$input_value = $field['default-value'];
 		
 	$input_value = ( isset( $request_data['description'] ) ? trim( $request_data['description'] ) : $input_value );
 
-	$extra_attr = apply_filters( 'wppb_extra_attribute', '', $field );
+	$extra_attr = apply_filters( 'wppb_extra_attribute', '', $field, $form_location );
 
 	if ( $form_location != 'back_end' ){
 		$error_mark = ( ( $field['required'] == 'Yes' ) ? '<span class="wppb-required" title="'.wppb_required_field_error($field["field-title"]).'">*</span>' : '' );
@@ -22,7 +24,7 @@ function wppb_description_handler( $output, $form_location, $field, $user_id, $f
 
         $output = '
 			<label for="description">'.$item_title.$error_mark.'</label>
-			<textarea rows="'.$field['row-count'].'" name="description" maxlength="'. apply_filters( 'wppb_maximum_character_length', '', $field ) .'" class="default_field_description" id="description" wrap="virtual" '. $extra_attr .'>'. esc_textarea( wp_unslash( $input_value ) ).'</textarea>';
+			<textarea rows="'.$field['row-count'].'" name="description" maxlength="'. apply_filters( 'wppb_maximum_character_length', '', $field ) .'" class="default_field_description '. apply_filters( 'wppb_fields_extra_css_class', '', $field ) .'" id="description" wrap="virtual" '. $extra_attr .'>'. esc_textarea( wp_unslash( $input_value ) ).'</textarea>';
         if( !empty( $item_description ) )
             $output .= '<span class="wppb-description-delimiter">'. $item_description .'</span>';
 

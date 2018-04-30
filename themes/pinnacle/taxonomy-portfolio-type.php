@@ -54,9 +54,20 @@
 			} else {
 				$slideheight = $slidewidth;
 			}
-			$showexcerpt = false; 
-			$plb = false; 
-			$portfolio_item_types = true;
+			$portfolio_excerpt = 'false'; 
+			$portfolio_lightbox = 'false'; 
+			$portfolio_item_types = 'true';
+
+			// Set global loop var
+        		global $kt_portfolio_loop;
+                 $kt_portfolio_loop = array(
+                 	'lightbox' => $portfolio_lightbox,
+                 	'showexcerpt' => $portfolio_excerpt,
+                 	'showtypes' => $portfolio_item_types,
+                 	'pstyleclass' => $pstyleclass,
+                 	'slidewidth' => $slidewidth,
+                 	'slideheight' => $slideheight,
+                 	);
 		    ?> 
 		        <div id="content" class="container">
    					<div class="row">
@@ -64,7 +75,7 @@
 					      	<?php echo category_description(); ?> 
 					      	<?php if (!have_posts()) : ?>
 								<div class="alert">
-								    <?php _e('Sorry, no results were found.', 'virtue'); ?>
+								    <?php _e('Sorry, no results were found.', 'pinnacle'); ?>
 								</div>
 		  						<?php get_search_form(); ?>
 							<?php endif; ?>
@@ -85,63 +96,10 @@
 							 	while (have_posts()) : the_post(); ?>
 									
 								<div class="<?php echo esc_attr($itemsize);?> p-item">
-					                <div class="portfolio-item grid_item postclass kad-light-gallery kad_portfolio_fade_in">
-                       				<?php if (has_post_thumbnail( $post->ID ) ) { 
-                       					$image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); 
-										$thumbnailURL = $image_url[0]; 
-									 	$image = aq_resize($thumbnailURL, $slidewidth, $slideheight, true);
-										if(empty($image)) {$image = $thumbnailURL;} ?>
-
-										<div class="portfolio-imagepadding">
-											<div class="portfolio-hoverclass">
-												<a href="<?php the_permalink() ?>" class="">
-			                                       <img src="<?php echo esc_url($image); ?>" alt="<?php the_title(); ?>" class="kad-lightboxhover">
-			                                       <div class="portfolio-hoverover"></div>
-			                                       <div class="portfolio-table">
-			                                       		<div class="portfolio-cell">
-			                                       			<?php if($pstyleclass == "padded_style" ) { ?>
-				                                       			<a href="<?php the_permalink() ?>" class="kad-btn kad-btn-primary"><?php echo __('View details', 'pinnacle');?></a>
-				                                       			<?php if($plb) {?>
-				                                       				<a href="<?php echo esc_url($thumbnailURL); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title();?>" data-rel="lightbox"><i class="kt-icon-search4"></i></a>
-				                                       			<?php } ?>
-				                                       		<?php } elseif($pstyleclass == "flat-no-margin" || $pstyleclass == "flat-w-margin" ) { ?>
-				                                       			<h5><?php the_title();?></h5>
-		                           								<?php if($portfolio_item_types == true) { 
-		                           									$terms = get_the_terms( $post->ID, 'portfolio-type' ); if ($terms) {?>
-		                           										<p class="cportfoliotag"><?php $output = array(); foreach($terms as $term){ $output[] = $term->name;} echo implode(', ', $output); ?></p> 
-		                           									<?php } 
-		                           								}
-				                                       			if($showexcerpt) {?>
-				                                       				<p class="p_excerpt"><?php echo pinnacle_excerpt(16); ?></p>
-				                                       			<?php } ?>
-				                                       			<?php if($plb) {?>
-				                                       				<a href="<?php echo esc_url($thumbnailURL); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title();?>" data-rel="lightbox"><i class="kt-icon-search4"></i></a>
-				                                       			<?php }
-				                                       		} ?>
-				                                       	</div>
-	                                       			</div>
-	                                   			</a>
-	                                   		</div>
-	                                	</div>
-	                                	<?php $image = null; $thumbnailURL = null;
-                           			}
-
-                           			if($pstyleclass == "padded_style" ) { ?>
-					              		<a href="<?php the_permalink() ?>" class="portfoliolink">
-						              		<div class="piteminfo">   
-						                          <h5><?php the_title();?></h5>
-						                           	<?php if($portfolio_item_types == true) {
-						                           		$terms = get_the_terms( $post->ID, 'portfolio-type' ); if ($terms) {?>
-						                           			<p class="cportfoliotag"><?php $output = array(); foreach($terms as $term){ $output[] = $term->name;} echo implode(', ', $output); ?></p> 
-						                           		<?php }
-						                           	}
-						                          	if($showexcerpt == true) {?> 
-						                          		<p><?php echo pinnacle_excerpt(16); ?></p>
-						                          	<?php } ?>
-						                    </div>
-					                	</a>
-                					<?php } ?>
-               						</div>
+					                <?php do_action('kadence_portfolio_loop_start');
+												get_template_part('templates/content', 'loop-portfolio'); 
+											  do_action('kadence_portfolio_loop_end');
+										?>
 	                    		</div>
 								<?php endwhile; ?>
                 			</div> <!--portfoliowrapper-->
@@ -151,8 +109,8 @@
 		                            	pinnacle_wp_pagination();
 		                            } else { ?>     
 			                            <nav id="post-nav" class="pager">
-			                                <div class="previous"><?php next_posts_link(__('&larr; Older posts', 'virtue')); ?></div>
-			                                <div class="next"><?php previous_posts_link(__('Newer posts &rarr;', 'virtue')); ?></div>
+			                                <div class="previous"><?php next_posts_link(__('&larr; Older posts', 'pinnacle')); ?></div>
+			                                <div class="next"><?php previous_posts_link(__('Newer posts &rarr;', 'pinnacle')); ?></div>
 			                            </nav>
 		                           	<?php } 
 		                    endif;

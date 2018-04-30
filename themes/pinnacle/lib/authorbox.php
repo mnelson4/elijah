@@ -29,7 +29,7 @@ function pinnacle_author_box() { ?>
         </span>
               <?php } if ( get_the_author_meta( 'flickr' ) ) { ?>
               <span class="flickrlink">
-  				<a href="<?php esc_url(the_author_meta( 'flickr' )); ?>" target="_blank" title="<?php _e('Follow', 'pinnacle'); ?>  <?php the_author_meta( 'display_name' ); ?> <?php _e('on Flickr', 'pinnacle');?>"><i class="icon-flickr2"></i></a>
+  				<a href="<?php esc_url(the_author_meta( 'flickr' )); ?>" target="_blank" title="<?php _e('Follow', 'pinnacle'); ?>  <?php the_author_meta( 'display_name' ); ?> <?php _e('on Flickr', 'pinnacle');?>"><i class="icon-flickr"></i></a>
   			</span>
               <?php } if ( get_the_author_meta( 'vimeo' ) ) { ?>
               <span class="vimeolink">

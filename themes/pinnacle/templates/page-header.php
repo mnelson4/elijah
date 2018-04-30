@@ -11,8 +11,7 @@
 	} else {
 		$bsub = '';
 	}
-	$bsub = apply_filters( 'kadence_page_subtitle', $bsub, $post, $pinnacle );
-	 ?>
+	$bsub = apply_filters( 'kadence_page_subtitle', $bsub, $post, $pinnacle ); ?>
 <div id="pageheader" class="titleclass">
 <div class="header-color-overlay"></div>
 	<div class="container">

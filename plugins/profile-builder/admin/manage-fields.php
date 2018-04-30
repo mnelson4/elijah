@@ -9,17 +9,19 @@
 function wppb_manage_fields_submenu(){
 	// create a new sub_menu page which holds the data for the default + extra fields
 	$args = array(
-				'menu_title' 	=> __( 'Manage Fields', 'profile-builder' ),
-				'page_title' 	=> __( 'Manage Default and Extra Fields', 'profile-builder' ),
-				'menu_slug'		=> 'manage-fields',
-				'page_type'		=> 'submenu_page',
-				'capability'	=> 'manage_options',
-				'priority'		=> 5,
-				'parent_slug'	=> 'profile-builder'
-			);
-	$all_fields = new WCK_Page_Creator_PB( $args );
+		'menu_title' => __('Manage Fields', 'profile-builder'),
+		'page_title' => __('Manage Default and Extra Fields', 'profile-builder'),
+		'menu_slug' => 'manage-fields',
+		'page_type' => 'submenu_page',
+		'capability' => 'manage_options',
+		'priority' => 5,
+		'parent_slug' => 'profile-builder'
+	);
+	$manage_fields_page = new WCK_Page_Creator_PB($args);
+}
+add_action( 'admin_menu', 'wppb_manage_fields_submenu', 1 );
 
-	
+function wppb_populate_manage_fields(){
 	// populate this page
 	$manage_field_types[] = 'Default - Name (Heading)';
 	$manage_field_types[] = 'Default - Contact Info (Heading)';
@@ -42,32 +44,46 @@ function wppb_manage_fields_submenu(){
     $manage_field_types[] = 'Default - Repeat Password';
     $manage_field_types[] = 'Default - Biographical Info';
     $manage_field_types[] = 'Default - Display name publicly as';
+	if ( wppb_can_users_signup_blog() ) {
+		$manage_field_types[] = 'Default - Blog Details';
+	}
+
+	/* added recaptcha and user role field since version 2.6.2 */
+	$manage_field_types[] = 'reCAPTCHA';
+	$manage_field_types[] = 'Select (User Role)';
 
     if( PROFILE_BUILDER != 'Profile Builder Free' ) {
         $manage_field_types[] = 'Heading';
         $manage_field_types[] = 'Input';
+        $manage_field_types[] = 'Number';
         $manage_field_types[] = 'Input (Hidden)';
         $manage_field_types[] = 'Textarea';
         $manage_field_types[] = 'WYSIWYG';
+        $manage_field_types[] = 'Phone';
         $manage_field_types[] = 'Select';
         $manage_field_types[] = 'Select (Multiple)';
         $manage_field_types[] = 'Select (Country)';
         $manage_field_types[] = 'Select (Timezone)';
-        $manage_field_types[] = 'Select (User Role)';
+        $manage_field_types[] = 'Select (Currency)';
+        $manage_field_types[] = 'Select (CPT)';
         $manage_field_types[] = 'Checkbox';
         $manage_field_types[] = 'Checkbox (Terms and Conditions)';
         $manage_field_types[] = 'Radio';
         $manage_field_types[] = 'Upload';
         $manage_field_types[] = 'Avatar';
         $manage_field_types[] = 'Datepicker';
-        $manage_field_types[] = 'reCAPTCHA';
+        $manage_field_types[] = 'Timepicker';
+        $manage_field_types[] = 'Colorpicker';
+        $manage_field_types[] = 'Validation';
+        $manage_field_types[] = 'Map';
+        $manage_field_types[] = 'HTML';
     }
 	
 				
 	//Free to Pro call to action on Manage Fields page
 	$field_description = __('Choose one of the supported field types','profile-builder');
 	if( PROFILE_BUILDER == 'Profile Builder Free' ) {
-		$field_description .= sprintf( __('. Extra Field Types are available in <a href="%s">Hobbyist or PRO versions</a>.' , 'profile-builder'), esc_url( 'http://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=manage-fields-link&utm_campaign=PBFree' ) );
+		$field_description .= sprintf( __('. Extra Field Types are available in <a href="%s">Hobbyist or PRO versions</a>.' , 'profile-builder'), esc_url( 'https://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=manage-fields-link&utm_campaign=PBFree' ) );
 	}
 
 
@@ -87,23 +103,42 @@ function wppb_manage_fields_submenu(){
 		$default_country_options[] = $country_name;
 	}
 
+    // currency select
+    $default_currency_array = wppb_get_currencies( 'back_end' );
+    array_unshift( $default_currency_array, '' );
+    foreach( $default_currency_array as $iso_currency_code => $currency_name ) {
+        $default_currency_values[]   = $iso_currency_code;
+        $default_currency_options[]  = $currency_name;
+    }
+
+	//cpt select
+	$post_types = get_post_types( array( 'public'   => true ), 'names' );
+
+
+	if( apply_filters( 'wppb_update_field_meta_key_in_db', false ) ) {
+		$meta_key_description = __( 'Use this in conjunction with WordPress functions to display the value in the page of your choosing<br/>Auto-completed but in some cases editable (in which case it must be unique)<br/>Changing this might take long in case of a very big user-count', 'profile-builder' );
+	}
+	else{
+		$meta_key_description = __( 'Use this in conjunction with WordPress functions to display the value in the page of your choosing<br/>Auto-completed but in some cases editable (in which case it must be unique)<br/>Changing this will only affect subsequent entries', 'profile-builder' );
+	}
 
 	// set up the fields array
 	$fields = apply_filters( 'wppb_manage_fields', array(
 
         array( 'type' => 'text', 'slug' => 'field-title', 'title' => __( 'Field Title', 'profile-builder' ), 'description' => __( 'Title of the field', 'profile-builder' ) ),
         array( 'type' => 'select', 'slug' => 'field', 'title' => __( 'Field', 'profile-builder' ), 'options' => apply_filters( 'wppb_manage_fields_types', $manage_field_types ), 'default-option' => true, 'description' => $field_description ),
-        array( 'type' => 'text', 'slug' => 'meta-name', 'title' => __( 'Meta-name', 'profile-builder' ), 'default' => wppb_get_meta_name(), 'description' => __( 'Use this in conjuction with WordPress functions to display the value in the page of your choosing<br/>Auto-completed but in some cases editable (in which case it must be uniqe)<br/>Changing this might take long in case of a very big user-count', 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'meta-name', 'title' => __( 'Meta-name', 'profile-builder' ), 'default' => wppb_get_meta_name(), 'description' => $meta_key_description ),
         array( 'type' => 'text', 'slug' => 'id', 'title' => __( 'ID', 'profile-builder' ), 'default' => wppb_get_unique_id(), 'description' => __( "A unique, auto-generated ID for this particular field<br/>You can use this in conjuction with filters to target this element if needed<br/>Can't be edited", 'profile-builder' ), 'readonly' => true ),
         array( 'type' => 'textarea', 'slug' => 'description', 'title' => __( 'Description', 'profile-builder' ), 'description' => __( 'Enter a (detailed) description of the option for end users to read<br/>Optional', 'profile-builder') ),
         array( 'type' => 'text', 'slug' => 'row-count', 'title' => __( 'Row Count', 'profile-builder' ), 'default' => 5, 'description' => __( "Specify the number of rows for a 'Textarea' field<br/>If not specified, defaults to 5", 'profile-builder' ) ),
         array( 'type' => 'text', 'slug' => 'allowed-image-extensions', 'title' => __( 'Allowed Image Extensions', 'profile-builder' ), 'default' => '.*', 'description' => __( 'Specify the extension(s) you want to limit to upload<br/>Example: .ext1,.ext2,.ext3<br/>If not specified, defaults to: .jpg,.jpeg,.gif,.png (.*)', 'profile-builder' ) ),
         array( 'type' => 'text', 'slug' => 'allowed-upload-extensions', 'title' => __( 'Allowed Upload Extensions', 'profile-builder' ), 'default' => '.*', 'description' => __( 'Specify the extension(s) you want to limit to upload<br/>Example: .ext1,.ext2,.ext3<br/>If not specified, defaults to all WordPress allowed file extensions (.*)', 'profile-builder' ) ),
         array( 'type' => 'text', 'slug' => 'avatar-size', 'title' => __( 'Avatar Size', 'profile-builder' ), 'default' => 100, 'description' => __( "Enter a value (between 20 and 200) for the size of the 'Avatar'<br/>If not specified, defaults to 100", 'profile-builder' ) ),
-        array( 'type' => 'text', 'slug' => 'date-format', 'title' => __( 'Date-format', 'profile-builder' ), 'default' => 'mm/dd/yy', 'description' => __( 'Specify the format of the date when using Datepicker<br/>Valid options: mm/dd/yy, mm/yy/dd, dd/yy/mm, dd/mm/yy, yy/dd/mm, yy/mm/dd<br/>If not specified, defaults to mm/dd/yy', 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'date-format', 'title' => __( 'Date-format', 'profile-builder' ), 'default' => 'mm/dd/yy', 'description' => __( 'Specify the format of the date when using Datepicker<br/>Valid options: mm/dd/yy, mm/yy/dd, dd/yy/mm, dd/mm/yy, yy/dd/mm, yy/mm/dd, mm-dd-yy, yy-mm-dd, D, dd M yy, D, d M y, DD, dd-M-y, D, d M yy, @<br/>If not specified, defaults to mm/dd/yy', 'profile-builder' ) ),
         array( 'type' => 'textarea', 'slug' => 'terms-of-agreement', 'title' => __( 'Terms of Agreement', 'profile-builder' ), 'description' => __( 'Enter a detailed description of the temrs of agreement for the user to read.<br/>Links can be inserted by using standard HTML syntax: &lt;a href="custom_url"&gt;custom_text&lt;/a&gt;', 'profile-builder' ) ),
         array( 'type' => 'text', 'slug' => 'options', 'title' => __( 'Options', 'profile-builder' ), 'description' => __( "Enter a comma separated list of values<br/>This can be anything, as it is hidden from the user, but should not contain special characters or apostrophes", 'profile-builder' ) ),
         array( 'type' => 'text', 'slug' => 'labels', 'title' => __( 'Labels', 'profile-builder' ), 'description' => __( "Enter a comma separated list of labels<br/>Visible for the user", 'profile-builder' ) ),
+        array( 'type' => 'select', 'slug' => 'recaptcha-type', 'title' => __( 'reCAPTCHA Type', 'profile-builder' ), 'options' => array('%reCAPTCHA V2%v2', '%Invisible reCAPTCHA%invisible'), 'default' => 'v2', 'description' => __( 'Choose the <a href="https://developers.google.com/recaptcha/docs/versions" target="_blank">type of reCAPTCHA</a> you wish to add to this site.', 'profile-builder' ) ),
         array( 'type' => 'text', 'slug' => 'public-key', 'title' => __( 'Site Key', 'profile-builder' ), 'description' => __( 'The site key from Google, <a href="http://www.google.com/recaptcha" target="_blank">www.google.com/recaptcha</a>', 'profile-builder' ) ),
         array( 'type' => 'text', 'slug' => 'private-key', 'title' => __( 'Secret Key', 'profile-builder' ), 'description' => __( 'The secret key from Google, <a href="http://www.google.com/recaptcha" target="_blank">www.google.com/recaptcha</a>', 'profile-builder' ) ),
         array( 'type' => 'checkbox', 'slug' => 'captcha-pb-forms', 'title' => __( 'Display on PB forms', 'profile-builder' ), 'options' => array( '%'.__('PB Login','profile-builder').'%'.'pb_login', '%'.__('PB Register','profile-builder').'%'.'pb_register', '%'.__('PB Recover Password','profile-builder').'%'.'pb_recover_password' ), 'default' => 'pb_register', 'description' => __( "Select on which Profile Builder forms to display reCAPTCHA", 'profile-builder' ) ),
@@ -115,8 +150,25 @@ function wppb_manage_fields_submenu(){
         array( 'type' => 'text', 'slug' => 'default-options', 'title' => __( 'Default Option(s)', 'profile-builder' ), 'description' => __( "Specify the option which should be checked by default<br/>If there are multiple values, separate them with a ',' (comma)", 'profile-builder' ) ),
 		array( 'type' => 'select', 'slug' => 'default-option-country', 'title' => __( 'Default Option', 'profile-builder' ), 'values' => ( isset( $default_country_values ) ) ? $default_country_values : '', 'options' => ( isset( $default_country_options ) ) ? $default_country_options : '', 'description' => __( "Default option of the field", 'profile-builder' ) ),
 		array( 'type' => 'select', 'slug' => 'default-option-timezone', 'title' => __( 'Default Option', 'profile-builder' ), 'options' => wppb_timezone_select_options( 'back_end' ), 'description' => __( "Default option of the field", 'profile-builder' ) ),
+        array( 'type' => 'select', 'slug' => 'default-option-currency', 'title' => __( 'Default Option', 'profile-builder' ), 'values' => ( isset( $default_currency_values ) ) ? $default_currency_values : '', 'options' => ( isset( $default_currency_options ) ) ? $default_currency_options : '', 'description' => __( "Default option of the field", 'profile-builder' ) ),
+        array( 'type' => 'select', 'slug' => 'show-currency-symbol', 'title' => __( 'Show Currency Symbol', 'profile-builder' ), 'options' => array( 'No', 'Yes' ), 'default' => 'No', 'description' => __( 'Whether the currency symbol should be displayed after the currency name in the select option.', 'profile-builder' ) ),
+        array( 'type' => 'select', 'slug' => 'cpt', 'title' => __( 'Show Post Type', 'profile-builder' ), 'options' => $post_types, 'default' => 'post', 'description' => __( 'Posts from what post type will be displayed in the select.', 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'validation-possible-values', 'title' => __( 'Allowable Values', 'profile-builder' ), 'description' => __( "Enter a comma separated list of possible values. Upon registration if the value provided by the user does not match one of these values, the user will not be registered.", 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'custom-error-message', 'title' => __( 'Error Message', 'profile-builder' ), 'description' => __( "Set a custom error message that will be displayed to the user.", 'profile-builder' ) ),
+        array( 'type' => 'select', 'slug' => 'time-format', 'title' => __( 'Time Format', 'profile-builder' ), 'options' => array( '%12 Hours%12', '%24 Hours%24' ), 'description' => __( 'Specify the time format.', 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'map-api-key', 'title' => __( 'Google Maps API Key', 'profile-builder' ), 'description' => __( 'Enter your Google Maps API key ( <a href="https://console.developers.google.com/flows/enableapi?apiid=maps_backend" target="_blank">Get your API key</a> ). If more than one map fields are added to a form the API key from the first map displayed will be used.', 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'map-default-lat', 'title' => __( 'Default Latitude', 'profile-builder' ), 'description' => __( "The latitude at which the map should be displayed when no pins are attached.", 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'map-default-lng', 'title' => __( 'Default Longitude', 'profile-builder' ), 'description' => __( "The longitude at which the map should be displayed when no pins are attached.", 'profile-builder' ) ),
+        array( 'type' => 'text', 'slug' => 'map-default-zoom', 'title' => __( 'Default Zoom Level', 'profile-builder' ), 'description' => __( "Add a number from 0 to 19. The higher the number the higher the zoom.", 'profile-builder' ), 'default' => 16 ),
+        array( 'type' => 'text', 'slug' => 'map-height', 'title' => __( 'Map Height', 'profile-builder' ), 'description' => __( "The height of the map.", 'profile-builder' ), 'default' => 400 ),
 		array( 'type' => 'textarea', 'slug' => 'default-content', 'title' => __( 'Default Content', 'profile-builder' ), 'description' => __( "Default value of the textarea", 'profile-builder' ) ),
-        array( 'type' => 'select', 'slug' => 'required', 'title' => __( 'Required', 'profile-builder' ), 'options' => array( 'No', 'Yes' ), 'default' => 'No', 'description' => __( 'Whether the field is required or not', 'profile-builder' ) ),
+		array( 'type' => 'textarea', 'slug' => 'html-content', 'title' => __( 'HTML Content', 'profile-builder' ), 'description' => __( "Add your HTML (or text) content", 'profile-builder' ) ),
+		array( 'type' => 'text', 'slug' => 'phone-format', 'title' => __( 'Phone Format', 'profile-builder' ), 'default' => '(###) ###-####', 'description' => __( "You can use: # for numbers, parentheses ( ), - sign, + sign, dot . and spaces.", 'profile-builder' ) .'<br>'.  __( "Eg. (###) ###-####", 'profile-builder' ) .'<br>'. __( "Empty field won't check for correct phone number.", 'profile-builder' ) ),
+		array( 'type' => 'select', 'slug' => 'heading-tag', 'title' => __( 'Heading Tag', 'profile-builder' ), 'options' => array( '%h1 - biggest size%h1', 'h2', 'h3', 'h4', 'h5', '%h6 - smallest size%h6' ), 'default' => 'h4', 'description' => __( 'Change heading field size on front-end forms', 'profile-builder' ) ),
+		array( 'type' => 'text', 'slug' => 'min-number-value', 'title' => __( 'Min Number Value', 'profile-builder' ), 'description' => __( "Min allowed number value (0 to allow only positive numbers)", 'profile-builder' ) .'<br>'. __( "Leave it empty for no min value", 'profile-builder' ) ),
+		array( 'type' => 'text', 'slug' => 'max-number-value', 'title' => __( 'Max Number Value', 'profile-builder' ), 'description' => __( "Max allowed number value (0 to allow only negative numbers)", 'profile-builder' ) .'<br>'. __( "Leave it empty for no max value", 'profile-builder' ) ),
+		array( 'type' => 'text', 'slug' => 'number-step-value', 'title' => __( 'Number Step Value', 'profile-builder' ), 'description' => __( "Step value 1 to allow only integers, 0.1 to allow integers and numbers with 1 decimal", 'profile-builder' ) .'<br>'. __( "To allow multiple decimals use for eg. 0.01 (for 2 deciamls) and so on", 'profile-builder' ) .'<br>'. __( "You can also use step value to specify the legal number intervals (eg. step value 2 will allow only -4, -2, 0, 2 and so on)", 'profile-builder' ) .'<br>'. __( "Leave it empty for no restriction", 'profile-builder' ) ),
+		array( 'type' => 'select', 'slug' => 'required', 'title' => __( 'Required', 'profile-builder' ), 'options' => array( 'No', 'Yes' ), 'default' => 'No', 'description' => __( 'Whether the field is required or not', 'profile-builder' ) ),
         array( 'type' => 'select', 'slug' => 'overwrite-existing', 'title' => __( 'Overwrite Existing', 'profile-builder' ), 'options' => array( 'No', 'Yes' ), 'default' => 'No', 'description' => __( "Selecting 'Yes' will add the field to the list, but will overwrite any other field in the database that has the same meta-name<br/>Use this at your own risk", 'profile-builder' ) ),
     ) );
 	
@@ -131,6 +183,7 @@ function wppb_manage_fields_submenu(){
 		);
 	new Wordpress_Creation_Kit_PB( $args );
 
+	/* this is redundant but it should have a very low impact and for comfort we leave it here as well  */
     wppb_prepopulate_fields();
 
     // create the info side meta-box
@@ -145,7 +198,7 @@ function wppb_manage_fields_submenu(){
     );
     new Wordpress_Creation_Kit_PB( $args );
 }
-add_action( 'init', 'wppb_manage_fields_submenu', 10 );
+add_action( 'admin_init', 'wppb_populate_manage_fields', 1 );
 
 /**
  * Function that prepopulates the manage fields list with the default fields of WP
@@ -176,6 +229,9 @@ function wppb_prepopulate_fields(){
 	$prepopulated_fields[] = array( 'field' => 'Default - Biographical Info', 'field-title' => __( 'Biographical Info', 'profile-builder' ), 'meta-name' => 'description', 'overwrite-existing' => 'No', 'id' => '14', 'description' => __( 'Share a little biographical information to fill out your profile. This may be shown publicly.', 'profile-builder' ), 'row-count' => '5', 'allowed-image-extensions' => '.*', 'allowed-upload-extensions' => '.*', 'avatar-size' => '100', 'date-format' => 'mm/dd/yy', 'terms-of-agreement' => '', 'options' => '', 'labels' => '', 'public-key' => '', 'private-key' => '', 'default-value' => '', 'default-option' => '', 'default-options' => '', 'required' => 'No' );
 	$prepopulated_fields[] = array( 'field' => 'Default - Password', 'field-title' => __( 'Password', 'profile-builder' ), 'meta-name' => '', 'overwrite-existing' => 'No', 'id' => '15', 'description' => __( 'Type your password.', 'profile-builder' ), 'row-count' => '5', 'allowed-image-extensions' => '.*', 'allowed-upload-extensions' => '.*', 'avatar-size' => '100', 'date-format' => 'mm/dd/yy', 'terms-of-agreement' => '', 'options' => '', 'labels' => '', 'public-key' => '', 'private-key' => '', 'default-value' => '', 'default-option' => '', 'default-options' => '', 'default-content' => '', 'required' => 'Yes' );
 	$prepopulated_fields[] = array( 'field' => 'Default - Repeat Password', 'field-title' => __( 'Repeat Password', 'profile-builder' ), 'meta-name' => '', 'overwrite-existing' => 'No', 'id' => '16', 'description' => __( 'Type your password again. ', 'profile-builder' ), 'row-count' => '5', 'allowed-image-extensions' => '.*', 'allowed-upload-extensions' => '.*', 'avatar-size' => '100', 'date-format' => 'mm/dd/yy', 'terms-of-agreement' => '', 'options' => '', 'labels' => '', 'public-key' => '', 'private-key' => '', 'default-value' => '', 'default-option' => '', 'default-options' => '', 'default-content' => '', 'required' => 'Yes' );
+	if ( wppb_can_users_signup_blog() ){
+		$prepopulated_fields[] = array( 'field' => 'Default - Blog Details', 'field-title' => __( 'Blog Details', 'profile-builder' ), 'meta-name' => '', 'overwrite-existing' => 'No', 'id' => '17', 'description' => '', 'row-count' => '5', 'allowed-image-extensions' => '.*', 'allowed-upload-extensions' => '.*', 'avatar-size' => '100', 'date-format' => 'mm/dd/yy', 'terms-of-agreement' => '', 'options' => '', 'labels' => '', 'public-key' => '', 'private-key' => '', 'default-value' => '', 'default-option' => '', 'default-options' => '', 'default-content' => '', 'required' => 'No' );
+	}
 
 	add_option ( 'wppb_manage_fields', apply_filters ( 'wppb_prepopulated_fields', $prepopulated_fields ) );
 }
@@ -187,18 +243,18 @@ function wppb_prepopulate_fields(){
  *
  * @return string
  */
-function wppb_get_meta_name(){
+function wppb_get_meta_name( $option = 'wppb_manage_fields', $prefix = 'custom_field_' ){
 	$id = 1;
 	
-	$wppb_manage_fields = get_option( 'wppb_manage_fields', 'not_found' );
+	$wppb_manage_fields = get_option( $option, 'not_found' );
 
 	if ( ( $wppb_manage_fields === 'not_found' ) || ( empty( $wppb_manage_fields ) ) ){
-		return 'custom_field_' . $id;
+		return $prefix . $id;
 	}
     else{
         $meta_names = array();
 		foreach( $wppb_manage_fields as $value ){
-			if ( strpos( $value['meta-name'], 'custom_field' ) === 0 ){
+			if ( strpos( $value['meta-name'], $prefix ) === 0 ){
                 $meta_names[] = $value['meta-name'];
 			}
 		}
@@ -206,7 +262,7 @@ function wppb_get_meta_name(){
         if( !empty( $meta_names ) ){
             $meta_numbers = array();
             foreach( $meta_names as $meta_name ){
-                $number = str_replace( 'custom_field', '', $meta_name );
+                $number = str_replace( $prefix, '', $meta_name );
                 /* we should have an underscore present in custom_field_# so remove it */
                 $number = str_replace( '_', '', $number );
 
@@ -214,11 +270,11 @@ function wppb_get_meta_name(){
             }
             if( !empty( $meta_numbers ) ){
                 rsort( $meta_numbers );
-                $id = $meta_numbers[0]+1;
+                $id = $meta_numbers[0]++;
             }
         }
 
-		return 'custom_field_' . $id;
+		return $prefix . $id;
 	}
 }
 
@@ -505,6 +561,321 @@ function wppb_timezone_select_options( $form_location ) {
 }
 
 
+/*
+ * Array with the currency ISO code and associated currency name
+ *
+ * @param string $form_location
+ *
+ * @return array
+ *
+ */
+function wppb_get_currencies( $form_location = '' ) {
+
+    $currencies = array(
+        'ALL' => __( 'Albania Lek', 'profile-builder' ),
+        'AFN' => __( 'Afghanistan Afghani', 'profile-builder' ),
+        'ARS' => __( 'Argentina Peso', 'profile-builder' ),
+        'AWG' => __( 'Aruba Guilder', 'wkc' ),
+        'AUD' => __( 'Australia Dollar', 'profile-builder' ),
+        'AZN' => __( 'Azerbaijan New Manat', 'profile-builder' ),
+        'BSD' => __( 'Bahamas Dollar', 'profile-builder' ),
+        'BBD' => __( 'Barbados Dollar','profile-builder' ),
+        'BDT' => __( 'Bangladeshi taka','profile-builder' ),
+        'BYR' => __( 'Belarus Ruble','profile-builder' ),
+        'BZD' => __( 'Belize Dollar','profile-builder' ),
+        'BMD' => __( 'Bermuda Dollar','profile-builder' ),
+        'BOB' => __( 'Bolivia Boliviano','profile-builder' ),
+        'BAM' => __( 'Bosnia and Herzegovina Convertible Marka','profile-builder' ),
+        'BWP' => __( 'Botswana Pula','profile-builder' ),
+        'BGN' => __( 'Bulgaria Lev','profile-builder' ),
+        'BRL' => __( 'Brazil Real','profile-builder' ),
+        'BND' => __( 'Brunei Darussalam Dollar','profile-builder' ),
+        'KHR' => __( 'Cambodia Riel','profile-builder' ),
+        'CAD' => __( 'Canada Dollar','profile-builder' ),
+        'KYD' => __( 'Cayman Islands Dollar','profile-builder' ),
+        'CLP' => __( 'Chile Peso','profile-builder' ),
+        'CNY' => __( 'China Yuan Renminbi','profile-builder' ),
+        'COP' => __( 'Colombia Peso','profile-builder' ),
+        'CRC' => __( 'Costa Rica Colon','profile-builder' ),
+        'HRK' => __( 'Croatia Kuna','profile-builder' ),
+        'CUP' => __( 'Cuba Peso','profile-builder' ),
+        'CZK' => __( 'Czech Republic Koruna','profile-builder' ),
+        'DKK' => __( 'Denmark Krone','profile-builder' ),
+        'DOP' => __( 'Dominican Republic Peso','profile-builder' ),
+        'XCD' => __( 'East Caribbean Dollar','profile-builder' ),
+        'EGP' => __( 'Egypt Pound','profile-builder' ),
+        'SVC' => __( 'El Salvador Colon','profile-builder' ),
+        'EEK' => __( 'Estonia Kroon','profile-builder' ),
+        'EUR' => __( 'Euro','profile-builder' ),
+        'FKP' => __( 'Falkland Islands (Malvinas) Pound','profile-builder' ),
+        'FJD' => __( 'Fiji Dollar','profile-builder' ),
+        'GHC' => __( 'Ghana Cedis','profile-builder' ),
+        'GIP' => __( 'Gibraltar Pound','profile-builder' ),
+        'GTQ' => __( 'Guatemala Quetzal','profile-builder' ),
+        'GGP' => __( 'Guernsey Pound','profile-builder' ),
+        'GYD' => __( 'Guyana Dollar','profile-builder' ),
+        'HNL' => __( 'Honduras Lempira','profile-builder' ),
+        'HKD' => __( 'Hong Kong Dollar','profile-builder' ),
+        'HUF' => __( 'Hungary Forint','profile-builder' ),
+        'ISK' => __( 'Iceland Krona','profile-builder' ),
+        'INR' => __( 'India Rupee','profile-builder' ),
+        'IDR' => __( 'Indonesia Rupiah','profile-builder' ),
+        'IRR' => __( 'Iran Rial','profile-builder' ),
+        'IMP' => __( 'Isle of Man Pound','profile-builder' ),
+        'ILS' => __( 'Israel Shekel','profile-builder' ),
+        'JMD' => __( 'Jamaica Dollar','profile-builder' ),
+        'JPY' => __( 'Japan Yen','profile-builder' ),
+        'JEP' => __( 'Jersey Pound','profile-builder' ),
+        'KZT' => __( 'Kazakhstan Tenge','profile-builder' ),
+        'KPW' => __( 'Korea (North) Won','profile-builder' ),
+        'KRW' => __( 'Korea (South) Won','profile-builder' ),
+        'KGS' => __( 'Kyrgyzstan Som','profile-builder' ),
+        'LAK' => __( 'Laos Kip','profile-builder' ),
+        'LVL' => __( 'Latvia Lat','profile-builder' ),
+        'LBP' => __( 'Lebanon Pound','profile-builder' ),
+        'LRD' => __( 'Liberia Dollar','profile-builder' ),
+        'LTL' => __( 'Lithuania Litas','profile-builder' ),
+        'MKD' => __( 'Macedonia Denar','profile-builder' ),
+        'MYR' => __( 'Malaysia Ringgit','profile-builder' ),
+        'MUR' => __( 'Mauritius Rupee','profile-builder' ),
+        'MXN' => __( 'Mexico Peso','profile-builder' ),
+        'MNT' => __( 'Mongolia Tughrik','profile-builder' ),
+        'MZN' => __( 'Mozambique Metical','profile-builder' ),
+        'NAD' => __( 'Namibia Dollar','profile-builder' ),
+        'NPR' => __( 'Nepal Rupee','profile-builder' ),
+        'ANG' => __( 'Netherlands Antilles Guilder','profile-builder' ),
+        'NZD' => __( 'New Zealand Dollar','profile-builder' ),
+        'NIO' => __( 'Nicaragua Cordoba','profile-builder' ),
+        'NGN' => __( 'Nigeria Naira','profile-builder' ),
+        'NOK' => __( 'Norway Krone','profile-builder' ),
+        'OMR' => __( 'Oman Rial', 'profile-builder' ),
+        'PKR' => __( 'Pakistan Rupee', 'profile-builder' ),
+        'PAB' => __( 'Panama Balboa', 'profile-builder' ),
+        'PYG' => __( 'Paraguay Guarani', 'profile-builder' ),
+        'PEN' => __( 'Peru Nuevo Sol', 'profile-builder' ),
+        'PHP' => __( 'Philippines Peso', 'profile-builder' ),
+        'PLN' => __( 'Poland Zloty', 'profile-builder' ),
+        'QAR' => __( 'Qatar Riyal', 'profile-builder' ),
+        'RON' => __( 'Romania New Leu', 'profile-builder' ),
+        'RUB' => __( 'Russia Ruble', 'profile-builder' ),
+        'SHP' => __( 'Saint Helena Pound', 'profile-builder' ),
+        'SAR' => __( 'Saudi Arabia Riyal', 'profile-builder' ),
+        'RSD' => __( 'Serbia Dinar', 'profile-builder' ),
+        'SCR' => __( 'Seychelles Rupee', 'profile-builder' ),
+        'SGD' => __( 'Singapore Dollar', 'profile-builder' ),
+        'SBD' => __( 'Solomon Islands Dollar', 'profile-builder' ),
+        'SOS' => __( 'Somalia Shilling', 'profile-builder' ),
+        'ZAR' => __( 'South Africa Rand', 'profile-builder' ),
+        'LKR' => __( 'Sri Lanka Rupee', 'profile-builder' ),
+        'SEK' => __( 'Sweden Krona', 'profile-builder' ),
+        'CHF' => __( 'Switzerland Franc', 'profile-builder' ),
+        'SRD' => __( 'Suriname Dollar', 'profile-builder' ),
+        'SYP' => __( 'Syria Pound', 'profile-builder' ),
+        'TWD' => __( 'Taiwan New Dollar', 'profile-builder' ),
+        'THB' => __( 'Thailand Baht', 'profile-builder' ),
+        'TTD' => __( 'Trinidad and Tobago Dollar', 'profile-builder' ),
+        'TRY' => __( 'Turkey Lira', 'profile-builder' ),
+        'TRL' => __( 'Turkey Lira', 'profile-builder' ),
+        'TVD' => __( 'Tuvalu Dollar', 'profile-builder' ),
+        'UAH' => __( 'Ukraine Hryvna', 'profile-builder' ),
+        'GBP' => __( 'United Kingdom Pound', 'profile-builder' ),
+        'UGX' => __( 'Uganda Shilling', 'profile-builder' ),
+        'USD' => __( 'US Dollar', 'profile-builder' ),
+        'UYU' => __( 'Uruguay Peso', 'profile-builder' ),
+        'UZS' => __( 'Uzbekistan Som', 'profile-builder' ),
+        'VEF' => __( 'Venezuela Bolivar', 'profile-builder' ),
+        'VND' => __( 'Viet Nam Dong', 'profile-builder' ),
+        'YER' => __( 'Yemen Rial', 'profile-builder' ),
+        'ZWD' => __( 'Zimbabwe Dollar', 'profile-builder' )
+    );
+
+    $filter_name = ( empty( $form_location ) ? 'wppb_get_currencies' : 'wppb_get_currencies_' . $form_location );
+
+    return apply_filters( $filter_name, $currencies );
+
+}
+
+
+/*
+ * Returns the currency symbol for a given currency code
+ *
+ * @param string $currency_code
+ *
+ * @return string
+ *
+ */
+function wppb_get_currency_symbol( $currency_code ) {
+
+    $currency_symbols = array(
+        'AED' => '&#1583;.&#1573;', // ?
+        'AFN' => '&#65;&#102;',
+        'ALL' => '&#76;&#101;&#107;',
+        'AMD' => '',
+        'ANG' => '&#402;',
+        'AOA' => '&#75;&#122;', // ?
+        'ARS' => '&#36;',
+        'AUD' => '&#36;',
+        'AWG' => '&#402;',
+        'AZN' => '&#1084;&#1072;&#1085;',
+        'BAM' => '&#75;&#77;',
+        'BBD' => '&#36;',
+        'BDT' => '&#2547;', // ?
+        'BGN' => '&#1083;&#1074;',
+        'BHD' => '.&#1583;.&#1576;', // ?
+        'BIF' => '&#70;&#66;&#117;', // ?
+        'BMD' => '&#36;',
+        'BND' => '&#36;',
+        'BOB' => '&#36;&#98;',
+        'BRL' => '&#82;&#36;',
+        'BSD' => '&#36;',
+        'BTN' => '&#78;&#117;&#46;', // ?
+        'BWP' => '&#80;',
+        'BYR' => '&#112;&#46;',
+        'BZD' => '&#66;&#90;&#36;',
+        'CAD' => '&#36;',
+        'CDF' => '&#70;&#67;',
+        'CHF' => '&#67;&#72;&#70;',
+        'CLF' => '', // ?
+        'CLP' => '&#36;',
+        'CNY' => '&#165;',
+        'COP' => '&#36;',
+        'CRC' => '&#8353;',
+        'CUP' => '&#8396;',
+        'CVE' => '&#36;', // ?
+        'CZK' => '&#75;&#269;',
+        'DJF' => '&#70;&#100;&#106;', // ?
+        'DKK' => '&#107;&#114;',
+        'DOP' => '&#82;&#68;&#36;',
+        'DZD' => '&#1583;&#1580;', // ?
+        'EGP' => '&#163;',
+        'ETB' => '&#66;&#114;',
+        'EUR' => '&#8364;',
+        'FJD' => '&#36;',
+        'FKP' => '&#163;',
+        'GBP' => '&#163;',
+        'GEL' => '&#4314;', // ?
+        'GHS' => '&#162;',
+        'GIP' => '&#163;',
+        'GMD' => '&#68;', // ?
+        'GNF' => '&#70;&#71;', // ?
+        'GTQ' => '&#81;',
+        'GYD' => '&#36;',
+        'HKD' => '&#36;',
+        'HNL' => '&#76;',
+        'HRK' => '&#107;&#110;',
+        'HTG' => '&#71;', // ?
+        'HUF' => '&#70;&#116;',
+        'IDR' => '&#82;&#112;',
+        'ILS' => '&#8362;',
+        'INR' => '&#8377;',
+        'IQD' => '&#1593;.&#1583;', // ?
+        'IRR' => '&#65020;',
+        'ISK' => '&#107;&#114;',
+        'JEP' => '&#163;',
+        'JMD' => '&#74;&#36;',
+        'JOD' => '&#74;&#68;', // ?
+        'JPY' => '&#165;',
+        'KES' => '&#75;&#83;&#104;', // ?
+        'KGS' => '&#1083;&#1074;',
+        'KHR' => '&#6107;',
+        'KMF' => '&#67;&#70;', // ?
+        'KPW' => '&#8361;',
+        'KRW' => '&#8361;',
+        'KWD' => '&#1583;.&#1603;', // ?
+        'KYD' => '&#36;',
+        'KZT' => '&#1083;&#1074;',
+        'LAK' => '&#8365;',
+        'LBP' => '&#163;',
+        'LKR' => '&#8360;',
+        'LRD' => '&#36;',
+        'LSL' => '&#76;', // ?
+        'LTL' => '&#76;&#116;',
+        'LVL' => '&#76;&#115;',
+        'LYD' => '&#1604;.&#1583;', // ?
+        'MAD' => '&#1583;.&#1605;.', //?
+        'MDL' => '&#76;',
+        'MGA' => '&#65;&#114;', // ?
+        'MKD' => '&#1076;&#1077;&#1085;',
+        'MMK' => '&#75;',
+        'MNT' => '&#8366;',
+        'MOP' => '&#77;&#79;&#80;&#36;', // ?
+        'MRO' => '&#85;&#77;', // ?
+        'MUR' => '&#8360;', // ?
+        'MVR' => '.&#1923;', // ?
+        'MWK' => '&#77;&#75;',
+        'MXN' => '&#36;',
+        'MYR' => '&#82;&#77;',
+        'MZN' => '&#77;&#84;',
+        'NAD' => '&#36;',
+        'NGN' => '&#8358;',
+        'NIO' => '&#67;&#36;',
+        'NOK' => '&#107;&#114;',
+        'NPR' => '&#8360;',
+        'NZD' => '&#36;',
+        'OMR' => '&#65020;',
+        'PAB' => '&#66;&#47;&#46;',
+        'PEN' => '&#83;&#47;&#46;',
+        'PGK' => '&#75;', // ?
+        'PHP' => '&#8369;',
+        'PKR' => '&#8360;',
+        'PLN' => '&#122;&#322;',
+        'PYG' => '&#71;&#115;',
+        'QAR' => '&#65020;',
+        'RON' => '&#108;&#101;&#105;',
+        'RSD' => '&#1044;&#1080;&#1085;&#46;',
+        'RUB' => '&#1088;&#1091;&#1073;',
+        'RWF' => '&#1585;.&#1587;',
+        'SAR' => '&#65020;',
+        'SBD' => '&#36;',
+        'SCR' => '&#8360;',
+        'SDG' => '&#163;', // ?
+        'SEK' => '&#107;&#114;',
+        'SGD' => '&#36;',
+        'SHP' => '&#163;',
+        'SLL' => '&#76;&#101;', // ?
+        'SOS' => '&#83;',
+        'SRD' => '&#36;',
+        'STD' => '&#68;&#98;', // ?
+        'SVC' => '&#36;',
+        'SYP' => '&#163;',
+        'SZL' => '&#76;', // ?
+        'THB' => '&#3647;',
+        'TJS' => '&#84;&#74;&#83;', // ? TJS (guess)
+        'TMT' => '&#109;',
+        'TND' => '&#1583;.&#1578;',
+        'TOP' => '&#84;&#36;',
+        'TRY' => '&#8356;', // New Turkey Lira (old symbol used)
+        'TTD' => '&#36;',
+        'TWD' => '&#78;&#84;&#36;',
+        'TZS' => '',
+        'UAH' => '&#8372;',
+        'UGX' => '&#85;&#83;&#104;',
+        'USD' => '&#36;',
+        'UYU' => '&#36;&#85;',
+        'UZS' => '&#1083;&#1074;',
+        'VEF' => '&#66;&#115;',
+        'VND' => '&#8363;',
+        'VUV' => '&#86;&#84;',
+        'WST' => '&#87;&#83;&#36;',
+        'XAF' => '&#70;&#67;&#70;&#65;',
+        'XCD' => '&#36;',
+        'XDR' => '',
+        'XOF' => '',
+        'XPF' => '&#70;',
+        'YER' => '&#65020;',
+        'ZAR' => '&#82;',
+        'ZMK' => '&#90;&#75;', // ?
+        'ZWL' => '&#90;&#36;',
+    );
+
+    if( !empty( $currency_symbols[$currency_code] ) )
+        return $currency_symbols[$currency_code];
+    else
+        return '';
+
+}
+
+
 /**
  * Function that returns a unique, incremented ID
  *
@@ -514,8 +885,7 @@ function wppb_timezone_select_options( $form_location ) {
  */
 function wppb_get_unique_id(){
     $id = 1;
-
-    $wppb_manage_fields = get_option( 'wppb_manage_fields', 'not_found' );
+	$wppb_manage_fields = get_option( 'wppb_manage_fields', 'not_found' );
     if ( ( $wppb_manage_fields === 'not_found' ) || ( empty( $wppb_manage_fields ) ) ){
         return $id;
     }
@@ -529,7 +899,7 @@ function wppb_get_unique_id(){
             $id = $ids_array[0] + 1;
         }
     }
-    return $id;
+    return apply_filters( 'wppb_field_unique_id', $id, $ids_array, $wppb_manage_fields );
 }
 
 /**
@@ -555,7 +925,6 @@ function wppb_check_unique_id_on_saving( $values ) {
         }
 
     }
-
     return $values;
 }
 add_filter( 'wck_add_meta_filter_values_wppb_manage_fields', 'wppb_check_unique_id_on_saving' );
@@ -584,6 +953,11 @@ function wppb_return_unique_field_list( $only_default_fields = false ){
 	$unique_field_list[] = 'Default - Repeat Password';
 	$unique_field_list[] = 'Default - Biographical Info';
 	$unique_field_list[] = 'Default - Display name publicly as';
+
+	if ( wppb_can_users_signup_blog() ) {
+		$unique_field_list[] = 'Default - Blog Details';
+	}
+
     if( !$only_default_fields ){
 	    $unique_field_list[] = 'Avatar';
 	    $unique_field_list[] = 'reCAPTCHA';
@@ -618,7 +992,7 @@ function wppb_check_field_on_edit_add( $message, $fields, $required_fields, $met
 		// END check for a valid field-type (fallback)
 		
 		$unique_field_list = wppb_return_unique_field_list();
-		$all_fields = get_option ( $meta_name, 'not_set' );
+		$all_fields = apply_filters( 'wppb_manage_fields_check_field_on_edit_add', get_option ( $meta_name, 'not_set' ), $posted_values );
 		
 		// check if the unique fields are only added once
 		if( $all_fields != 'not_set' ){
@@ -630,7 +1004,7 @@ function wppb_check_field_on_edit_add( $message, $fields, $required_fields, $met
 			}
 		}
 		// END check if the unique fields are only added once
-		
+
 		// check for avatar size
 		if ( $posted_values['field'] == 'Avatar' ){
 			if ( is_numeric( $posted_values['avatar-size'] ) ){
@@ -666,7 +1040,10 @@ function wppb_check_field_on_edit_add( $message, $fields, $required_fields, $met
 		// check for the correct the date-format
 		if ( $posted_values['field'] == 'Datepicker' ){
 			$date_format = strtolower( $posted_values['date-format'] );			
-			if ( ( trim( $date_format ) != 'mm/dd/yy' ) && ( trim( $date_format ) != 'mm/yy/dd' ) && ( trim( $date_format ) != 'dd/yy/mm' ) && ( trim( $date_format ) != 'dd/mm/yy' ) && ( trim( $date_format ) != 'yy/dd/mm' ) && ( trim( $date_format ) != 'yy/mm/dd' ) )
+			if ( trim( $date_format ) != 'mm/dd/yy' && trim( $date_format ) != 'mm/yy/dd' && trim( $date_format ) != 'dd/yy/mm' &&
+				trim( $date_format ) != 'dd/mm/yy' && trim( $date_format ) != 'yy/dd/mm' && trim( $date_format ) != 'yy/mm/dd' &&
+				trim( $date_format ) != 'yy-mm-dd' && trim( $date_format ) != 'DD, dd-M-y' && trim( $date_format ) != 'D, dd M yy' &&
+				trim( $date_format ) != 'D, d M y' && trim( $date_format ) != 'D, d M yy' && trim( $date_format ) != 'mm-dd-yy' && trim( $date_format ) != '@' )
 				$message .= __( "The entered value for the Datepicker is not a valid date-format\n", 'profile-builder' );
 			
 			elseif ( trim( $date_format ) == '' )
@@ -683,7 +1060,7 @@ function wppb_check_field_on_edit_add( $message, $fields, $required_fields, $met
 				$unique_meta_name_list = array( 'first_name', 'last_name', 'nickname', 'description' );
 
                 //check to see if meta-name is empty
-                $skip_empty_check_for_fields = array('Heading', 'Select (User Role)', 'reCAPTCHA');
+                $skip_empty_check_for_fields = array( 'Heading', 'Select (User Role)', 'reCAPTCHA', 'HTML' );
 
                 if( !in_array( $posted_values['field'], $skip_empty_check_for_fields ) && empty( $posted_values['meta-name'] ) ) {
                     $message .= __( "The meta-name cannot be empty\n", 'profile-builder' );
@@ -724,6 +1101,14 @@ function wppb_check_field_on_edit_add( $message, $fields, $required_fields, $met
 			}
 		}
 		//END check duplicate meta-name
+
+		// check for correct meta name on upload field
+		if( $posted_values['field'] == 'Upload' ) {
+			if( ! empty( $posted_values['meta-name'] ) && preg_match( '/([^a-z\d_-])/', $posted_values['meta-name'] ) ) {
+				$message .= __( "The meta-name can only contain lowercase letters, numbers, _ , - and no spaces.\n", 'profile-builder' );
+			}
+		}
+		// END check for correct meta name on upload field
 		
 		// check for valid default option (checkbox, select, radio)
 		if ( ( $posted_values['field'] == 'Checkbox' ) || ( $posted_values['field'] == 'Select (Multiple)' ) ) {
@@ -766,7 +1151,7 @@ function wppb_check_field_on_edit_add( $message, $fields, $required_fields, $met
 			$fields_so_far = get_post_meta ( $post_id, $meta_name, true );
 			
 			foreach ( $fields_so_far as $key => $value ){
-				if ( $value['field'] == $posted_values['field'] )
+				if ( $value['id'] == $posted_values['id'] )
 					$message .= __( "That field is already added in this form\n", 'profile-builder' );
 			}
 		}
@@ -840,7 +1225,7 @@ function wppb_add_content_before_manage_fields(){
    <p>
        <?php
        if( PROFILE_BUILDER == 'Profile Builder Pro' )
-           _e("If you're interested in displaying different fields in the registration and edit profile forms, please use the Multiple Registration & Edit Profile Forms Addon.", 'profile-builder');
+           _e("If you're interested in displaying different fields in the registration and edit profile forms, please use the Multiple Registration & Edit Profile Forms Modules.", 'profile-builder');
        else
            _e( "With Profile Builder Pro v2 you can display different fields in the registration and edit profile forms, using the Multiple Registration & Edit Profile Forms module.", "profile-builder" )
        ?>
@@ -889,6 +1274,7 @@ function wppb_wpml_compat_with_fields( $oldvalue, $_newvalue ){
 							'Default - Password',
 							'Default - Repeat Password',
 							'Default - Biographical Info',
+							'Default - Blog Details',
 							'Default - Display name publicly as'
 	);
 
@@ -913,4 +1299,117 @@ function wppb_wpml_compat_with_fields( $oldvalue, $_newvalue ){
             }
         }
     }
+}
+
+
+/*
+ * Returns the HTML for a map given the field
+ *
+ */
+function wppb_get_map_output( $field, $args ) {
+
+    $defaults = array(
+        'markers'     => array(),
+        'editable'    => true,
+        'show_search' => true,
+        'extra_attr'  => ''
+    );
+
+    $args = wp_parse_args( $args, $defaults );
+
+    $return = '';
+
+    // Search box
+    // The style:left=-99999px is set to hide the input from the viewport. It will be rewritten when the map gets initialised
+    if( $args['show_search'] )
+        $return .= '<input style="left: -99999px" type="text" id="' . $field['meta-name'] . '-search-box" class="wppb-map-search-box" placeholder="' . __( 'Search Location', 'profile-builder' ) . '" />';
+
+    // Map container
+    $return .= '<div id="' . $field['meta-name'] . '" class="wppb-map-container" style="height: ' . $field['map-height'] . 'px;" data-editable="' . ( $args['editable'] ? 1 : 0 ) . '" data-default-zoom="' . ( !empty( $field['map-default-zoom'] ) ? (int)$field['map-default-zoom'] : 16 ) . '" data-default-lat="' . $field['map-default-lat'] . '" data-default-lng="' . $field['map-default-lng'] . '" ' . $args['extra_attr'] . '></div>';
+
+    if( !empty( $args['markers'] ) ) {
+        foreach( $args['markers'] as $marker )
+            $return .= '<input name="' . $field['meta-name'] . '[]" type="hidden" class="wppb-map-marker" value="' . $marker . '" />';
+    }
+
+    return $return;
+
+}
+
+
+/*
+ * Returns all the saved markers for a map field for a particular user
+ *
+ */
+function wppb_get_user_map_markers( $user_id, $meta_name ) {
+
+    global $wpdb;
+
+    $meta_name_underlined = $meta_name . '_';
+
+    $results = $wpdb->get_results( "SELECT meta_value, meta_key FROM {$wpdb->usermeta} WHERE user_id={$user_id} AND meta_key LIKE '%{$meta_name_underlined}%'", ARRAY_N );
+
+	$markers = array();
+	$i = 0;
+
+    foreach( $results as $key => $result ) {
+		$pattern = '/^' . $meta_name . '_[0-9]+$/';
+		preg_match( $pattern, $result[1], $matches );
+		if ( count ($matches) > 0 ) {
+			$markers[$i] = $result[0];
+			$i++;
+		}
+
+	}
+    return $markers;
+
+}
+
+/*
+ * Deletes from the database all saved markers
+ *
+ */
+function wppb_delete_user_map_markers( $user_id, $meta_name ) {
+
+    global $wpdb;
+
+    $meta_name .= '_';
+
+    $delete = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->usermeta} WHERE user_id=%d AND meta_key LIKE %s", $user_id, '%' . $meta_name . '%' ) );
+
+    wp_cache_delete( $user_id, 'user_meta' );
+
+}
+
+/**
+ * Disable the add button again after we added a field
+ */
+add_action( 'wck_ajax_add_form_wppb_manage_fields', 'wppb_redisable_the_add_button' );
+function wppb_redisable_the_add_button(){
+	?>
+	<script>wppb_disable_add_entry_button ( '#wppb_manage_fields' );</script>
+	<?php
+}
+
+
+/**
+ * Function that updates the meta_key of a field in the usertmeta table when it was changed for a field. It is turned off by default
+ */
+add_action( 'wck_before_update_meta', 'wppb_change_field_meta_key', 10, 4 );
+function wppb_change_field_meta_key( $meta, $id, $values, $element_id ){
+	if( apply_filters( 'wppb_update_field_meta_key_in_db', false ) ) {		
+		if ($meta == 'wppb_manage_fields') {
+			global $wpdb;
+			$wppb_manage_fields = get_option('wppb_manage_fields');
+			if (!empty($wppb_manage_fields)) {
+				if (!empty($values['meta-name']) && $wppb_manage_fields[$element_id]['meta-name'] != $values['meta-name']) {
+					$wpdb->update(
+						$wpdb->usermeta,
+						array('meta_key' => sanitize_text_field($values['meta-name'])),
+						array('meta_key' => sanitize_text_field($wppb_manage_fields[$element_id]['meta-name']))
+					);
+				}
+			}
+		}
+	}
 }

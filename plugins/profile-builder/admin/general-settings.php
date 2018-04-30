@@ -13,10 +13,7 @@ add_action( 'admin_menu', 'wppb_register_general_settings_submenu_page', 3 );
 
 
 function wppb_generate_default_settings_defaults(){
-	$wppb_general_settings = get_option( 'wppb_general_settings', 'not_found' );
-	
-	if ( $wppb_general_settings == 'not_found' )
-		update_option( 'wppb_general_settings', array( 'extraFieldsLayout' => 'default', 'emailConfirmation' => 'no', 'activationLandingPage' => '', 'adminApproval' => 'no', 'loginWith' => 'usernameemail' ) );
+	add_option( 'wppb_general_settings', array( 'extraFieldsLayout' => 'default', 'emailConfirmation' => 'no', 'activationLandingPage' => '', 'adminApproval' => 'no', 'loginWith' => 'usernameemail', 'rolesEditor' => 'no', 'contentRestriction' => 'no' ) );
 }
 
 
@@ -59,7 +56,7 @@ function wppb_general_settings_content() {
 					<option value="no" <?php if ( $wppb_generalSettings['emailConfirmation'] == 'no' ) echo 'selected'; ?>><?php _e( 'No', 'profile-builder' ); ?></option>
 				</select>
 				<ul>
-				    <li class="description"><?php _e( 'This works with front-end forms only. Recommended to redirect WP default registration to a Profile Builder one using "Custom Redirects" addon.', 'profile-builder' ); ?></li>
+				    <li class="description"><?php _e( 'This works with front-end forms only. Recommended to redirect WP default registration to a Profile Builder one using "Custom Redirects" module.', 'profile-builder' ); ?></li>
 				    <?php if ( $wppb_generalSettings['emailConfirmation'] == 'yes' ) { ?>
 					    <li class="description dynamic1"><?php printf( __( 'You can find a list of unconfirmed email addresses %1$sUsers > All Users > Email Confirmation%2$s.', 'profile-builder' ), '<a href="'.get_bloginfo( 'url' ).'/wp-admin/users.php?page=unconfirmed_emails">', '</a>' )?></li>
                     <?php } ?>
@@ -124,7 +121,7 @@ function wppb_general_settings_content() {
 
 					if( ! empty( $wppb_userRoles ) ) {
 						foreach( $wppb_userRoles as $role => $role_name ) {
-							echo '<label><input type="checkbox" id="adminApprovalOnUserRoleCheckbox" name="wppb_general_settings[adminApprovalOnUserRole][]" class="wppb-checkboxes" value="' . $role . '"';
+							echo '<label><input type="checkbox" id="adminApprovalOnUserRoleCheckbox" name="wppb_general_settings[adminApprovalOnUserRole][]" class="wppb-checkboxes" value="' . esc_attr( $role ) . '"';
 							if( ! empty( $wppb_generalSettings['adminApprovalOnUserRole'] ) && in_array( $role, $wppb_generalSettings['adminApprovalOnUserRole'] ) )	echo ' checked';
 							if( empty( $wppb_generalSettings['adminApprovalOnUserRole'] ) )		echo ' checked';
 							echo '>';
@@ -142,6 +139,44 @@ function wppb_general_settings_content() {
 	<?php } ?>
 
 	<?php
+		if( file_exists( WPPB_PLUGIN_DIR.'/features/roles-editor/roles-editor.php' ) ) {
+			?>
+			<tr>
+				<th scope="row">
+					<?php _e( '"Roles Editor" Activated:', 'profile-builder' ); ?>
+				</th>
+				<td>
+					<select id="rolesEditorSelect" name="wppb_general_settings[rolesEditor]" class="wppb-select" onchange="wppb_display_page_select_re(this.value)">
+						<option value="no" <?php if( !empty( $wppb_generalSettings['rolesEditor'] ) && $wppb_generalSettings['rolesEditor'] == 'no' ) echo 'selected'; ?>><?php _e( 'No', 'profile-builder' ); ?></option>
+						<option value="yes" <?php if( !empty( $wppb_generalSettings['rolesEditor'] ) && $wppb_generalSettings['rolesEditor'] == 'yes' ) echo 'selected'; ?>><?php _e( 'Yes', 'profile-builder' ); ?></option>
+					</select>
+					<ul>
+						<li class="description dynamic3"><?php printf( __( 'You can add / edit user roles at %1$sUsers > Roles Editor%2$s.', 'profile-builder' ), '<a href="'.get_bloginfo( 'url' ).'/wp-admin/edit.php?post_type=wppb-roles-editor">', '</a>' )?></li>
+					<ul>
+				</td>
+			</tr>
+	<?php } ?>
+
+    <?php
+        if( file_exists( WPPB_PLUGIN_DIR.'/features/content-restriction/content-restriction.php' ) ) {
+            ?>
+            <tr>
+                <th scope="row">
+                    <?php _e( '"Content Restriction" Activated:', 'profile-builder' ); ?>
+                </th>
+                <td>
+                    <select id="contentRestrictionSelect" name="wppb_general_settings[contentRestriction]" class="wppb-select" onchange="wppb_display_page_select_cr(this.value)">
+                        <option value="no" <?php if( !empty( $wppb_generalSettings['contentRestriction'] ) && $wppb_generalSettings['contentRestriction'] == 'no' ) echo 'selected'; ?>><?php _e( 'No', 'profile-builder' ); ?></option>
+                        <option value="yes" <?php if( !empty( $wppb_generalSettings['contentRestriction'] ) && $wppb_generalSettings['contentRestriction'] == 'yes' ) echo 'selected'; ?>><?php _e( 'Yes', 'profile-builder' ); ?></option>
+                    </select>
+                    <ul>
+                        <li class="description dynamic4"><?php printf( __( 'Set your settings at %1$sProfile Builder > Content Restriction%2$s and use each page / post / custom post type individual meta-box to restrict content.', 'profile-builder' ), '<a href="'.get_bloginfo( 'url' ).'/wp-admin/admin.php?page=profile-builder-content_restriction">', '</a>' )?></li>
+                    <ul>
+                </td>
+            </tr>
+    <?php } ?>
+
+	<?php
 	if ( PROFILE_BUILDER == 'Profile Builder Free' ) {
 	?>
 		<tr>
@@ -149,7 +184,7 @@ function wppb_general_settings_content() {
 				<?php _e( '"Admin Approval" Feature:', 'profile-builder' ); ?>
 			</th>
 			<td>
-				<p><em>	<?php printf( __( 'You decide who is a user on your website. Get notified via email or approve multiple users at once from the WordPress UI. Enable Admin Approval by upgrading to %1$sHobbyist or PRO versions%2$s.', 'profile-builder' ),'<a href="http://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=general-settings-link&utm_campaign=PBFree">', '</a>' )?></em></p>
+				<p><em>	<?php printf( __( 'You decide who is a user on your website. Get notified via email or approve multiple users at once from the WordPress UI. Enable Admin Approval by upgrading to %1$sHobbyist or PRO versions%2$s.', 'profile-builder' ),'<a href="https://www.cozmoslabs.com/wordpress-profile-builder/?utm_source=wpbackend&utm_medium=clientsite&utm_content=general-settings-link&utm_campaign=PBFree">', '</a>' )?></em></p>
 			</td>
 		</tr>
 	<?php } ?>
@@ -177,7 +212,7 @@ function wppb_general_settings_content() {
                 <?php _e( 'Minimum Password Length:', 'profile-builder' ); ?>
             </th>
             <td>
-                <input type="text" name="wppb_general_settings[minimum_password_length]" class="wppb-text" value="<?php if( !empty( $wppb_generalSettings['minimum_password_length'] ) ) echo $wppb_generalSettings['minimum_password_length']; ?>"/>
+                <input type="text" name="wppb_general_settings[minimum_password_length]" class="wppb-text" value="<?php if( !empty( $wppb_generalSettings['minimum_password_length'] ) ) echo esc_attr( $wppb_generalSettings['minimum_password_length'] ); ?>"/>
                 <ul>
                     <li class="description"><?php _e( 'Enter the minimum characters the password should have. Leave empty for no minimum limit', 'profile-builder' ); ?> </li>
                 </ul>
@@ -221,8 +256,23 @@ function wppb_general_settings_content() {
  * @since v.2.0.7
  */
 function wppb_general_settings_sanitize( $wppb_generalSettings ) {
-
     $wppb_generalSettings = apply_filters( 'wppb_general_settings_sanitize_extra', $wppb_generalSettings );
+
+	if( !empty( $wppb_generalSettings ) ){
+		foreach( $wppb_generalSettings as $settings_name => $settings_value ){
+			if( $settings_name == "minimum_password_length" || $settings_name == "activationLandingPage" )
+				$wppb_generalSettings[$settings_name] = filter_var( $settings_value, FILTER_SANITIZE_NUMBER_INT );
+			elseif( $settings_name == "extraFieldsLayout" || $settings_name == "emailConfirmation" || $settings_name == "adminApproval" || $settings_name == "loginWith" || $settings_name == "minimum_password_strength" )
+				$wppb_generalSettings[$settings_name] = filter_var( $settings_value, FILTER_SANITIZE_STRING );
+			elseif( $settings_name == "adminApprovalOnUserRole" ){
+				if( is_array( $settings_value ) && !empty( $settings_value ) ){
+					foreach( $settings_value as $key => $value ){
+						$wppb_generalSettings[$settings_name][$key] = filter_var( $value, FILTER_SANITIZE_STRING );
+					}
+				}
+			}
+		}
+	}
 
     return $wppb_generalSettings;
 }

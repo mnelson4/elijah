@@ -19,7 +19,6 @@ function kadence_setup() {
 }
 add_action('after_setup_theme', 'kadence_setup');
 
-if (!defined('__DIR__')) { define('__DIR__', dirname(__FILE__)); }
 
 function pinnacle_fav_output(){
   // Keep for fallback

@@ -4,7 +4,7 @@ global $pinnacle;
 if(!pinnacle_hide_pagetitle()) { ?>
 <?php } else { 
 	if(is_shop()) {
-		$shop_page_id	= woocommerce_get_page_id('shop');
+		$shop_page_id	= wc_get_page_id('shop');
 		$bsub 			= get_post_meta( $shop_page_id, '_kad_subtitle', true );
 	} else {
 		$bsub 			= $description = apply_filters( 'the_content', term_description() );

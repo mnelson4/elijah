@@ -6,66 +6,26 @@
           $slide_sidebar = 1170;
         }
         // Get Post Head settings
-        if ( has_post_format( 'video' )) {
-              $headcontent = get_post_meta( $post->ID, '_kad_video_blog_head', true );
-              if(empty($headcontent) || $headcontent == 'default') {
-                  if(!empty($pinnacle['video_post_blog_default'])) {
-                        $headcontent = $pinnacle['video_post_blog_default'];
-                    } else {
-                        $headcontent = 'video';
-                    }
-              }
-              $swidth = get_post_meta( $post->ID, '_kad_video_posthead_width', true ); 
-              if (!empty($swidth)) {
-                $slidewidth = $swidth;
-              } else {
-                $slidewidth = $slide_sidebar;
-              }
-        } else if (has_post_format( 'gallery' )) {
-              $headcontent = get_post_meta( $post->ID, '_kad_gallery_blog_head', true );
-              if(empty($headcontent) || $headcontent == 'default') {
-                  if(!empty($pinnacle['gallery_post_blog_default'])) {
-                        $headcontent = $pinnacle['gallery_post_blog_default'];
-                    } else {
-                        $headcontent = 'flex';
-                    }
-              }
-              $height = get_post_meta( $post->ID, '_kad_gallery_posthead_height', true );
-              $swidth = get_post_meta( $post->ID, '_kad_gallery_posthead_width', true );
-                if (!empty($height)){
-                  $slideheight = $height;
-                } else {
-                  $slideheight = 400;
-                }
-                if (!empty($swidth)) {
-                  $slidewidth = $swidth;
-                } else {
-                  $slidewidth = $slide_sidebar;
-                }
-        } elseif (has_post_format( 'image' )) {
-               $headcontent = get_post_meta( $post->ID, '_kad_image_blog_head', true );
-              if(empty($headcontent) || $headcontent == 'default') {
-                  if(!empty($pinnacle['image_post_blog_default'])) {
-                        $headcontent = $pinnacle['image_post_blog_default'];
-                    } else {
-                        $headcontent = 'image';
-                    }
-              }
-              $swidth = get_post_meta( $post->ID, '_kad_posthead_width', true );
-              if (!empty($swidth)) {
-                $slidewidth = $swidth;
-              } else {
-                $slidewidth = $slide_sidebar;
-              } 
-        } else {
-                  $headcontent = 'none';
-        } ?>
+        $headcontent = pinnacle_get_post_head_content();
+         ?>
         <div id="content" class="container">
           <div class="row single-article" itemscope="" itemtype="http://schema.org/BlogPosting">
             <div class="main <?php echo esc_attr( pinnacle_main_class() ); ?>" role="main">
               <?php while (have_posts()) : the_post(); ?>
                 <article <?php post_class('postclass'); ?>>
-                  <?php if ($headcontent == 'flex') { ?>
+                  <?php if ($headcontent == 'flex') { 
+                  	$height = get_post_meta( $post->ID, '_kad_gallery_posthead_height', true );
+             		$swidth = get_post_meta( $post->ID, '_kad_gallery_posthead_width', true );
+	                if (!empty($height)){
+	                  	$slideheight = $height;
+	                } else {
+	                  	$slideheight = 400;
+	                }
+	                if (!empty($swidth)) {
+	                  	$slidewidth = $swidth;
+	                } else {
+	                  	$slidewidth = $slide_sidebar;
+	                }?>
                     <section class="postfeat">
                       <div class="flexslider kt-flexslider loading kad-light-gallery" style="max-width:<?php echo esc_attr($slidewidth);?>px;" data-flex-speed="7000" data-flex-anim-speed="400" data-flex-animation="fade" data-flex-auto="true">
                         <ul class="slides">
@@ -74,17 +34,34 @@
                                     $attachments = array_filter( explode( ',', $image_gallery ) );
                                       if ($attachments) {
                                       foreach ($attachments as $attachment) {
-                                        $attachment_url = wp_get_attachment_url($attachment , 'full');
-                                        $image = aq_resize($attachment_url, $slidewidth, $slideheight, true);
-                                          if(empty($image)) {$image = $attachment_url;}
-                                        echo '<li><a href="'.esc_attr($attachment_url).'" data-rel="lightbox"><img src="'.esc_attr($image).'" width="'.esc_attr($slidewidth).'" height="'.esc_attr($slideheight).'" itemprop="image"/></a></li>';
+                                        $attachment_src = wp_get_attachment_image_src($attachment , 'full');
+                                        $image = aq_resize($attachment_src[0], $slidewidth, $slideheight, true, false, false, $attachment);
+                                        if(empty($image)) {$image = $attachment_src;} 
+                                        echo '<li><a href="'.esc_attr($attachment_src[0]).'" data-rel="lightbox" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">';
+                                        echo '<img src="'.esc_attr($image[0]).'" width="'.esc_attr($image[1]).'" height="'.esc_attr($image[2]).'" itemprop="contentUrl" '.kt_get_srcset_output($image[1], $image[2], $attachment_src[0], $attachment).'/>';
+                                        echo '<meta itemprop="url" content="'.esc_url($image[0]).'">';
+                                        echo '<meta itemprop="width" content="'.esc_attr($image[1]).'">';
+                                        echo '<meta itemprop="height" content="'.esc_attr($image[2]).'">';
+                                        echo '</a></li>';
                                       }
                                     }
                                   }?>                            
                         </ul>
                       </div> <!--Flex Slides-->
                     </section>
-                  <?php } else if ($headcontent == 'carouselslider') { ?>
+                  <?php } else if ($headcontent == 'carouselslider') { 
+                  	$height = get_post_meta( $post->ID, '_kad_gallery_posthead_height', true );
+             		$swidth = get_post_meta( $post->ID, '_kad_gallery_posthead_width', true );
+	                if (!empty($height)){
+	                  	$slideheight = $height;
+	                } else {
+	                  	$slideheight = 400;
+	                }
+	                if (!empty($swidth)) {
+	                  	$slidewidth = $swidth;
+	                } else {
+	                  	$slidewidth = $slide_sidebar;
+	                }?>
                     <section class="postfeat">
                       <div id="imageslider" class="loading">
                         <div class="carousel_slider_outer fredcarousel fadein-carousel" style="overflow:hidden; max-width:<?php echo esc_attr($slidewidth);?>px; height: <?php echo esc_attr($slideheight);?>px; margin-left: auto; margin-right:auto;">
@@ -98,8 +75,11 @@
                                                     $image = aq_resize($attachment_url, null, $slideheight, false, false);
                                                     if(empty($image)) {$image = array($attachment_url,$slidewidth,$slideheight);} 
                                                     echo '<div class="carousel_gallery_item" style="float:left; display: table; position: relative; text-align: center; margin: 0; width:auto; height:'.esc_attr($image[2]).'px;">';
-                                                    echo '<div class="carousel_gallery_item_inner" style="vertical-align: middle; display: table-cell;">';
-                                                    echo '<img src="'.esc_attr($image[0]).'" width="'.esc_attr($image[1]).'" height="'.esc_attr($image[2]).'" itemprop="image" />';
+                                                    echo '<div class="carousel_gallery_item_inner" style="vertical-align: middle; display: table-cell;" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">';
+                                                    echo '<img src="'.esc_attr($image[0]).'" width="'.esc_attr($image[1]).'" height="'.esc_attr($image[2]).'" itemprop="contentUrl" '.kt_get_srcset_output($image[1], $image[2], $attachment_url, $attachment).' />';
+                                                    echo '<meta itemprop="url" content="'.esc_url($image[0]).'">';
+                                                    echo '<meta itemprop="width" content="'.esc_attr($image[1]).'">';
+                                                    echo '<meta itemprop="height" content="'.esc_attr($image[2]).'">';
                                                       ?>
                                                     </div>
                                                   </div>
@@ -111,22 +91,45 @@
                           </div> 
                       </div>  
                     </section>
-                  <?php } else if ($headcontent == 'video') { ?>
+                  <?php } else if ($headcontent == 'video') { 
+                  	$swidth = get_post_meta( $post->ID, '_kad_video_posthead_width', true ); 
+		            if (!empty($swidth)) {
+		                $slidewidth = $swidth;
+		            } else {
+		                $slidewidth = $slide_sidebar;
+		            } ?>
                     <section class="postfeat">
                         <div class="videofit" style="max-width: <?php echo esc_attr($slidewidth);?>px; margin-left: auto; margin-right: auto;">
                               <?php echo get_post_meta( $post->ID, '_kad_post_video', true ); ?>
                         </div>
+                        <?php if (has_post_thumbnail( $post->ID ) ) { 
+                            $image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); ?>
+                            <div itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                                <meta itemprop="url" content="<?php echo esc_url($image[0]); ?>">
+                                <meta itemprop="width" content="<?php echo esc_attr($image[1])?>">
+                                <meta itemprop="height" content="<?php echo esc_attr($image[2])?>">
+                            </div>
+                        <?php } ?>
                     </section>
-                  <?php } else if ($headcontent == 'image') {           
-                    $thumb = get_post_thumbnail_id();
-                    $img_url = wp_get_attachment_url( $thumb,'full' );
-                    $image = aq_resize( $img_url, $slidewidth, false );
-                    if(empty($image)) { $image = $img_url; }
+                  <?php } else if ($headcontent == 'image') {
+	                  	$swidth = get_post_meta( $post->ID, '_kad_posthead_width', true );
+		              	if (!empty($swidth)) {
+		               		$slidewidth = $swidth;
+		              	} else {
+		                	$slidewidth = $slide_sidebar;
+		              	}       
+                    $image_id = get_post_thumbnail_id();
+                    $image_src = wp_get_attachment_image_src( $image_id, 'full' ); 
+                    $image = aq_resize( $image_src[0], $slidewidth, null, true, false, false, $image_id);
+                    if(empty($image[0])) {$image = $image_src;}
                     if($image) : ?>
                     <section class="postfeat">
-                        <div class="imghoverclass post-single-img" itemprop="image">
-                            <a href="<?php echo esc_url($img_url); ?>" data-rel="lightbox" class="">
-                              <img src="<?php echo esc_url($image); ?>" itemprop="image" alt="<?php the_title(); ?>" />
+                        <div class="imghoverclass post-single-img" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
+                            <a href="<?php echo esc_url($image_src[0]); ?>" data-rel="lightbox">
+                              <img src="<?php echo esc_url($image[0]); ?>" itemprop="contentUrl" alt="<?php the_title(); ?>" width="<?php echo $image[1];?>" height="<?php echo $image[1];?>" <?php echo kt_get_srcset_output($image[1], $image[2], $image_src[0], $image_id);?> />
+                              <meta itemprop="url" content="<?php echo esc_url($image[0]); ?>">
+                              <meta itemprop="width" content="<?php echo esc_attr($image[1])?>px">
+                              <meta itemprop="height" content="<?php echo esc_attr($image[2])?>px">
                             </a>
                           </div>
                     </section>
@@ -146,7 +149,7 @@
                       <?php } ?>
                       <?php get_template_part('templates/entry', 'meta-subhead'); ?>
                   </header>
-                  <div class="entry-content clearfix" itemprop="description articleBody">
+                  <div class="entry-content clearfix" itemprop="articleBody">
                     <?php the_content(); ?>
                     <?php wp_link_pages(array('before' => '<nav class="page-nav"><p>' . __('Pages:', 'pinnacle'), 'after' => '</p></nav>')); ?>
                   </div>
