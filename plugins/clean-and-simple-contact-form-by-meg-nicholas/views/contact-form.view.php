@@ -154,6 +154,33 @@
 				</div>
 			<?php } ?>
 
+
+
+			<?php if ( cscf_PluginSettings::ContactConsent() ) { ?>
+				<!-- contact consent -->
+				<div class="control-group form-group<?php if ( isset( $contact->Errors['contact-consent'] ) ) {
+					echo ' error has-error';
+				} ?>">
+					<label for="cscf_contact-consent"><?php echo cscf_PluginSettings::ContactConsentMsg(); ?>:</label>
+					<div class="<?php echo cscf_PluginSettings::InputIcons() ? "input-group" : ""; ?>">
+						<?php if ( cscf_PluginSettings::InputIcons() == true ) { ?>
+							<span class="input-group-addon"><span class="glyphicon glyphicon-comment"></span></span>
+						<?php } ?>
+						<input data-rule-required="true"
+                               data-msg-required="<?php _e( 'Please give your consent.', 'clean-and-simple-contact-form-by-meg-nicholas' ); ?>"
+                            <?php echo $contact->ContactConsent == true ? 'checked' : ''; ?> type="checkbox"
+						                                                                       id="cscf_contact-consent"
+						                                                                       name="cscf[contact-consent]">
+					</div>
+						<span for="cscf[contact-consent]" class="help-inline help-block error"
+						      style="display:<?php echo isset( $contact->Errors['contact-consent'] ) ? 'block' : 'none'; ?>;">
+                        <?php if ( isset( $contact->Errors['contact-consent'] ) ) {
+	                        echo $contact->Errors['contact-consent'];
+                        } ?>
+                    </span>
+				</div>
+			<?php } ?>
+
 			<!-- recaptcha -->
 			<?php if ( $contact->RecaptchaPublicKey <> '' && $contact->RecaptchaPrivateKey <> '' ) { ?>
 

@@ -122,6 +122,27 @@ class cscf_PluginSettings
 
     }
 
+
+    static
+    function ContactConsent()
+    {
+
+        $options = get_option(CSCF_OPTIONS_KEY);
+
+        return isset($options['contact-consent']) ? true : false;
+
+    }
+
+    static
+    function ContactConsentMsg()
+    {
+
+        $options = get_option(CSCF_OPTIONS_KEY);
+
+	    return isset( $options['contact-consent-msg'] ) ? $options['contact-consent-msg'] : __( 'I consent to my contact details being stored', 'clean-and-simple-contact-form-by-meg-nicholas' );
+
+    }
+
     static
     function IsJetPackContactFormEnabled()
     {

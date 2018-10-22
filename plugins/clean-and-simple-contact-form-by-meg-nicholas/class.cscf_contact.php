@@ -11,6 +11,7 @@ class cscf_Contact {
 	var $Message;
 	var $EmailToSender;
 	var $ErrorMessage;
+	var $ContactConsent;
 	var $RecaptchaPublicKey;
 	var $RecaptchaPrivateKey;
 	var $Errors;
@@ -40,6 +41,11 @@ class cscf_Contact {
 			if ( isset( $_POST['post-id'] ) ) {
 				$this->PostID = $_POST['post-id'];
 			}
+
+			if ( cscf_PluginSettings::ContactConsent() ) {
+				$this->ContactConsent = isset( $cscf['contact-consent'] );
+			}
+
 			unset( $_POST['cscf'] );
 		}
 
@@ -55,7 +61,6 @@ class cscf_Contact {
 		}
 
 		//check nonce
-
 		if ( ! wp_verify_nonce( $_POST['cscf_nonce'], 'cscf_contact' ) ) {
 			return false;
 		}
@@ -68,7 +73,6 @@ class cscf_Contact {
 		}
 
 		//email
-
 		if ( strlen( $this->Email ) == 0 ) {
 			$this->Errors['email'] = __( 'Please give your email address.', 'clean-and-simple-contact-form-by-meg-nicholas' );
 		}
@@ -81,30 +85,32 @@ class cscf_Contact {
 		}
 
 		//name
-
 		if ( strlen( $this->Name ) == 0 ) {
 			$this->Errors['name'] = __( 'Please give your name.', 'clean-and-simple-contact-form-by-meg-nicholas' );
 		}
 
 		//message
-
 		if ( strlen( $this->Message ) == 0 ) {
 			$this->Errors['message'] = __( 'Please enter a message.', 'clean-and-simple-contact-form-by-meg-nicholas' );
 		}
 
 		//email invalid address
-
 		if ( strlen( $this->Email ) > 0 && ! filter_var( $this->Email, FILTER_VALIDATE_EMAIL ) ) {
 			$this->Errors['email'] = __( 'Please enter a valid email address.', 'clean-and-simple-contact-form-by-meg-nicholas' );
 		}
 
-		//check recaptcha but only if we have keys
+		//contact consent
+		if ( cscf_PluginSettings::ContactConsent() ) {
+			if ( ! $this->ContactConsent ) {
+				$this->Errors['contact-consent'] = __( 'Please give your consent.', 'clean-and-simple-contact-form-by-meg-nicholas' );
+			}
+		}
 
+		//check recaptcha but only if we have keys
 		if ( $this->RecaptchaPublicKey <> '' && $this->RecaptchaPrivateKey <> '' ) {
 			$resp = csf_RecaptchaV2::VerifyResponse( $_SERVER["REMOTE_ADDR"], $this->RecaptchaPrivateKey, $_POST["g-recaptcha-response"] );
 
 			if ( ! $resp->success ) {
-//	            $this->Errors['recaptcha'] = __('Sorry the code wasn\'t entered correctly please try again.', 'clean-and-simple-contact-form-by-meg-nicholas');
 				$this->Errors['recaptcha'] = __( 'Please solve the recaptcha to continue.', 'clean-and-simple-contact-form-by-meg-nicholas' );
 			}
 		}
@@ -141,7 +147,9 @@ class cscf_Contact {
 		$message = __( 'From: ', 'clean-and-simple-contact-form-by-meg-nicholas' ) . $this->Name . "\n\n";
 		$message .= __( 'Email: ', 'clean-and-simple-contact-form-by-meg-nicholas' ) . $this->Email . "\n\n";
 		$message .= __( 'Page URL: ', 'clean-and-simple-contact-form-by-meg-nicholas' ) . get_permalink( $this->PostID ) . "\n\n";
-		$message .= __( 'Message:', 'clean-and-simple-contact-form-by-meg-nicholas' ) . "\n\n" . $this->Message;
+		$message .= __( 'Message:', 'clean-and-simple-contact-form-by-meg-nicholas' ) . "\n\n" . $this->Message . "\n\n";
+		$message .= cscf_PluginSettings::ContactConsentMsg() . ': ' . ( $this->ContactConsent ? __( 'yes', 'clean-and-simple-contact-form-by-meg-nicholas' ) : __( 'no', 'clean-and-simple-contact-form-by-meg-nicholas' ) );
+
 
 		$result = ( wp_mail( cscf_PluginSettings::RecipientEmails(), cscf_PluginSettings::Subject(), stripslashes( $message ), $header ) );
 

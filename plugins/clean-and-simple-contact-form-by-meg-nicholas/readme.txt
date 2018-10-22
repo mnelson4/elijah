@@ -5,7 +5,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl.html
 Tags: simple, contact, form, contact button, contact form, contact form plugin, akismet, contacts, contacts form plugin, contact me, feedback form, bootstrap, twitter, google, reCAPTCHA, ajax, secure
 Requires at least: 3.3
-Tested up to: 4.6.1
+Tested up to: 4.9.6
 Stable tag: 4.6.2
 
 A clean and simple AJAX contact form with Google reCAPTCHA, Twitter Bootstrap markup and Akismet spam filtering.
@@ -118,20 +118,23 @@ Here is a list of things that you can change
 
 *   **reCAPTCHA Theme**: Here you can change the reCAPTCHA box theme so that it fits with the style of your website.
 
-*   **!NEW! Recipient Emails**: The email address where you would like all messages to be sent. 
+*   **Recipient Emails**: The email address where you would like all messages to be sent.
     This will default to the email address you have specified under 'E-Mail Address' in your WordPress General Settings. 
     If you want your mail sent to a different address then enter it here.
     You may enter multiple email addresses by clicking the '+' button.
 
-*   **!NEW! Confirm Email Address**: Email confirmation is now optional. To force your user to re-type their email address tick 'Confirm Email Address'.
+*   **Confirm Email Address**: Email confirmation is now optional. To force your user to re-type their email address tick 'Confirm Email Address'.
     It is recommended that you leave this option on. If you turn this option off your user will only have to enter their email address once,
     but if they enter it incorrectly you will have no way of getting back to them!
 
 *   **Email Subject**: This is the email subject that will appear on all messages. If you would like to set it to something different then enter it here.
 
-*   **!NEW! Override 'From' Address**: If you tick this and then fill in the 'From Address:' box then all email will be sent from the given address NOT from the email address given by the form filler.
+*   **Override 'From' Address**: If you tick this and then fill in the 'From Address:' box then all email will be sent from the given address NOT from the email address given by the form filler.
 
-*   **!NEW! Option to allow enquiry to email themselves a copy of the message.
+*   **Option to allow enquiry to email themselves a copy of the message.
+
+*   **!NEW! Contact consent**: This option allows you to be GDPR compliant by adding a 'Consent to contact' check box at the bottom of the form.
+
 
 == Screenshots ==
 1. Contact Form With reCAPTCHA
@@ -203,6 +206,9 @@ the reCAPTCHA for the contact form will be displayed correctly but not in the co
 The comments form will never validate due to no supplied reCAPTCHA code.
 
 == Changelog ==
+= 4.7.0 =
+* Tested with Wordpress version 4.9.6
+* Added consent to contact checkbox for GDPR compliance
 = 4.6.2 =
 * Turkish translation update. Thanks to Abdullah Manaz! Tested up to WordPress 4.6.1.
 = 4.6.1 =
@@ -351,7 +357,8 @@ Polish thanks to Patryk Peas
 
 
 == Upgrade Notice ==
-
+= 4.7.0 =
+Tested with Wordpress version 4.9.6. Added 'consent to contact' GDPR compliance message
 = 4.6.2 =
 Updated translations. Tested up to WordPress 4.6.1.
 = 4.6.0 =

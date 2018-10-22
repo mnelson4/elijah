@@ -38,7 +38,7 @@ class cscf_settings
     {
         ?>
 
-        <?php screen_icon(); ?><h2><?php _e('Clean and Simple Contact Form Settings', 'clean-and-simple-contact-form-by-meg-nicholas'); ?></h2>
+        <h2><?php _e('Clean and Simple Contact Form Settings', 'clean-and-simple-contact-form-by-meg-nicholas'); ?></h2>
         <hr/>
 
         <div style="float:right;position: relative;width:250px;">
@@ -151,11 +151,23 @@ class cscf_settings
         ), 'contact-form-settings', 'section_message', array(
             'confirm-email'
         ));
-        add_settings_field('email-sender', '<span style="color:red;">' . __('*New*','clean-and-simple-contact-form-by-meg-nicholas') . '</span> ' . __('Allow users to email themselves a copy :', 'clean-and-simple-contact-form-by-meg-nicholas'), array(
+        add_settings_field('email-sender', __('Allow users to email themselves a copy :', 'clean-and-simple-contact-form-by-meg-nicholas'), array(
             $this,
             'create_fields'
         ), 'contact-form-settings', 'section_message', array(
             'email-sender'
+        ));
+        add_settings_field('contact-consent', '<span style="color:red;">' . __('*New*','clean-and-simple-contact-form-by-meg-nicholas') . '</span> ' . __('Add a consent checkbox :', 'clean-and-simple-contact-form-by-meg-nicholas'), array(
+            $this,
+            'create_fields'
+        ), 'contact-form-settings', 'section_message', array(
+            'contact-consent'
+        ));
+        add_settings_field('contact-consent-msg', '<span style="color:red;">' . __('*New*','clean-and-simple-contact-form-by-meg-nicholas') . '</span> ' . __('Consent message :', 'clean-and-simple-contact-form-by-meg-nicholas'), array(
+            $this,
+            'create_fields'
+        ), 'contact-form-settings', 'section_message', array(
+            'contact-consent-msg'
         ));
         add_settings_field('override-from', __('Override \'From\' Address :', 'clean-and-simple-contact-form-by-meg-nicholas'), array(
             $this,
@@ -354,6 +366,16 @@ class cscf_settings
                 $checked = cscf_PluginSettings::EmailToSender() == true ? "checked" : "";
                 ?><input type="checkbox" <?php echo $checked; ?>  id="email-sender"
                          name="<?php echo CSCF_OPTIONS_KEY; ?>[email-sender]"><?php
+                break;
+            case 'contact-consent':
+                $checked = cscf_PluginSettings::ContactConsent() == true ? "checked" : "";
+                ?><input type="checkbox" <?php echo $checked; ?>  id="contact-consent"
+                         name="<?php echo CSCF_OPTIONS_KEY; ?>[contact-consent]"><?php
+                break;
+            case 'contact-consent-msg':
+                ?><input type="text" size="60" id="contact-consent-msg"
+                         name="<?php echo CSCF_OPTIONS_KEY; ?>[contact-consent-msg]"
+                         value="<?php echo cscf_PluginSettings::ContactConsentMsg(); ?>"><?php
                 break;
             case 'from-email':
                 $disabled = cscf_PluginSettings::OverrideFrom() == false ? "readonly" : "";
