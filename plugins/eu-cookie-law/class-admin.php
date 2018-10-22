@@ -10,15 +10,14 @@ function show_peadig_eucookie_options() {
 	add_options_page('EU Cookie Law', 'EU Cookie Law', 'manage_options', 'peadig_eucookie', 'peadig_eucookie_options');
 }
 
-add_action( 'admin_enqueue_scripts', 'ecl_enqueue_color_picker' );
-function ecl_enqueue_color_picker( $hook_suffix ) {
+add_action( 'admin_enqueue_scripts', function ( $hook_suffix ) {
     $screen = get_current_screen();
 
     if ( $screen->id == 'settings_page_peadig_eucookie') {
         wp_enqueue_style( 'wp-color-picker' );
-        wp_enqueue_script( 'elc-color-picker', plugins_url('js/eucookiesettings.js', __FILE__ ), array( 'wp-color-picker' ), false, true );
+        wp_enqueue_script( 'elc-color-picker', plugins_url('js/settings.js', __FILE__ ), array( 'wp-color-picker' ), false, true );
     }
-}
+} );
 
 // ADMIN PAGE
 function peadig_eucookie_options() {
@@ -46,20 +45,47 @@ function peadig_eucookie_options() {
                 <?php esc_html_e('Support', 'eu-cookie-law'); ?>
             </a>
         </h1>
-        
+
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+
+        <!-- Identify your business so that you can collect the payments. -->
+        <input type="hidden" name="business" value="milesimarco@outlook.com">
+
+        <!-- Specify a Donate button. -->
+        <input type="hidden" name="cmd" value="_donations">
+
+        <!-- Specify details about the contribution -->
+        <input type="hidden" name="item_name" value="EU Cookie Law (WordPress plugin)">
+        <input type="hidden" name="currency_code" value="EUR">
+
+        <!-- Display the payment button. -->
+        <input type="image" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate">
+        <img alt="" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
+
+        </form>
+
 		<form method="post" action="options.php">
 			<?php settings_fields('peadig_eucookie_options'); ?>
 			<?php
                 ecl_check_defaults();
                 $options = get_option('peadig_eucookie');
             ?>
+
 			<table class="form-table">
 				<tr valign="top"><th scope="row"><label for="enabled"><?php esc_html_e('Activate'); ?></label></th>
 					<td><input id="enabled" name="peadig_eucookie[enabled]" type="checkbox" value="1" <?php checked('1', $options['enabled']); ?> /></td>
 				</tr>
                 <tr valign="top"><th scope="row"><label for="autoblock"><?php esc_html_e('Auto Block', 'eu-cookie-law'); ?></label></th>
 					<td><input id="autoblock" name="peadig_eucookie[autoblock]" type="checkbox" value="1" <?php checked('1', $options['autoblock']); ?> /><br>
-<small><?php esc_html_e('This function will automatically block iframes, embeds and scripts in your post, pages and widgets.', 'eu-cookie-law'); ?></small></td>
+<small><?php esc_html_e('This function will automatically block iframes, embeds and scripts in your post, pages and widgets.', 'eu-cookie-law'); ?></small>
+                <table id="fineblock" class="form-table"<?php if ( !eucookie_option('autoblock') ) { echo ' style="display: none;"'; } ?>>
+                    <tr valign="top"><th scope="row"><label for="exclude_script"><?php esc_html_e('Exclude Scripts'); ?></label><br><small>/beta<smaill></th>
+                        <td><input id="exclude_script" name="peadig_eucookie[exclude_script]" type="checkbox" value="1" <?php checked('1', $options['exclude_script']); ?> /><br>
+<small><?php esc_html_e('Check this if you don\'t want scripts to be blocked.', 'eu-cookie-law'); ?></small></td>
+                    </tr>
+                </table>
+                
+                </td>
 				</tr>
                 <tr valign="top"><th scope="row"><label for="tinymcebutton"><?php esc_html_e('Enable TinyMCE Button', 'eu-cookie-law'); ?></label></th>
 					<td><input id="tinymcebutton" name="peadig_eucookie[tinymcebutton]" type="checkbox" value="1" <?php checked('1', $options['tinymcebutton']); ?> /><br>
@@ -79,11 +105,11 @@ function peadig_eucookie_options() {
 <small><?php esc_html_e('Once the user clicks accept the bar will disappear. You can set how long this will apply for before the bar reappears to the user.', 'eu-cookie-law'); ?> <?php esc_html_e('Set "0" for SESSION cookie.', 'eu-cookie-law'); ?></small>
 					</td>
 				</tr>
-                <tr valign="top"><th scope="row"><label for="scrollconsent"><?php esc_html_e('Scroll Consent', 'eu-cookie-law'); ?></label></th>
+                <tr valign="top"><th scope="row"><label for="scrollconsent"><?php esc_html_e('Scroll Consent', 'eu-cookie-law'); ?></label><br><small style="color:red;">/no GDPR compliance except for technical cookies + AutoBlock OFF<smaill></th>
 					<td><input id="scrollconsent" name="peadig_eucookie[scrollconsent]" type="checkbox" value="1" <?php checked('1', $options['scrollconsent']); ?> /><br>
 <small><?php esc_html_e('Click here if you want to consider scrolling as cookie acceptation. Users should be informed about this...', 'eu-cookie-law'); ?></small></td>
 				</tr>
-                <tr valign="top"><th scope="row"><label for="navigationconsent"><?php esc_html_e('Navigation Consent', 'eu-cookie-law'); ?></label></th>
+                <tr valign="top"><th scope="row"><label for="navigationconsent"><?php esc_html_e('Navigation Consent', 'eu-cookie-law'); ?></label><br><small style="color:red;">/no GDPR compliance except for technical cookies + AutoBlock OFF<smaill></th>
 					<td><input id="navigationconsent" name="peadig_eucookie[navigationconsent]" type="checkbox" value="1" <?php checked('1', $options['navigationconsent']); ?> /><br>
 <small><?php esc_html_e('Click here if you want to consider continuing navigation as cookie acceptation. Users should be informed about this...', 'eu-cookie-law'); ?></small></td>
 				</tr>
@@ -200,7 +226,7 @@ function peadig_eucookie_options() {
                 </tr>
                     <tr valign="top"><th scope="row"><label for="cc-cookieenabled">
                     <?php esc_html_e('Cookie enabled message', 'eu-cookie-law'); ?><br>
-                    <small><?php esc_html_e('This is the message that will be displayed when cookie are enabled', 'eu-cookie-law'); ?></small></label></th>
+                    <small><?php esc_html_e('Message when cookies have been accepted', 'eu-cookie-law'); ?></small></label></th>
 					<td>
 <textarea style='font-size: 90%; width:95%;' name='peadig_eucookie[cc-cookieenabled]' id='cc-cookieenabled' rows='9' ><?php echo esc_textarea( $options['cc-cookieenabled'] ); ?></textarea><br>
                     
@@ -210,7 +236,7 @@ function peadig_eucookie_options() {
 				</tr>
                 <tr valign="top"><th scope="row"><label for="cc-cookiedisabled">
                     <?php esc_html_e('Cookie disabled message', 'eu-cookie-law'); ?><br>
-                    <small><?php esc_html_e('This is the message that will be displayed when cookie are not accepted', 'eu-cookie-law'); ?></small></label></th>
+                    <small><?php esc_html_e('Message when cookies haven\'t been accepted', 'eu-cookie-law'); ?></small></label></th>
 					<td>
 <textarea style='font-size: 90%; width:95%;' name='peadig_eucookie[cc-cookiedisabled]' id='cc-cookiedisabled' rows='9' ><?php echo esc_textarea( $options['cc-cookiedisabled'] ); ?></textarea>
 					</td>

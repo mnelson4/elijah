@@ -1,6 +1,6 @@
 === EU Cookie Law ===
 Contributors: alexmoss, Milmor, pleer, ShaneJones
-Version:	2.13
+Version:	3.0.5
 Stable tag:	trunk
 Author:		Alex Moss, Marco Milesi, Peadig, Shane Jones
 Author URI:   https://profiles.wordpress.org/milmor/
@@ -23,7 +23,7 @@ https://www.youtube.com/watch?v=6f2qxC3GZJ8
 Demo: [www.sanpellegrinoterme.gov.it](http://www.sanpellegrinoterme.gov.it)
 
 = Features =
-* **GDPR** compliance under review
+* **GDPR** compliant (if you have doubts, ask in the forum)
 * **Customizable banner** (color, position, strings)
 * Consent by **Clicking, Scrolling and Navigation**
 * Set your page, popup or custom URL for Cookie Policy
@@ -114,6 +114,12 @@ Please note that **cookie_accepted** returns true if you disable it in the setti
 
 If you think that we should enhance something let us know in the [forum](https://wordpress.org/support/plugin/eu-cookie-law).
 
+= Javascript Filters =
+Sometimes it could be useful to trigger custom actions on cookie consent, so we added useful filters.
+
+If you want to play, just download our [sample plugin](https://plugins.svn.wordpress.org/eu-cookie-law/assets/eu-cookie-law-filter.zip) and start coding!
+
+
 = Auto block =
 The plugin offers an exclusive function that allows you to block **iframes, embeds, objects and scripts** in posts, pages and widgets. This can be activated in the plugin options panel because is disabled by default.
 
@@ -156,6 +162,30 @@ Click on the translations link to open the translation editor and adjust the str
 9. Fully customizable
 
 == Changelog ==
+
+= 3.0.5 10.06.2018 =
+* Various **bug fixes**
+
+= 3.0.2 09.06.2018 =
+* **Improved** caching compatibility by adding plugin version as "?123" parameter on scripts.js enqueue
+* **Added** another layer to check if cookies are accepted, so that the banner should disappear - it didn't in some configurations (provide feedback, thanks)
+* **Better** .click detection on banner click - By @pelzi
+* **Added** version 2.13 in tags, so that in case of v3.x conflicts you can rollback
+
+= 3.0.1 26.05.2018 =
+* **Fixed** critical bug with some browsers (for example Internet Explorer) that killed "Accept" button
+
+= 3.0 24.05.2018 - First GDPR release =
+Hello! This is our first GDPR release and hope you'll like it. Some functions have changed, so report bugs in our support forum to discuss them.
+Also, if you don't use technical cookies only, we suggest to turn AutoBlock function ON.
+
+* **Added** option to exclude script block: useful if you only wants to block iframe/embeds, but not scripts. Scripts (like Google Analytics) can be always be blocked with our placeholders
+* **Added** more javascript-oriented logic to increase cache compatibility
+* **SCROLL CONSENT** and **NAVIGATION CONSENT** automatically disabled if you use AutoBlock
+* **Added** developer filter in Javascript for consent. Take a look on our FAQ or directly head to download our [sample plugin download](https://plugins.svn.wordpress.org/eu-cookie-law/assets/eu-cookie-law-filter.zip) to start coding!
+* **Improved** [cookie-control] shortcode style to revoke consent
+* **Added** 10px in style.css for blocked cookies banner
+* Some code cleanup for faster performances
 
 = 2.13 24.04.2018 =
 * **Fixed** bug with WordPress default Youtube embeds. Thanks to @rfmcomposer + @bitmed

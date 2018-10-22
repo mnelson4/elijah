@@ -2,26 +2,11 @@
 
     $euCookieSet = 0;
 
-add_action( 'send_headers', function() {
-	if ( isset($_GET['nocookie']) ) {
-        setcookie('euCookie', '', 1, '/');
-        global $euCookieSet;
-        $euCookieSet = 0;
-        wp_redirect( esc_url( remove_query_arg( 'nocookie' ) ) );
-        exit();
-    }
-});
-
 add_action('wp_head', function() {
     
     global $euCookieSet;
-    global $deleteCookieUrlCheck;
-    
-    if ( !isset($_GET['nocookie']) && wp_get_referer() && eucookie_option('navigationconsent') && (!cookie_accepted()) && (eucookie_option('boxlinkid') != get_the_ID()) ) {
-        $euCookieSet = 1;
-    }
-    
-    
+    global $deleteCookieUrlCheck;    
+
     if ( ecl_isSearchEngine() ) {
         $euCookieSet = 1;
     }
@@ -30,21 +15,20 @@ add_action('wp_head', function() {
 	wp_enqueue_style	('basecss');
     
     $eclData = array(
-        'euCookieSet' => $euCookieSet,
+        'euCookieSet' => ( $euCookieSet || cookie_accepted() ),
         'autoBlock' =>  eucookie_option('autoblock'),
         'expireTimer' => get_expire_timer(),
         'scrollConsent' => eucookie_option('scrollconsent'),
         'networkShareURL' => ecl_get_cookie_domain(),
         'isCookiePage' => eucookie_option('boxlinkid') == get_the_ID(),
-        'isRefererWebsite' => eucookie_option('navigationconsent') && wp_get_referer(),
-        'deleteCookieUrl' => esc_url( add_query_arg( 'nocookie', '1', get_permalink() ) )
+        'isRefererWebsite' => eucookie_option('navigationconsent') && wp_get_referer() && ( eucookie_option('boxlinkid') != get_the_ID() )
     );
     
     wp_enqueue_script(
         'eucookielaw-scripts',
         plugins_url('js/scripts.js', __FILE__),
         array( 'jquery' ),
-        '',
+        get_option('ecl_version_number'),
         true
     );
     wp_localize_script('eucookielaw-scripts','eucookielaw_data',$eclData);
@@ -96,7 +80,7 @@ function cookie_accepted() {
     
     if ( ! eucookie_option('enabled') ) { return true; }
     
-    if ( ( isset( $_COOKIE['euCookie'] ) && !isset( $_GET['nocookie'] ) ) || $euCookieSet ) {
+    if ( isset( $_COOKIE['euCookie'] )  || $euCookieSet ) {
         return true;
     } else {
         return false;
@@ -195,7 +179,9 @@ function ecl_erase($content) {
        ) {
         
         $content = preg_replace('#<iframe.*?\/iframe>|<object.*?\/object>|<embed.*?>#is', generate_cookie_notice('auto', '100%'), $content);
-        $content = preg_replace('#<script.(?:(?!eucookielaw_exclude).)*?\/script>#is', '', $content);
+        if ( !eucookie_option('exclude_script') ) {
+            $content = preg_replace('#<script.(?:(?!eucookielaw_exclude).)*?\/script>#is', '', $content);
+        }
         $content = preg_replace('#<!cookie_start.*?\!cookie_end>#is', generate_cookie_notice('auto', '100%'), $content);
         $content = preg_replace('#<div id=\"disqus_thread\".*?\/div>#is', generate_cookie_notice('auto', '100%'), $content);
     }
@@ -245,13 +231,13 @@ function ecl_frontstyle($name) {
     }
 }
 
-function eu_cookie_control_shortcode( $atts ) {
+add_shortcode( 'cookie-control', function ( $atts ) {
     if ( !eucookie_option('enabled') ) { return; }
     if ( cookie_accepted() ) {
         return '
             <div class="pea_cook_control" style="color:'.ecl_frontstyle('fontcolor').'; background-color: rgba('.ecl_frontstyle('backgroundcolor').',0.9);">
-                '.eucookie_option('cc-cookieenabled').'<br>
-                <button id="eu_revoke_cookies" class="eu_control_btn">'.eucookie_option('cc-disablecookie').'</button>
+                <b>'.eucookie_option('cc-cookieenabled').'</b><br>
+                <button id="eu_revoke_cookies" class="eu_control_btn" style="color:rgba('.ecl_frontstyle('backgroundcolor').'); background-color: '.ecl_frontstyle('fontcolor').';">'.eucookie_option('cc-disablecookie').'</button>
             </div>';
     } else {
         return '
@@ -259,8 +245,7 @@ function eu_cookie_control_shortcode( $atts ) {
                 '.str_replace( '%s', eucookie_option('barbutton'), eucookie_option('cc-cookiedisabled') ).'
             </div>';            
     }
-}
-add_shortcode( 'cookie-control', 'eu_cookie_control_shortcode' );
+} );
 
 function eu_cookie_list_shortcode( $atts ) {
    

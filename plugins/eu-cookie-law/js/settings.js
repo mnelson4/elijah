@@ -1,7 +1,6 @@
 jQuery(document).ready(function($){
     $('.color-field').wpColorPicker();
 	
-	
 	eclshowhide();
 	
 	$( "#networkshareurl" ).prop( "disabled", !$('#networkshare').is(':checked') );
@@ -10,6 +9,15 @@ jQuery(document).ready(function($){
 
 	$('#networkshare').on('change', function() {
 		$( "#networkshareurl" ).prop( "disabled", !$('#networkshare').is(':checked') );
+	});
+
+	// On Change
+	$('#autoblock').on('change', function() {
+		if ( $('#autoblock').is(':checked') ) {
+			$('#fineblock').fadeIn('slow');
+		} else {
+			$('#fineblock').fadeOut('slow');
+		}
 	});
 	
 	function eclshowhide() {
