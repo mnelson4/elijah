@@ -26,3 +26,16 @@ white-space: normal;
     max-width: 150px;
     height: auto;
 }
+.wp-admin #side-sortables .cmb2-wrap>.cmb-field-list>.cmb-row {
+    padding: 5px 0 10px;
+}
+
+.wp-admin #side-sortables .cmb-th {
+    padding-bottom: 0;
+}
+
+.wp-admin #side-sortables .cmb-th label {
+    color: #222;
+    font-weight: 600;
+    font-size: 12px;
+}

@@ -6,6 +6,10 @@ function pinnacle_lazy_load_filter() {
   	}
   	return apply_filters('pinnacle_lazy_load', $lazy);
 }
+add_filter( 'max_srcset_image_width', 'pinnacle_srcset_max');
+function pinnacle_srcset_max($string) {
+  return 2000;
+}
 function pinnacle_img_placeholder() {
   return apply_filters('kadence_placeholder_image', get_template_directory_uri() . '/assets/img/post_standard.jpg');
 }

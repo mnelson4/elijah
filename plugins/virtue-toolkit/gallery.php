@@ -227,23 +227,28 @@ function kadence_toolkit_shortcode_gallery($attr) {
       		unset($attr['orderby']);
     	}
   	}
+  	if(!isset($post)) {
+    	$post_id = null;
+  	} else {
+    	$post_id = $post->ID;
+  	}
 
   	extract(shortcode_atts(array(
-	    'order'      => 'ASC',
-	    'orderby'    => 'menu_order ID',
-	    'id'         => $post->ID,
-	    'itemtag'    => '',
-	    'icontag'    => '',
-	    'captiontag' => '',
-	    'columns'    => 3,
-	    'link'      => 'file',
-	    'size'       => 'full',
-	    'include'    => '',
-	    'attachment_page' => 'false',
-	    'use_image_alt' => 'false',
-	    'gallery_id'  => (rand(10,100)),
-	    'lightboxsize' => 'full',
-	    'exclude'    => ''
+		'order'      => 'ASC',
+		'orderby'    => 'menu_order ID',
+		'id'         => $post_id,
+		'itemtag'    => '',
+		'icontag'    => '',
+		'captiontag' => '',
+		'columns'    => 3,
+		'link'      => 'file',
+		'size'            => 'full',
+		'include'         => '',
+		'attachment_page' => 'false',
+		'use_image_alt'   => 'false',
+		'gallery_id'      => ( rand( 10, 100 ) ),
+		'lightboxsize'    => 'full',
+		'exclude'         => ''
   	), $attr));
 
   	$id = intval($id);

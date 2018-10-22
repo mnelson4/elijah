@@ -20,7 +20,7 @@ $form 				= get_post_meta( $post->ID, '_kad_contact_form', true );
 				if(isset($virtue['google_map_api']) && !empty($virtue['google_map_api'])) {
 		    		$gmap_api = $virtue['google_map_api'];
 			    } else {
-			    	$gmap_api = 'AIzaSyBt7JOCM4XQTEi9jzdqB8alFc1Vm_3mbfQ';
+			    	$gmap_api = '';
 			    }
 				if(!empty($height)) {
 					$mapheight = $height;
@@ -31,7 +31,9 @@ $form 				= get_post_meta( $post->ID, '_kad_contact_form', true );
 					$zoom = $mapzoom;
 				} else {
 					$zoom = 15;
-				} ?>
+				}
+				if ( ! empty( $gmap_api ) ) {
+				?>
 				<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=<?php echo esc_attr($gmap_api);?>"></script>
 		    	<script type="text/javascript">
 					jQuery(window).load(function() {
@@ -88,6 +90,8 @@ $form 				= get_post_meta( $post->ID, '_kad_contact_form', true );
 			      });
 			</script>
 		    <?php echo '<style type="text/css" media="screen">#map_address {height:'.esc_attr($mapheight).'px; margin-bottom:20px;}</style>';
+
+		    }
     }
 	if(isset($_POST['submitted'])) {
 		if(isset($form_math) && $form_math == 'yes') {
@@ -146,17 +150,34 @@ $form 				= get_post_meta( $post->ID, '_kad_contact_form', true );
 		$emailSent = true;
 	}
 
-} ?>
-  	<div id="pageheader" class="titleclass">
-		<div class="container">
-			<?php get_template_part('templates/page', 'header'); ?>
-		</div><!--container-->
-	</div><!--titleclass-->
-	<?php if ($map == 'yes') { ?>
+}
+
+/**
+ * @hooked virtue_page_title - 20
+ */
+do_action( 'virtue_page_title_container' );
+
+	if ($map == 'yes') { ?>
         <div id="mapheader" class="titleclass">
             <div class="container">
-		        <div id="map_address">
-	            </div>
+            	<?php if ( ! empty( $gmap_api ) ) { ?>
+            		<div id="map_address">
+	            	</div>
+	            <?php
+            	} else {
+					if ( 'TERRAIN' === $maptype ) {
+						$maptype = 'p';
+					} elseif ( 'HYBRID' === $maptype ) {
+						$maptype = 'h';
+					} elseif ( 'SATELLITE' === $maptype ) {
+						$maptype = 'k';
+					} else {
+						$maptype = 'm';
+					}
+					$query_string = 'q=' . rawurlencode( $address ) . '&cid=&t=' . rawurlencode( $maptype ) . '&center=' . rawurlencode( $address );
+					echo '<div class="kt-map"><iframe style="width:100%; max-width: 100%; border:0;" height="' . esc_attr( $mapheight ) . '" src="https://maps.google.com/maps?&' . esc_attr( htmlentities( $query_string ) ) . '&output=embed&z=' . esc_attr( $zoom ) . '&iwloc=A&visual_refresh=true"></iframe></div>';
+
+				}?>
 	        </div><!--container-->
         </div><!--titleclass-->
   	<?php } ?>

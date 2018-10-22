@@ -176,21 +176,18 @@ if ( post_type_exists( 'portfolio' ) ) {
 						<div class="<?php echo esc_attr($itemsize);?> all p-item">
                 			<div class="portfolio-item grid_item postclass kad-light-gallery">
 								<?php if (has_post_thumbnail( $post->ID ) ) {
-									$image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' ); 
-									$thumbnailURL = $image_url[0]; 
-									$image = aq_resize($thumbnailURL, $slidewidth, $slideheight, true);
-									if(empty($image)) {$image = $thumbnailURL;} ?>
+									$img = pinnacle_get_image_array( $slidewidth, $slideheight, true, null, null, get_post_thumbnail_id( $post->ID ), false); ?>
 									<div class="portfolio-imagepadding">
 										<div class="portfolio-hoverclass">
 											<a href="<?php the_permalink() ?>" class="">
-	                                       		<img src="<?php echo esc_url($image); ?>" alt="<?php the_title(); ?>" class="kad-lightboxhover">
+	                                       		<img src="<?php echo esc_url($img['src']); ?>" alt="<?php the_title_attribute(); ?>" <?php echo 'width="'.esc_attr($img['width']).'" height="'.esc_attr($img['height']).'"';?> <?php echo $img['srcset']; ?> class="kad-lightboxhover">
 	                                       		<div class="portfolio-hoverover"></div>
 	                                       		<div class="portfolio-table">
 	                                       			<div class="portfolio-cell">
 	                                       			<?php if($pstyleclass == "padded_style" ) { ?>
 		                                       				<a href="<?php the_permalink() ?>" class="kad-btn kad-btn-primary"><?php echo __('View details', 'pinnacle');?></a>
 		                                       				<?php if($lightbox) {?>
-		                                       					<a href="<?php echo esc_url($thumbnailURL); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title();?>" data-rel="lightbox"><i class="icon-search"></i></a>
+		                                       					<a href="<?php echo esc_url($img['full']); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title_attribute();?>" data-rel="lightbox"><i class="icon-search"></i></a>
 		                                       				<?php } ?>
 		                                       		<?php } elseif($pstyleclass == "flat-no-margin" || $pstyleclass == "flat-w-margin" ) { ?>
 		                                       				<h5><?php the_title();?></h5>
@@ -204,7 +201,7 @@ if ( post_type_exists( 'portfolio' ) ) {
 		                                       					<p class="p_excerpt"><?php echo pinnacle_excerpt(16); ?></p> 
 		                                       				<?php } ?>
 		                                       				<?php if($lightbox) {?>
-		                                       					<a href="<?php echo esc_url($thumbnailURL); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title();?>" data-rel="lightbox"><i class="icon-search"></i></a>
+		                                       					<a href="<?php echo esc_url($img['full']); ?>" class="kad-btn kad-btn-primary plightbox-btn" title="<?php the_title_attribute(); ?>" data-rel="lightbox"><i class="icon-search"></i></a>
 		                                       				<?php }?>
 		                                       		<?php } ?>
 		                                       		</div>

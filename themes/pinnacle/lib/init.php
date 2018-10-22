@@ -16,6 +16,41 @@ function kadence_setup() {
   add_theme_support('post-formats', array('gallery', 'image', 'video'));
   add_theme_support( 'automatic-feed-links' );
   add_editor_style('/assets/css/editor-style.css');
+  global $pinnacle;
+	// Gutenberg Support.
+	add_theme_support( 'editor-color-palette', array(
+		array(
+			'name'  => __( 'Primary Color', 'pinnacle' ),
+			'slug'  => 'pinnacle-primary',
+			'color' => ( isset( $pinnacle['primary_color'] ) && ! empty( $pinnacle['primary_color'] ) ? $pinnacle['primary_color'] : '#f3690e' ),
+		),
+		array(
+			'name'  => __( 'Lighter Primary Color', 'pinnacle' ),
+			'slug'  => 'pinnacle-primary-light',
+			'color' => ( isset( $pinnacle['primary20_color'] ) && ! empty( $pinnacle['primary20_color'] ) ? $pinnacle['primary20_color'] : '#f5873f' ),
+		),
+		array(
+			'name'  => __( 'Very light gray', 'pinnacle' ),
+			'slug'  => 'very-light-gray',
+			'color' => '#eee',
+		),
+		array(
+			'name'  => esc_html__( 'White', 'pinnacle' ),
+			'slug'  => 'white',
+			'color' => '#fff',
+		),
+		array(
+			'name'  => __( 'Very dark gray', 'pinnacle' ),
+			'slug'  => 'very-dark-gray',
+			'color' => '#444',
+		),
+		array(
+			'name'  => esc_html__( 'Black', 'pinnacle' ),
+			'slug'  => 'black',
+			'color' => '#000',
+		),
+	) );
+	add_theme_support( 'align-wide' );
 }
 add_action('after_setup_theme', 'kadence_setup');
 

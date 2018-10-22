@@ -1,5 +1,5 @@
 <?php
-
+require_once( VIRTUE_TOOLKIT_PATH . 'cmb/init.php' );
 add_action( 'init', 'initialize_kadence_toolkit_meta_boxes', 10 );
 function initialize_kadence_toolkit_meta_boxes() {
 	$the_theme = wp_get_theme();
@@ -9,9 +9,6 @@ function initialize_kadence_toolkit_meta_boxes() {
 		add_filter( 'cmb2_admin_init', 'kadence_toolkit_virtue_metaboxes', 100 );
 	} else if( 'Ascend' == $the_theme->get( 'Name' ) || 'ascend' == $the_theme->get( 'Template')  ) {
 		add_filter( 'cmb2_admin_init', 'kadence_toolkit_ascend_metabox');
-	}
-	if ( ! defined( 'CMB2_LOADED' ) ) {
-		require_once( VIRTUE_TOOLKIT_PATH . 'cmb/init.php' );
 	}
 
 }
@@ -689,16 +686,16 @@ function kadence_toolkit_virtue_metaboxes() {
 	$prefix = '_kad_';
 
 	$kttk_page_subtitle = new_cmb2_box( array(
-		'id'         	=> 'subtitle_metabox',
-		'title'      	=> __( "Page Title and Subtitle", 'virtue' ),
-		'object_types'	=> array( 'page' ),
-		'priority'   	=> 'high',
+		'id'           => 'subtitle_metabox',
+		'title'        => __( 'Page Title and Subtitle', 'virtue-toolkit' ),
+		'object_types' => array( 'page' ),
+		'priority'     => 'high',
 	) );
 	$kttk_page_subtitle->add_field( array(
-		'name'    => __("Subtitle", 'virtue' ),
-		'desc'    => __( "Subtitle will go below page title", 'virtue' ),
-		'id'      => $prefix . 'subtitle',
-		'type' 	  => 'textarea_small',
+		'name' => __( 'Subtitle', 'virtue-toolkit' ),
+		'desc' => __( 'Subtitle will go below page title', 'virtue-toolkit' ),
+		'id'   => $prefix . 'subtitle',
+		'type' => 'textarea_small',
 	) );
 	
 	// Video Post
@@ -890,18 +887,6 @@ function kadence_toolkit_virtue_metaboxes() {
 		'id'     	=> $prefix . 'portfolio_type',
 		'type'    	=> 'kttk_select_type',
 		'taxonomy' 	=> 'portfolio-type',
-	) );
-	$kttk_portfolio_page->add_field( array(
-		'name'    => __("Order Items By", 'virtue-toolkit' ),
-		'desc'    => '',
-		'id'      => $prefix . 'portfolio_order',
-		'type'    => 'select',
-		'options' => array(
-			'menu_order' 	=> __("Menu Order", 'virtue-toolkit' ),
-			'title' 		=> __("Title", 'virtue-toolkit' ),
-			'date' 			=> __("Date", 'virtue-toolkit' ),
-			'rand' 			=> __("Random", 'virtue-toolkit' ),
-		),
 	) );
 	$kttk_portfolio_page->add_field( array(
 		'name'    => __("Order Items By", 'virtue-toolkit' ),

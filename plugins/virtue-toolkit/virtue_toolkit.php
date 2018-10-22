@@ -1,51 +1,59 @@
 <?php
+/**
+ * Plugin Name: Kadence Toolkit
+ * Description: Custom Portfolio and Shortcode functionality for free Kadence WordPress themes
+ * Version: 4.9.1
+ * Author: Kadence Themes
+ * Author URI: https://kadencethemes.com/
+ * License: GPLv2 or later
+ *
+ * @package Kadence Toolkit
+ */
 
-/*
-Plugin Name: Kadence Toolkit
-Description: Custom Portfolio and Shortcode functionality for free Kadence WordPress themes
-Version: 4.8
-Author: Kadence Themes
-Author URI: https://kadencethemes.com/
-License: GPLv2 or later
-*/
-
+/**
+ * Kadence Toolkit Activation
+ */
 function virtue_toolkit_activation() {
 	flush_rewrite_rules();
-	get_option('kadence_toolkit_flushpermalinks', '1');
+	get_option( 'kadence_toolkit_flushpermalinks', '2' );
 }
-register_activation_hook(__FILE__, 'virtue_toolkit_activation');
+register_activation_hook( __FILE__, 'virtue_toolkit_activation' );
 
-function virtue_toolkit_deactivation() {
-}
-register_deactivation_hook(__FILE__, 'virtue_toolkit_deactivation');
-
-add_filter( 'kadence_theme_options_args', 'virtue_toolkit_redux_args_new');
+/**
+ * Set redux args
+ *
+ * @param array $args redux framework args.
+ */
 function virtue_toolkit_redux_args_new( $args ) {
-    $args['customizer_only'] = false;
-    $args['save_defaults'] = true;
-    return $args;
+	$args['customizer_only'] = false;
+	$args['save_defaults']   = true;
+	return $args;
+}
+add_filter( 'kadence_theme_options_args', 'virtue_toolkit_redux_args_new' );
+
+if ( ! defined( 'VIRTUE_TOOLKIT_PATH' ) ) {
+	define( 'VIRTUE_TOOLKIT_PATH', realpath( plugin_dir_path( __FILE__ ) ) . DIRECTORY_SEPARATOR );
+}
+if ( ! defined( 'VIRTUE_TOOLKIT_URL' ) ) {
+	define( 'VIRTUE_TOOLKIT_URL', plugin_dir_url( __FILE__ ) );
 }
 
-if(!defined('VIRTUE_TOOLKIT_PATH')){
-	define('VIRTUE_TOOLKIT_PATH', realpath(plugin_dir_path(__FILE__)) . DIRECTORY_SEPARATOR );
-}
-if(!defined('VIRTUE_TOOLKIT_URL')){
-	define('VIRTUE_TOOLKIT_URL', plugin_dir_url(__FILE__) );
-}
+require_once VIRTUE_TOOLKIT_PATH . 'kadence_image_processing.php';
+require_once VIRTUE_TOOLKIT_PATH . 'post-types.php';
+require_once VIRTUE_TOOLKIT_PATH . 'gallery.php';
+require_once VIRTUE_TOOLKIT_PATH . 'author_box.php';
+require_once VIRTUE_TOOLKIT_PATH . 'shortcodes.php';
+require_once VIRTUE_TOOLKIT_PATH . 'shortcode_ajax.php';
+require_once VIRTUE_TOOLKIT_PATH . 'pagetemplater.php';
+require_once VIRTUE_TOOLKIT_PATH . 'metaboxes.php';
+require_once VIRTUE_TOOLKIT_PATH . 'class-virtue-toolkit-welcome.php';
+require_once VIRTUE_TOOLKIT_PATH . 'widgets.php';
 
-require_once( VIRTUE_TOOLKIT_PATH . 'kadence_image_processing.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'post-types.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'gallery.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'author_box.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'shortcodes.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'shortcode_ajax.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'pagetemplater.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'metaboxes.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'welcome.php' );
-require_once( VIRTUE_TOOLKIT_PATH . 'widgets.php' );
-
+/**
+ * Virtue Toolkit Textdomain
+ */
 function virtue_toolkit_textdomain() {
-  load_plugin_textdomain( 'virtue-toolkit', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' ); 
+	load_plugin_textdomain( 'virtue-toolkit', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 add_action( 'plugins_loaded', 'virtue_toolkit_textdomain' );
 
@@ -65,9 +73,9 @@ add_action('admin_enqueue_scripts', 'virtue_toolkit_admin_scripts');
 
 function virtue_toolkit_flushpermalinks() {
 	$hasflushed = get_option('kadence_toolkit_flushpermalinks', '0');
-	if($hasflushed != '1') {
+	if($hasflushed != '2') {
 		flush_rewrite_rules();
-		update_option('kadence_toolkit_flushpermalinks', '1');
+		update_option('kadence_toolkit_flushpermalinks', '2');
 	}
 }
 add_action('init', 'virtue_toolkit_flushpermalinks');

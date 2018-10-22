@@ -7,7 +7,7 @@
 function pinnacle_scripts() {
 	global $pinnacle;
 
-  	wp_enqueue_style('pinnacle_theme', get_template_directory_uri() . '/assets/css/pinnacle.css', false, '161');
+  	wp_enqueue_style('pinnacle_theme', get_template_directory_uri() . '/assets/css/pinnacle.css', false, '164');
   	if(isset($pinnacle['skin_stylesheet']) && !empty($pinnacle['skin_stylesheet'])) {
   		$skin = $pinnacle['skin_stylesheet'];
   	} else {
@@ -27,8 +27,8 @@ function pinnacle_scripts() {
 
   	wp_enqueue_script('modernizr', get_template_directory_uri() . '/assets/js/vendor/modernizr-2.7.0.min.js', array( 'jquery' ), null, false);
   	wp_enqueue_script('masonry');
-  	wp_enqueue_script('pinnacle_plugins', get_template_directory_uri() . '/assets/js/min/kt_plugins.min.js', array( 'jquery' ), 161, true);
-   	wp_enqueue_script('pinnacle_main', get_template_directory_uri() . '/assets/js/min/kt_main.min.js', array( 'jquery' ), 161, true);
+  	wp_enqueue_script('pinnacle_plugins', get_template_directory_uri() . '/assets/js/min/kt_plugins.min.js', array( 'jquery' ), 164, true);
+   	wp_enqueue_script('pinnacle_main', get_template_directory_uri() . '/assets/js/min/kt_main.min.js', array( 'jquery' ), 164, true);
 
   	if(class_exists('woocommerce')) {
    		wp_enqueue_script( 'kt-wc-add-to-cart-variation', get_template_directory_uri() . '/assets/js/min/kt-add-to-cart-variation-min.js' , array( 'jquery' ), false, '134', true );

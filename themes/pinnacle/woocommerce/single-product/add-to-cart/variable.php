@@ -4,7 +4,7 @@
  *
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version 3.0.0
+ * @version 3.4.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,7 +45,9 @@ do_action('woocommerce_before_add_to_cart_form'); ?>
 		</tbody>
 	</table>
 
-	<?php do_action('woocommerce_before_add_to_cart_button'); ?>
+	<?php if ( version_compare( WC_VERSION, '3.4', '<' ) ) {
+		do_action( 'woocommerce_before_add_to_cart_button' ); 
+	} ?>
 
 	<div class="single_variation_wrap_kad single_variation_wrap" style="display:block;">
 		<?php 
@@ -63,10 +65,13 @@ do_action('woocommerce_before_add_to_cart_form'); ?>
 
 	</div>
 
-	<?php do_action('woocommerce_after_add_to_cart_button'); ?>
+	
+	<?php if ( version_compare( WC_VERSION, '3.4', '<' ) ) {
+		do_action( 'woocommerce_after_add_to_cart_button' ); 
+	} ?>
 
 	<?php endif; ?>
-
+	<?php do_action( 'woocommerce_after_variations_form' ); ?>
 </form>
 
 <?php do_action('woocommerce_after_add_to_cart_form'); ?>

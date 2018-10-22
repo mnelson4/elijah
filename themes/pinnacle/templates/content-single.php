@@ -34,14 +34,12 @@
                                     $attachments = array_filter( explode( ',', $image_gallery ) );
                                       if ($attachments) {
                                       foreach ($attachments as $attachment) {
-                                        $attachment_src = wp_get_attachment_image_src($attachment , 'full');
-                                        $image = aq_resize($attachment_src[0], $slidewidth, $slideheight, true, false, false, $attachment);
-                                        if(empty($image)) {$image = $attachment_src;} 
-                                        echo '<li><a href="'.esc_attr($attachment_src[0]).'" data-rel="lightbox" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">';
-                                        echo '<img src="'.esc_attr($image[0]).'" width="'.esc_attr($image[1]).'" height="'.esc_attr($image[2]).'" itemprop="contentUrl" '.kt_get_srcset_output($image[1], $image[2], $attachment_src[0], $attachment).'/>';
-                                        echo '<meta itemprop="url" content="'.esc_url($image[0]).'">';
-                                        echo '<meta itemprop="width" content="'.esc_attr($image[1]).'">';
-                                        echo '<meta itemprop="height" content="'.esc_attr($image[2]).'">';
+                                      	$img = pinnacle_get_image_array( $slidewidth, $slideheight, true,null, null, $attachment, false); 
+                                        echo '<li><a href="'.esc_attr($img['full']).'" data-rel="lightbox" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">';
+                                        echo '<img src="'.esc_attr($img['src']).'" width="'.esc_attr($img['width']).'" height="'.esc_attr($img['height']).'" alt="'.esc_attr($img['alt']).'" itemprop="contentUrl" '.wp_kses_post($img['srcset']).'/>';
+                                        echo '<meta itemprop="url" content="'.esc_url($img['src']).'">';
+                                        echo '<meta itemprop="width" content="'.esc_attr($img['width']).'">';
+                                        echo '<meta itemprop="height" content="'.esc_attr($img['height']).'">';
                                         echo '</a></li>';
                                       }
                                     }
@@ -71,15 +69,13 @@
                                           $attachments = array_filter( explode( ',', $image_gallery ) );
                                             if ($attachments) {
                                               foreach ($attachments as $attachment) {
-                                                    $attachment_url = wp_get_attachment_url($attachment , 'full');
-                                                    $image = aq_resize($attachment_url, null, $slideheight, false, false);
-                                                    if(empty($image)) {$image = array($attachment_url,$slidewidth,$slideheight);} 
-                                                    echo '<div class="carousel_gallery_item" style="float:left; display: table; position: relative; text-align: center; margin: 0; width:auto; height:'.esc_attr($image[2]).'px;">';
+                                              		$img = pinnacle_get_image_array( null, $slideheight, false, null, null, $attachment, false); 
+                                                    echo '<div class="carousel_gallery_item" style="float:left; display: table; position: relative; text-align: center; margin: 0; width:auto; height:'.esc_attr($img['height']).'px;">';
                                                     echo '<div class="carousel_gallery_item_inner" style="vertical-align: middle; display: table-cell;" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">';
-                                                    echo '<img src="'.esc_attr($image[0]).'" width="'.esc_attr($image[1]).'" height="'.esc_attr($image[2]).'" itemprop="contentUrl" '.kt_get_srcset_output($image[1], $image[2], $attachment_url, $attachment).' />';
-                                                    echo '<meta itemprop="url" content="'.esc_url($image[0]).'">';
-                                                    echo '<meta itemprop="width" content="'.esc_attr($image[1]).'">';
-                                                    echo '<meta itemprop="height" content="'.esc_attr($image[2]).'">';
+                                                    echo '<img src="'.esc_attr($img['src']).'" width="'.esc_attr($img['width']).'" height="'.esc_attr($img['height']).'" itemprop="contentUrl" '.wp_kses_post($img['srcset']).' />';
+                                                    echo '<meta itemprop="url" content="'.esc_url($img['src']).'">';
+                                                    echo '<meta itemprop="width" content="'.esc_attr($img['width']).'">';
+                                                    echo '<meta itemprop="height" content="'.esc_attr($img['height']).'">';
                                                       ?>
                                                     </div>
                                                   </div>

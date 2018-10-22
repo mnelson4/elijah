@@ -153,6 +153,7 @@
                     <key name="description" />
                 </key>
             </key>
+            <key name="home_icon_menu_btn" />
             <key name="home_action_text" />
             <key name="home_action_text_btn" />
             <key name="home_action_link" />
