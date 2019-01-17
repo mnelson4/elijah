@@ -281,6 +281,9 @@ function elijah_hierarchical_reveal_checkboxes( $taxonomy, $post_id ) {
  */
 function elijah_hierarchical_reveal_checkbox_and_child( $terms_with_children, $input_name, $selected_term_ids = array() ) {
 	$html = '';
+	if(!is_array($terms_with_children)) {
+	    return $html;
+    }
 	foreach( $terms_with_children as $term_with_children ) {
 		$this_id = $input_name . $term_with_children->term()->slug;
 		$selected = in_array( $term_with_children->term()->term_id, $selected_term_ids );

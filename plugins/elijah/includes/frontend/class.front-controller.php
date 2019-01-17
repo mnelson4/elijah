@@ -18,7 +18,7 @@ class Elijah_Front_Controller {
 		if( isset( $_REQUEST[ 'elijah_request' ] ) ){
 			$method_name = 'handle_' . $_REQUEST[ 'elijah_request' ];
 			if( method_exists( $this, $method_name ) ) {
-				return call_user_method( $method_name, $this );
+				return call_user_func( array( $this, $method_name) );
 			}
 		}
 	}
