@@ -1,0 +1,70 @@
+.pmb-spinner {
+    background: url('/wp-admin/images/wpspin_light.gif') no-repeat;
+    background-size: 16px 16px;
+    margin-left:auto;
+    margin-right:auto;
+    opacity: .7;
+    filter: alpha(opacity=70);
+    width: 16px;
+    height: 16px;
+}
+@media print {
+    .pmb-waiting-message-fullpage{
+        display:none;
+    }
+}
+@media not print{
+    .pmb-posts{
+        display:none;
+    }
+}
+
+.pmb-waiting-message-fullpage{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color:white;
+    color:black;
+    z-index:1000;
+}
+
+.pmb-waiting-message-outer-container{
+    text-align:center;
+    margin-top:10%;
+}
+
+div.pmb-post-header{
+    page-break-inside:avoid;
+}
+.pmb-page-break{
+    page-break-before: always;
+}
+/* On the print page, try to avoid page breaks in the middle of images*/
+.pmb-image{
+    page-break-inside:avoid;
+}
+.pmb-header{
+    page-break-inside:avoid;
+    page-break-after:avoid;
+}
+button{
+    background-color:lightskyblue;
+}
+.pmb-print-ready{
+    display:none;
+}
+.print-preview-instructions ol{
+     text-align:left;
+     padding: 0 2em 0 2em;
+ }
+.pmb-error{
+    margin:1em;
+}
+.entry-excerpt{
+    font-style:italic;
+}
+div.tiled-gallery{
+    page-break-inside:avoid;
+}
