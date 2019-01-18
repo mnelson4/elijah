@@ -31,7 +31,7 @@ class PmbInit extends BaseController
         require_once('PmbActivation.php');
         $controller = new PmbActivation();
         $controller->setHooks();
-        if(function_exists('rest_api_proxy_loaded')) {
+        if(function_exists('rest_proxy_loaded')) {
             define('PMB_REST_PROXY_EXISTS',true);
         } else{
             define('PMB_REST_PROXY_EXISTS', false);
@@ -56,6 +56,9 @@ class PmbInit extends BaseController
             $controller = new PmbFrontend();
         }
         $controller->setHooks();
+        require_once('PmbGutenbergBlock.php');
+        $block_controller = new PmbGutenbergBlock();
+        $block_controller->setHooks();
     }
 
     public function setUrls()
