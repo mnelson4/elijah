@@ -13,13 +13,13 @@ Create a paper/PDF copy of your entire blog in one click!
 
 == Description ==
 
-Create a paper/PDF copy of your entire blog in one click!
-A paper copy will be readable in 100 years- long after your website is taken down and your digital backups.
+Create a paper/PDF copy of your entire blog in 2 clicks!
+A paper copy may  be readable in 100 years- long after your website is taken down and your digital backups are corrupted.
 "Print My Blog" makes this really easy: no need to print your blog posts one-by-one, or print unnecessary stuff like your sidebar widgets or footer.
 One click printing of your entire blog's contents in a format optimized for print.
-Plugin alternative to [blog2print](https://www.blog2print.com), except you can print with your own printer or even your browser's print-to-pdf feature.
+Plugin alternative to [blog2print](https://www.blog2print.com) and [blogbooker](https://blogbooker.com/), except you can print with your own printer or even your browser's print-to-pdf feature.
 
-No upsells, no premium version. Entirely supported by donations.
+No upsells, no premium version.
 
 = Why would I want to print my entire blog? =
 
@@ -31,9 +31,9 @@ Glad you asked:
 * when shutting down a blog, convert its content to an easy-to-read format
 
 = How does it work? =
-Watch this 45 second video!
+Watch this 2 minute video.
 
-https://www.youtube.com/watch?v=puMi_CLxl3s&feature=youtu.be
+https://youtu.be/shOjx-Ijung
 
 It works with hundreds of blog posts (or pages, but not other custom post types yet), with Gutenberg, and page builders.
 Only your posts’ content is printed, not your logo, site title, sidebar widgets, footer, etc. Just the stuff you care to read.
@@ -52,15 +52,14 @@ Want this plugin to be even better?
 
 Here’s how you can help:
 
-* give it a good review and tell your friends
-* help test. If you find a bug, please create an issue on [GitHub](https://github.com/mnelson4/printmyblog)
-* help code. Create a pull request on [GitHub](https://github.com/mnelson4/printmyblog)
+* [give it a good review](https://wordpress.org/support/plugin/print-my-blog/reviews/#new-post) and tell your friends
+* [give feedback](https://github.com/mnelson4/printmyblog) on GitHub about what features you want or bugs you find
 * help translate. Make this accessible to users everywhere using [WordPress' Glotpress](https://translate.wordpress.org/projects/wp-plugins/print-my-blog)
 * help help. Answer other users’ questions in the [support section](https://wordpress.org/support/plugin/print-my-blog).
 
 == What's the Big Deal? ==
 
-The mission is: preserve our blogs to a low-tech format.
+The mission is: preserve your blog for decades to come in a low-tech format.
 
 Your website might not be around forever, nor might WordPress. But by printing it, there’s hope your blog’s ideas and stories can live on.
 
@@ -84,6 +83,16 @@ Your website might not be around forever, nor might WordPress. But by printing i
 3. The Blog is Ready for Printing!
 
 == Changelog ==
+
+= 1.2.4 =
+* Add Gutenberg Block so site visitors can print the blog
+* Increased post rendering from 500ms to 200ms per post
+* Moved WP REST Proxy area outside of advanced area
+
+= 1.2.3 =
+* Fixed a bug from 1.2.0 that caused text resizing to not load
+* Fixed some featured images not loading because of unusual REST API response
+* Fixed JetPack's Tiled Galleries by enqueuing its stylesheet
 
 = 1.2.2 =
 * Bump minimum compatible version of WordPress to 4.6 (this will help with translations, and now is probably the easiest time to make the change)

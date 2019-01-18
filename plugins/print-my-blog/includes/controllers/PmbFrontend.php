@@ -69,6 +69,14 @@ class PmbFrontend extends BaseController
             array(),
             filemtime(PMB_ASSETS_DIR . 'styles/print_page.css')
         );
+        // Enqueue tiled gallery too. It's par of Jetpack so it's common, and if we're printing a WordPress.com blog
+        // it's very likely to be used.
+        wp_enqueue_style(
+            'tiled-gallery',
+            PMB_ASSETS_URL . 'styles/tiled-gallery.css',
+            array(),
+            filemtime(PMB_ASSETS_DIR . 'styles/tiled-gallery.css')
+        );
         wp_localize_script(
             'pmb_print_page',
             'pmb_print_data',
@@ -152,7 +160,7 @@ class PmbFrontend extends BaseController
      */
     protected function enqueueInlineStyleBasedOnOptions()
     {
-        $columns = intval($this->getFromRequest('columns',2));
+        $columns = intval($this->getFromRequest('columns',1));
         $post_page_break = (bool)$this->getFromRequest('post-page-break',false);
         $font_size = sanitize_key($this->getFromRequest('font-size', 'small'));
         $css = "
@@ -201,6 +209,10 @@ class PmbFrontend extends BaseController
                 'url' => get_bloginfo('url'),
                 'proxy_for' => null
             );
+        }
+        // If they forgot to add http(s), add it for them.
+        if(strpos($_GET['site'], 'http://') === false && strpos($_GET['site'], 'https://') === false) {
+            $_GET['site'] = 'http://' . $_GET['site'];
         }
         // if there is one, check if it exists in wordpress.com, eg "retirementreflections.com"
         $site = sanitize_text_field($_GET['site']);
