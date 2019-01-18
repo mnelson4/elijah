@@ -39,3 +39,16 @@ div.howitworks{
 #topbar-search .icon-reorder:before {
   content: "\f007";
 }
+
+/* print my blog styling */
+.form-table th{
+    width: 200px;
+    padding: 20px 10px 20px 0;
+}
+.form-table input{
+    width: 400px;
+}
+.form-table p.description{
+    font-size: 0.9em;
+    font-style: italic;
+}
