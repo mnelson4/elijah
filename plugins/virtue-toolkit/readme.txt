@@ -2,8 +2,8 @@
 Contributors: britner
 Tags: 
 Requires at least: 4.2
-Tested up to: 4.9.8
-Stable tag: 4.9.1
+Tested up to: 5.0.0
+Stable tag: 4.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ Install the plugin into the `/wp-content/plugins/` folder, and activate it.
 
 
 == Changelog ==
+
+= 4.9.2 =
+* Update: WordPress 5.0 ready.
 
 = 4.9.1 =
 * Update maps with fall back to Iframe so API is not required.

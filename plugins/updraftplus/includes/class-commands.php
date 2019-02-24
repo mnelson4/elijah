@@ -57,7 +57,7 @@ class UpdraftPlus_Commands {
 	 *
 	 * @param Array $downloader_params - download parameters (findex, type, timestamp, stage)
 	 *
-	 * @return Array - as from UpdrafPlus_Admin::do_updraft_download_backup() (with 'request' key added, with value $downloader_params)
+	 * @return Array - as from UpdraftPlus_Admin::do_updraft_download_backup() (with 'request' key added, with value $downloader_params)
 	 */
 	public function downloader($downloader_params) {
 
@@ -199,6 +199,9 @@ class UpdraftPlus_Commands {
 		$backup_history = UpdraftPlus_Backup_History::get_history();
 	
 		$results['history'] = $updraftplus_admin->settings_downloading_and_restoring($backup_history, true, $get_history_opts);
+
+		$results['backupnow_file_entities'] = apply_filters('updraftplus_backupnow_file_entities', array());
+		$results['modal_afterfileoptions'] = apply_filters('updraft_backupnow_modal_afterfileoptions', '', '');
 		
 		$results['count_backups'] = count($backup_history);
 
@@ -230,8 +233,9 @@ class UpdraftPlus_Commands {
 		$remotescan = ('remotescan' == $operation);
 		$rescan = ($remotescan || 'rescan' == $operation);
 		
-		
 		$history_status = $updraftplus_admin->get_history_status($rescan, $remotescan, $debug);
+		$history_status['backupnow_file_entities'] = apply_filters('updraftplus_backupnow_file_entities', array());
+		$history_status['modal_afterfileoptions'] = apply_filters('updraft_backupnow_modal_afterfileoptions', '', '');
 
 		return $history_status;
 		
@@ -895,7 +899,7 @@ class UpdraftPlus_Commands {
 			
 			if (0 != $response['tokens']) {
 				$content .= '<div class="updraftclone_action_box">';
-				$content .= $updraftplus_admin->updraftplus_clone_versions();
+				$content .= $updraftplus_admin->updraftplus_clone_ui_widget();
 				$content .= '<p class="updraftplus_clone_status"></p>';
 				$content .= '<button id="updraft_migrate_createclone" class="button button-primary button-hero" data-clone_id="'.$response['clone_info']['id'].'" data-secret_token="'.$response['clone_info']['secret_token'].'">'. __('Create clone', 'updraftplus') . '</button>';
 				$content .= '<span class="updraftplus_spinner spinner">' . __('Processing', 'updraftplus') . '...</span>';

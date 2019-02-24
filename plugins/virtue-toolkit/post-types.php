@@ -65,6 +65,7 @@ function kadence_toolkit_portfolio_post_init() {
 		'labels'       => $worklabels,
 		'show_ui'      => true,
 		'query_var'    => true,
+		'show_in_rest'       => true,
 		'rewrite'      => array( 'slug' => $portfolio_type_slug ),
 	) );
 
