@@ -54,6 +54,17 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 8 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ), 11 );
 
+		add_action( 'admin_notices',              array( $this, 'admin_notices'       ) );
+		add_action( 'wp_ajax_tml-dismiss-notice', array( $this, 'ajax_dismiss_notice' ) );
+
+		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes'       ) );
+		add_action( 'save_post',      array( $this, 'save_action_meta_box' ) );
+
+		if ( ! $this->get_option( 'allow_update' ) ) {
+			add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'pre_set_site_transient_update_plugins' ) );
+		}
+		add_action( 'upgrader_pre_install', array( $this, 'upgrader_pre_install' ), 0, 2 );
+
 		register_uninstall_hook( THEME_MY_LOGIN_PATH . '/theme-my-login.php', array( 'Theme_My_Login_Admin', 'uninstall' ) );
 	}
 
@@ -100,13 +111,15 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 			$this->install();
 
 		// Add sections
-		add_settings_section( 'general',    __( 'General', 'theme-my-login'    ), '__return_false', $this->options_key );
-		add_settings_section( 'modules',    __( 'Modules', 'theme-my-login'    ), '__return_false', $this->options_key );
+		add_settings_section( 'general', __( 'General', 'theme-my-login' ), '__return_false',                          $this->options_key );
+		add_settings_section( 'modules', __( 'Modules', 'theme-my-login' ), '__return_false',                          $this->options_key );
+		add_settings_section( 'update',  __( 'Update',  'theme-my-login' ), array( $this, 'settings_section_update' ), $this->options_key );
 
 		// Add fields
 		add_settings_field( 'enable_css', __( 'Stylesheet', 'theme-my-login' ), array( $this, 'settings_field_enable_css' ), $this->options_key, 'general' );
 		add_settings_field( 'login_type', __( 'Login Type', 'theme-my-login' ), array( $this, 'settings_field_login_type' ), $this->options_key, 'general' );
 		add_settings_field( 'modules',    __( 'Modules',    'theme-my-login' ), array( $this, 'settings_field_modules'    ), $this->options_key, 'modules' );
+		add_settings_field( 'update',     __( 'Update',     'theme-my-login' ), array( $this, 'settings_field_update'     ), $this->options_key, 'update'  );
 	}
 
 	/**
@@ -120,6 +133,119 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 		wp_localize_script( 'theme-my-login-admin', 'tmlAdmin', array(
 			'interim_login_url' => site_url( 'wp-login.php?interim-login=1', 'login' )
 		) );
+	}
+
+	/**
+	 * Print admin notices.
+	 *
+	 * @since 6.4.5
+	 *
+	 * @return [type] [description]
+	 */
+	public function admin_notices() {
+		$dismissed_notices = $this->get_option( 'dismissed_notices', array() );
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( ! in_array( '7', $dismissed_notices ) ) {
+			?>
+
+			<div class="notice notice-info tml-notice is-dismissible" data-notice="7">
+				<p>
+					<?php _e( '<strong>Heads up!</strong> Theme My Login 7 is right around the corner and some major changes are coming!', 'theme-my-login' ); ?>
+					<br /><br />
+					<?php _e( 'Most notably, all of the previously included modules (with the exception of Custom Passwords, which has been merged into the core plugin) have been removed.', 'theme-my-login' ); ?>
+					<?php _e( 'Instead, all of the legacy modules (now called "Extensions"), with many more to come, can now be purchased at our <a href="https://thememylogin.com/extensions">extensions store</a>.', 'theme-my-login' ); ?>
+					<br /><br />
+					<?php _e( "It's not all bad news though! As a legacy user, we're offering you a discount for a limited time. Use discount code <strong>SAVINGFACE</strong> at checkout in order to receive <strong>20% off</strong> of your purchase!", 'theme-my-login' ); ?>
+					<br /><br />
+					<a class="button button-primary" href="https://thememylogin.com/extensions" target="_blank"><?php _e( 'Take Me To The Store', 'theme-my-login' ); ?></a>
+				</p>
+			</div>
+
+			<?php
+		}
+	}
+
+	/**
+	 * Handle saving of notice dismissals.
+	 *
+	 * @since 6.4.15
+	 */
+	public function ajax_dismiss_notice() {
+		if ( empty( $_POST['notice'] ) ) {
+			return;
+		}
+
+		$dismissed_notices = $this->get_option( 'dismissed_notices', array() );
+		$dismissed_notices[] = sanitize_key( $_POST['notice'] );
+
+		$this->set_option( 'dismissed_notices', $dismissed_notices );
+		$this->save_options();
+
+		wp_send_json_success();
+	}
+
+	/**
+	 * Adds the TML Action meta box.
+	 *
+	 * @since 6.4.13
+	 */
+	public function add_meta_boxes() {
+		add_meta_box(
+			'tml_action',
+			__( 'Theme My Login Action', 'theme-my-login' ),
+			array( $this, 'action_meta_box' ),
+			'page',
+			'side'
+		);
+	}
+
+	/**
+	 * Renders the TML Action meta box.
+	 *
+	 * @since 6.4.13
+	 *
+	 * @param WP_Post $post The post object.
+	 */
+	public function action_meta_box( $post ) {
+		$page_action = get_post_meta( $post->ID, '_tml_action', true );
+		?>
+
+		<select name="tml_action" id="tml_action">
+			<option value=""></option>
+			<?php foreach ( Theme_My_Login::default_pages() as $action => $label ) : ?>
+				<option value="<?php echo esc_attr( $action ); ?>"<?php selected( $action, $page_action ); ?>><?php echo esc_html( $label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+
+		<?php
+	}
+
+	/**
+	 * Saves the TML Action meta box.
+	 *
+	 * @since 6.4.13
+	 *
+	 * @param int $post_id The post ID.
+	 */
+	public function save_action_meta_box( $post_id ) {
+		if ( 'page' != get_post_type( $post_id ) ) {
+			return;
+		}
+
+		if ( isset( $_POST['tml_action'] ) ) {
+			$tml_action = sanitize_key( $_POST['tml_action'] );
+			if ( ! empty( $_POST['tml_action'] ) ) {
+				update_post_meta( $post_id, '_tml_action', $tml_action );
+			} else {
+				if ( false !== get_post_meta( $post_id, '_tml_action', true ) ) {
+					delete_post_meta( $post_id, '_tml_action' );
+				}
+			}
+		}
 	}
 
 	/**
@@ -160,7 +286,7 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 		<input name="theme_my_login[enable_css]" type="checkbox" id="theme_my_login_enable_css" value="1"<?php checked( 1, $this->get_option( 'enable_css' ) ); ?> />
 		<label for="theme_my_login_enable_css"><?php _e( 'Enable "theme-my-login.css"', 'theme-my-login' ); ?></label>
 		<p class="description"><?php _e( 'In order to keep changes between upgrades, you can store your customized "theme-my-login.css" in your current theme directory.', 'theme-my-login' ); ?></p>
-        <?php
+		<?php
 	}
 
 	/**
@@ -187,7 +313,7 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 
 		<p class="description"><?php _e( 'Allow users to login using their username and/or e-mail address.', 'theme-my-login' ); ?></p>
 
-    	<?php
+		<?php
 	}
 
 	/**
@@ -209,6 +335,67 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 	}
 
 	/**
+	 * Renders Update settings section.
+	 *
+	 * @since 6.4.16
+	 */
+	public function settings_section_update() {
+		?>
+
+		<p><?php echo implode( ' ', array(
+			__( 'Please read the following carefully!', 'theme-my-login' ),
+			__( 'Theme My Login version 7.0+ contains major changes that can possibly break some sites. In order to protect your site from potentially breaking, we are requiring you to opt-in to receive the update.', 'theme-my-login' ),
+			__( 'So that we may help you understand some of these changes, we will go over them below.', 'theme-my-login' ),
+		) ); ?>
+
+		<h3><?php _e( 'Modules will no longer be included with the plugin', 'theme-my-login' ); ?></h3>
+
+		<p><?php echo implode( ' ', array(
+			__( 'With the exception of Custom Passwords (merged into the core plugin) and Custom User Links (discontinued), all of the modules listed above are now available in <a href="https://thememylogin.com/extensions">our store</a>.', 'theme-my-login' ),
+			__( 'If you update, you will need to purchase a license to use the new extensions.', 'theme-my-login' ),
+			__( 'Most of these extensions have been completely rewritten and contain additional features not found in the 6.4.x modules.', 'theme-my-login' ),
+			'<strong>' . __( 'If you are not using any of the above modules, this change will not affect you.', 'theme-my-login' ) . '</strong>',
+		) ); ?></p>
+
+		<h3><?php _e( 'Templates will no longer be utilized by the plugin', 'theme-my-login' ); ?></h3>
+
+		<p><?php echo implode( ' ', array(
+			__( 'In order to simplify the way the plugin generates forms, templates are no longer used. Instead, the forms are generated procedurally in PHP code. This makes it much easier to add, edit and rearrange form fields and leads to less complexity.', 'theme-my-login' ),
+			'<strong>' . __( 'If you are not using custom templates for any actions, this change will not affect you.', 'theme-my-login' ) . '</strong>',
+		) ); ?></p>
+
+		<h3><?php _e( 'The plugin will no longer use WordPress pages to represent actions', 'theme-my-login' ); ?></h3>
+
+		<p><?php echo implode( ' ', array(
+			__( 'Instead of using "real" pages, they are generated "on-the-fly", that is, as needed, when the corresponding action is requested. This eliminates clutter and avoids the accidental deletion of pages that represent actions.', 'theme-my-login' ),
+			'<strong>' . __( 'If you have not added anything to the pages that the plugin created, this change will not affect you.', 'theme-my-login' ) . '</strong>',
+		) ); ?></p>
+
+		<?php
+	}
+
+	/**
+	 * Renders Update settings field.
+	 *
+	 * @since 6.4.16
+	 */
+	public function settings_field_update() {
+		?>
+
+		<p>
+			<input name="theme_my_login[allow_update]" type="radio" id="theme_my_login_allow_update_on" value="1"<?php checked( (bool) $this->get_option( 'allow_update' ) ); ?> />
+			<label for="theme_my_login_allow_update_on"><?php _e( 'I understand the possible consequences, but I want the latest features and wish to allow the update', 'theme-my-login' ); ?></label>
+		</p>
+
+		<p>
+			<input name="theme_my_login[allow_update]" type="radio" id="theme_my_login_allow_update_off" value="0"<?php checked( ! $this->get_option( 'allow_update' ) ); ?> />
+			<label for="theme_my_login_allow_update_off"><?php _e( 'I understand that I will no longer receive any new features but I would like to stay on the 6.4 branch anyway', 'theme-my-login' ); ?></label>
+		</p>
+
+		<?php
+	}
+
+	/**
 	 * Sanitizes TML settings
 	 *
 	 * This is the callback for register_setting()
@@ -220,9 +407,10 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 	 * @return string|array Sanitized settings
 	 */
 	public function save_settings( $settings ) {
-		$settings['enable_css']     = ! empty( $settings['enable_css']   );
+		$settings['enable_css']     = ! empty( $settings['enable_css'] );
 		$settings['login_type']     = in_array( $settings['login_type'], array( 'default', 'username', 'email' ) ) ? $settings['login_type'] : 'default';
 		$settings['active_modules'] = isset( $settings['active_modules'] ) ? (array) $settings['active_modules'] : array();
+		$settings['allow_update']   = ! empty( $settings['allow_update'] );
 
 		// If we have modules to activate
 		if ( $activate = array_diff( $settings['active_modules'], $this->get_option( 'active_modules', array() ) ) ) {
@@ -243,6 +431,107 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 		$settings = wp_parse_args( $settings, $this->get_options() );
 
 		return $settings;
+	}
+
+	/**
+	 * Give those who opt to stay on the 6.4 branch updates.
+	 *
+	 * @since 6.4.17
+	 *
+	 * @param object $transient The transient data.
+	 * @return object The transient data.
+	 */
+	public function pre_set_site_transient_update_plugins( $transient = '' ) {
+		$basename = 'theme-my-login/theme-my-login.php';
+
+		if ( ! is_object( $transient ) ) {
+			$transient = new stdClass;
+		}
+
+		if ( ! isset( $transient->response ) || ! isset( $transient->no_update ) ) {
+			return $transient;
+		}
+
+		if ( is_array( $transient->response ) && isset( $transient->response[ $basename ] ) ) {
+			$plugin_data = $transient->response[ $basename ];
+			unset( $transient->response[ $basename ] );
+		} elseif ( is_array( $transient->no_update ) && isset( $transient->no_update[ $basename ] ) ) {
+			$plugin_data = $transient->no_update[ $basename ];
+			unset( $transient->no_update[ $basename ] );
+		} else {
+			return $transient;
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+
+		$plugin_info = plugins_api( 'plugin_information', array( 'slug' => 'theme-my-login' ) );
+		if ( is_wp_error( $plugin_info ) ) {
+			return $transient;
+		}
+
+		uksort( $plugin_info->versions, 'version_compare' );
+
+		// Find the latest 6.4 version
+		foreach ( array_reverse( $plugin_info->versions ) as $version => $file ) {
+			if ( strpos( $version, '6.4' ) === 0 ) {
+				$plugin_data->new_version = $version;
+				$plugin_data->package = $file;
+				break;
+			}
+		}
+
+		// This is an update
+		if ( version_compare( Theme_My_Login::VERSION, $plugin_data->new_version, '<' ) ) {
+			$transient->response[ $basename ] = $plugin_data;
+
+		// This is just fetching the plugin information
+		} else {
+			$transient->no_update[ $basename ] = $plugin_data;
+		}
+
+		$transient->last_checked = time();
+
+		return $transient;
+	}
+
+	/**
+	 * Disable upgrading to 7.0+ unless explicitly allowed.
+	 *
+	 * @since 6.4.16
+	 *
+	 * @param bool|WP_Error $response Whether to allow the install or not.
+	 * @param array         $args     Extra arguments passed to the hook.
+	 * @return bool|WP_Error
+	 */
+	public function upgrader_pre_install( $response, $args ) {
+		// Bail if we're not upgrading a plugin
+		if ( empty( $args['plugin'] ) ) {
+			return $response;
+		}
+
+		$basename = plugin_basename( THEME_MY_LOGIN_PATH . '/theme-my-login.php' );
+
+		// Bal if we're not upgrading TML
+		if ( $basename != $args['plugin'] ) {
+			return $response;
+		}
+
+		$plugins = get_site_transient( 'update_plugins' );
+
+		// Bail if we're not upgrading to 7.0+
+		if ( version_compare( $plugins->response[ $basename ]->new_version, '7.0', '<' ) ) {
+			return $response;
+		}
+
+		// Bail if the update has been allowed
+		if ( $this->get_option( 'allow_update' ) ) {
+			return $response;
+		}
+
+		return new WP_Error( 'update_denied', sprintf(
+			__( 'Theme My Login has not been updated because you have not allowed the update on the <a href="%s" target="_top">settings page</a>.', 'theme-my-login' ),
+			admin_url( 'admin.php?page=theme_my_login' )
+		) );
 	}
 
 	/**
@@ -427,4 +716,3 @@ class Theme_My_Login_Admin extends Theme_My_Login_Abstract {
 	}
 }
 endif; // Class exists
-
