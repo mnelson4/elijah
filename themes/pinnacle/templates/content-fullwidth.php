@@ -127,22 +127,29 @@
                               <div class="col-md-5">
                                   <div class="flexslider kt-flexslider loading" data-flex-speed="7000" data-flex-anim-speed="400" data-flex-animation="fade" data-flex-auto="true">
                                       <ul class="slides">
-                                         <?php $image_gallery = get_post_meta( $post->ID, '_kad_image_gallery', true );
-                                            if(!empty($image_gallery)) {
-                                              $attachments = array_filter( explode( ',', $image_gallery ) );
-                                                if ($attachments) {
-                                                  foreach ($attachments as $attachment) {
-                                                  $attachment_url = wp_get_attachment_url($attachment , 'full');
-                                                  $image = aq_resize($attachment_url, 360, 360, true);
-                                                  if(empty($image)) {$image = $attachment_url;} ?>
-                                                    <li>
-                                                      <a href="<?php the_permalink() ?>" alt="<?php the_title(); ?>">
-                                                        <img src="<?php echo esc_url($image); ?>" alt="<?php esc_attr($attachment_post->post_excerpt);?>" class="" />
-                                                      </a>
-                                                    </li>
-                                                  <?php }
-                                                }
-                                            } ?>           
+										<?php
+										$image_gallery = get_post_meta( $post->ID, '_kad_image_gallery', true );
+										if ( ! empty( $image_gallery ) ) {
+											$attachments = array_filter( explode( ',', $image_gallery ) );
+											if ( $attachments ) {
+												foreach ( $attachments as $attachment ) {
+													$attachment_url = wp_get_attachment_url( $attachment, 'full' );
+													$alt            = get_post_meta( $attachment, '_wp_attachment_image_alt', true );
+													$image = aq_resize( $attachment_url, 360, 360, true );
+													if ( empty( $image ) ) {
+														$image = $attachment_url;
+													}
+													?>
+													<li>
+														<a href="<?php the_permalink(); ?>" alt="<?php the_title_attribute(); ?>">
+															<img src="<?php echo esc_url( $image ); ?>" alt="<?php esc_attr( $alt ); ?>" />
+														</a>
+													</li>
+													<?php
+												}
+											}
+										}
+										?>
                                       </ul>
                                 </div> <!--Flex Slides-->
                             </div>

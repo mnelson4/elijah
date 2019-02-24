@@ -4,7 +4,7 @@
  *
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version     3.3.2
+ * @version     3.5.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ if ( version_compare( WC_VERSION, '3.0', '>' ) ) {
 }
 
 
-if ( $attachment_ids ) {
+if ( $attachment_ids && $product->get_image_id() ) {
 	if(isset($pinnacle['product_simg_resize']) && 0 == $pinnacle['product_simg_resize'] || false == $galslider) {
 		$presizeimage = 0;
 	} else {

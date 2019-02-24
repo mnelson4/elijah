@@ -1,38 +1,45 @@
 /* Main column width */
-body.gutenberg-editor-page .editor-post-title__block,
-body.gutenberg-editor-page .editor-default-block-appender,
-body.gutenberg-editor-page .editor-block-list__block {
+body.gutenberg-editor-page.wp-admin .editor-post-title__block,
+body.gutenberg-editor-page.wp-admin .editor-default-block-appender,
+body.gutenberg-editor-page.wp-admin .editor-block-list__block,
+body.block-editor-page.wp-admin .editor-post-title__block,
+body.block-editor-page.wp-admin .editor-default-block-appender,
+body.block-editor-page.wp-admin .editor-block-list__block {
     max-width: 800px;
 }
 
+body.gutenberg-editor-page  .cmb2-postbox h2.hndle, body.block-editor-page  .cmb2-postbox h2.hndle {
+    background: #f2f2f2;
+}
+
 /* Width of "wide" blocks */
-body.gutenberg-editor-page .editor-block-list__block[data-align="wide"] {
+body.gutenberg-editor-page .editor-block-list__block[data-align="wide"], body.block-editor-page .editor-block-list__block[data-align="wide"] {
     max-width: 1400px;
 }
 @media (min-width: 1100px) {
-	body.gutenberg-editor-page .editor-block-list__block[data-align="wide"] {
+	body.gutenberg-editor-page .editor-block-list__block[data-align="wide"], body.block-editor-page .editor-block-list__block[data-align="wide"] {
 	    width: 92%;
 	}
 }
 @media (min-width: 1550px) {
-	body.gutenberg-editor-page .editor-block-list__block[data-align="wide"] {
+	body.gutenberg-editor-page .editor-block-list__block[data-align="wide"], body.block-editor-page .editor-block-list__block[data-align="wide"] {
 	    width: 84%;
 	}
 }
 @media (min-width: 1900px) {
-	body.gutenberg-editor-page .editor-block-list__block[data-align="wide"] {
+	body.gutenberg-editor-page .editor-block-list__block[data-align="wide"], body.block-editor-page .editor-block-list__block[data-align="wide"] {
 	    width: 72%;
 	}
 }
 
 /* Width of "full-wide" blocks */
-body.gutenberg-editor-page .editor-block-list__block[data-align="full"] {
+body.gutenberg-editor-page .editor-block-list__block[data-align="full"], body.block-editor-page .editor-block-list__block[data-align="full"]{
     max-width: none;
 }
 .editor-rich-text__tinymce.mce-content-body {
 	line-height: 1.6;
 }
-body.gutenberg-editor-page {
+body.gutenberg-editor-page, body.block-editor-page {
 	p.has-drop-cap:not(:focus):first-letter {
 		font-weight: inherit;
 	}

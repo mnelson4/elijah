@@ -32,6 +32,24 @@ Yes, go here: https://wordpress.org/support/theme/pinnacle
 
 == Changelog ==
 
+= 1.7.2 | 6th Feb 2018 = 
+* Update: Woocommerce 3.5.5 support.
+
+= 1.7.1 | 18th December 2018 = 
+* Update: Block Editor Tweaks.
+* Update: Call out for Kadence Blocks.
+
+= 1.7.0 | 5th December 2018 = 
+* Update: WordPress 5.0 ready.
+
+= 1.6.7 | 1st November 2018 = 
+* Update: more gutenberg stuff.
+* Update: Woocommerce update.
+
+= 1.6.6 | 26th October 2018 = 
+* Update: more gutenberg stuff.
+* Update: Woocommerce update.
+
 = 1.6.5 | 20th August 2018 = 
 * Update: more gutenberg stuff.
 

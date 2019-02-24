@@ -239,9 +239,14 @@ $product_column = $woocommerce_loop['columns'];
     } 
   }
 
-
-remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );
-remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_product_link_close', 5 );
+/**
+ * Init archive hooks for woocommerce
+ */
+function pinnacle_init_woo_archive_hooks() {
+	remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );
+	remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
+}
+add_action( 'init', 'pinnacle_init_woo_archive_hooks' );
 
 
 
