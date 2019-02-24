@@ -31,10 +31,11 @@ class PmbFrontend extends BaseController
                 $pmb_wp_error = $site_info;
                 return PMB_TEMPLATES_DIR . 'print_page_error.template.php';
             }
-            global $pmb_site_name, $pmb_site_description, $pmb_site_url;
+            global $pmb_site_name, $pmb_site_description, $pmb_site_url,  $pmb_printout_meta;
             $pmb_site_name = $site_info['name'];
             $pmb_site_description = $site_info['description'];
             $pmb_site_url = $site_info['url'];
+            $pmb_printout_meta = $this->getFromRequest('printout-meta', false);
             $this->proxy_for = $site_info['proxy_for'];
             // enqueue our scripts and styles at the right time
             // specifically, after everybody else, so we can override them.
@@ -59,15 +60,15 @@ class PmbFrontend extends BaseController
         );
         wp_enqueue_script(
             'pmb_print_page',
-            PMB_ASSETS_URL . 'scripts/print_page.js',
+            PMB_ASSETS_URL . 'scripts/print-page.js',
             array('jquery', 'wp-api', 'luxon'),
-            filemtime(PMB_ASSETS_DIR . 'scripts/print_page.js')
+            filemtime(PMB_ASSETS_DIR . 'scripts/print-page.js')
         );
         wp_enqueue_style(
             'pmb_print_page',
-            PMB_ASSETS_URL . 'styles/print_page.css',
+            PMB_ASSETS_URL . 'styles/print-page.css',
             array(),
-            filemtime(PMB_ASSETS_DIR . 'styles/print_page.css')
+            filemtime(PMB_ASSETS_DIR . 'styles/print-page.css')
         );
         // Enqueue tiled gallery too. It's par of Jetpack so it's common, and if we're printing a WordPress.com blog
         // it's very likely to be used.
@@ -77,16 +78,29 @@ class PmbFrontend extends BaseController
             array(),
             filemtime(PMB_ASSETS_DIR . 'styles/tiled-gallery.css')
         );
+        // Enqueue the CSS for compatibility with known troublemaking plugins.
+        wp_enqueue_style(
+            'pmb-plugin-compatibility',
+            PMB_ASSETS_URL . 'styles/plugin-compatibility.css',
+            array(),
+            filemtime(PMB_ASSETS_DIR . 'styles/plugin-compatibility.css')
+        );
         wp_localize_script(
             'pmb_print_page',
             'pmb_print_data',
             array(
                 'i18n' => array(
-                    'organizing_posts' => esc_html__('Ordering posts.', 'print-my-blog'),
-                    'wrapping_up' => esc_html__('Wrapping Up!', 'print-my-blog'),
+                    'loading_content' => esc_html__('Loading Content', 'print-my-blog'),
+                    'loading_comments' => esc_html__('Loading Comments', 'print-my-blog'),
+                    'organizing_posts' => esc_html__('Ordering Posts', 'print-my-blog'),
+                    'organizing_comments' => esc_html__('Ordering Comments', 'print-my-blog'),
+                    'rendering_posts' => esc_html__('Placing Content on Page', 'print-my-blog'),
+                    'wrapping_up' => esc_html__('Optimizing for Print', 'print-my-blog'),
+                    'ready' => esc_html__('Print-Page Ready', 'print-my-blog'),
                     'error_fetching_posts' => esc_html__('There was an error fetching posts. It was: ', 'print-my-blog'),
-                    'rendering_posts' => esc_html__('Rendering posts.', 'print-my-blog'),
-                    'left' => esc_html__('left...', 'print-my-blog')
+                    'comments' => esc_html__('Comments', 'print-my-blog'),
+                    'no_comments' => esc_html('No Comments', 'print-my-blog'),
+                    'says' => __('<span class="screen-reader-text says">says:</span>', 'print-my-blog')
                 ),
                 'data' => array(
                     'locale' => get_locale(),
@@ -96,7 +110,9 @@ class PmbFrontend extends BaseController
                     'columns' => $this->getFromRequest('columns',1),
                     'post_type' => $this->getFromRequest('post-type', 'post'),
                     'rendering_wait' => $this->getFromRequest('rendering-wait', 500),
-                    'include_inline_js' => (bool)$this->getFromRequest('include-inline-js', false)
+                    'include_inline_js' => (bool)$this->getFromRequest('include-inline-js', false),
+                    'links' => (string)$this->getFromRequest('links', 'include'),
+                    'comments' => (bool)$this->getFromRequest('comments', false),
                 ),
             )
         );

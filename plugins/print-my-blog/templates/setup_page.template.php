@@ -1,10 +1,10 @@
 <div class="wrap nosubsub">
-<h1><?php esc_html_e('Print My Blog','printmyblog' );?></h1>
+<h1><?php esc_html_e('Print My Blog','print-my-blog' );?></h1>
     <?php if(isset($_GET['welcome'])){
         ?>
         <div class="updated fade">
             <p>
-                <?php esc_html_e('Welcome! This is where you begin preparing your blog for printing. You can get here from the left-hand menu, under "Tools", then "Print My Blog."','printmyblog' );?>
+                <?php esc_html_e('Welcome! This is where you begin preparing your blog for printing. You can get here from the left-hand menu, under "Tools", then "Print My Blog."','print-my-blog' );?>
             </p>
         </div>
     <?php
@@ -45,11 +45,21 @@
                 </tr>
                 <tr>
                     <th scope="row">
+                        <label for="comments"><?php esc_html_e('Include Comments','print-my-blog' );?></label>
+                    </th>
+                    <td>
+                        <input type="checkbox" name="comments" value="1">
+                        <p class="description"><?php esc_html_e('Whether to include the posts\'s comments.','print-my-blog' );?></p>
+                    </td>
+
+                </tr>
+                <tr>
+                    <th scope="row">
                         <label for="include-excerpts"><?php esc_html_e('Include Excerpts','print-my-blog' );?></label>
                     </th>
                     <td>
                         <input type="checkbox" name="include-excerpts" value="1">
-                        <p class="description"><?php esc_html_e('Whether to include the posts\'s excerpt before the rest of the content. Useful in case you put different content in there.','print-my-blog' );?></p>
+                        <p class="description"><?php esc_html_e('Whether to include the posts’s excerpt before the rest of the content. Useful in case you put different content in there.','print-my-blog' );?></p>
                     </td>
 
                 </tr>
@@ -59,6 +69,15 @@
             <h2><?php esc_html_e('Page Layout','print-my-blog' );?></h2>
             <table class="form-table">
                 <tbody>
+                <tr>
+                    <th scope="row">
+                        <label for="printout-meta"><?php esc_html_e('Show Printout Meta Info','print-my-blog' );?></label>
+                    </th>
+                    <td>
+                        <input type="checkbox" name="printout-meta" id="printout-meta" checked="checked">
+                        <p class="description"><?php esc_html_e('Whether to include your blog’s URL, date of printing, and that this printout was made using Print My Blog.','print-my-blog' );?></p>
+                    </td>
+                </tr>
                 <tr>
                     <th scope="row">
                         <label for="post-page-break"><?php esc_html_e('Each Post Begins on a New Page','print-my-blog' );?></label>
@@ -109,6 +128,19 @@
                         <p class="description"><?php esc_html_e('If you want to save paper, choose a smaller image size, or hide images altogether. On the other hand, deafult size images often look the best.','print-my-blog' );?></p>
                     </td>
                 </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="links"><?php esc_html_e('Include Hyperlinks','print-my-blog' );?></label>
+                    </th>
+                    <td>
+                        <select name="links" id="image-size">
+                            <option value="include" selected="selected"><?php esc_html_e('Include','print-my-blog' );?></option>
+                            <option value="remove"><?php esc_html_e('Remove','print-my-blog' );?></option>
+
+                        </select>
+                        <p class="description"><?php esc_html_e('Whether to remove hyperlinks or not.','print-my-blog' );?></p>
+                    </td>
+                </tr>
                 </tbody>
             </table>
 
@@ -142,6 +174,6 @@
             </div>
             <input type="hidden" name="<?php echo PMB_PRINTPAGE_SLUG;?>" value="1">
         </div>
-        <button class="button-primary"><?php esc_html_e('Prepare Print Page','printmyblog' );?></button>
+        <button class="button-primary"><?php esc_html_e('Prepare Print-Page','print-my-blog' );?></button>
     </form>
 </div>
