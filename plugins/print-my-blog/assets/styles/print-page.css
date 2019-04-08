@@ -1,13 +1,3 @@
-.pmb-spinner {
-    background: url('/wp-admin/images/wpspin_light.gif') no-repeat;
-    background-size: 16px 16px;
-    margin-left:auto;
-    margin-right:auto;
-    opacity: .7;
-    filter: alpha(opacity=70);
-    width: 16px;
-    height: 16px;
-}
 @media print {
     .pmb-waiting-message-fullpage{
         display:none;
@@ -112,4 +102,16 @@ div.tiled-gallery{
 }
 .pmb-help a:hover{
     color:blue;
+}
+
+.pmb-posts-body article.pmb-post-article{
+    float:none;
+    width:100%;
+}
+
+.pmb-divider{
+    margin-bottom:3em;
+}
+.pmb-posts .wp-caption{
+    max-width:100%;
 }

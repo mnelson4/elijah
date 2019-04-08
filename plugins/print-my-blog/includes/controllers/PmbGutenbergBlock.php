@@ -2,6 +2,7 @@
 
 namespace PrintMyBlog\controllers;
 
+use PrintMyBlog\domain\PrintOptions;
 use Twine\controllers\BaseController;
 
 class PmbGutenbergBlock extends BaseController
@@ -20,13 +21,15 @@ class PmbGutenbergBlock extends BaseController
     public function registerGutenbergBlock()
     {
         wp_register_script(
-            'pmb-setupform',
+            'pmb-block',
             PMB_ASSETS_URL . 'scripts/pmb-block.js',
-            array('wp-blocks', 'wp-element', 'wp-components')
+            array('wp-blocks', 'wp-element', 'wp-components', 'pmb-setup-page')
         );
         if (function_exists('register_block_type')) {
             register_block_type('printmyblog/setupform', array(
-                'editor_script' => 'pmb-setupform',
+                'editor_script' => 'pmb-block',
+                'script' => 'pmb-setup-page',
+                'style' => 'pmb-setup-page',
                 'render_callback' => [$this, 'block_dynamic_render_cb'],
             ));
         }
@@ -46,6 +49,7 @@ class PmbGutenbergBlock extends BaseController
     public function block_dynamic_render_cb ( $att ) {
         // Coming from RichText, each line is an array's element
         ob_start();
+        $print_options = new PrintOptions();
         include(PMB_TEMPLATES_DIR . 'setup_page.template.php');
         return ob_get_clean();
     }

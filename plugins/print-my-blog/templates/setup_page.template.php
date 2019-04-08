@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var $print_options PrintMyBlog\domain\PrintOptions
+ */
+
+use PrintMyBlog\domain\PrintOptions;
+
+?>
 <div class="wrap nosubsub">
 <h1><?php esc_html_e('Print My Blog','print-my-blog' );?></h1>
     <?php if(isset($_GET['welcome'])){
@@ -10,58 +18,78 @@
     <?php
     }
     ?>
-    <p><?php esc_html_e('Configure how you\'d like the blog to be printed, or just use our recommended defaults.', 'print-my-blog'); ?></p>
+    <p><?php esc_html_e('Configure how you’d like the blog to be printed, or just use our recommended defaults.', 'print-my-blog'); ?></p>
     <form action="<?php echo site_url();?>" method="get">
         <?php if(PMB_REST_PROXY_EXISTS){?>
         <table class="form-table">
             <tbody>
                 <tr>
-                    <th scope="row"><?php esc_html_e('Site URL (including "https://" or "http://")', 'print-my-blog');?></th>
+                    <th scope="row">
+                        <?php esc_html_e('Site URL (including "https://" or "http://")', 'print-my-blog');?>
+                    </th>
                     <td>
-                        <input name="site" placeholder="<?php echo site_url();?>">
-                        <p class="description"><?php esc_html_e('URL of the WordPress site (self-hosted or on WordPress.com) you\'d like to print. Leave blank to use this current site.', 'print-my-blog');?></p>
+                        <input name="site" id="pmb-site" class="pmb-wide-input" placeholder="<?php echo site_url();?>">
+                        <div class="pmb-spinner-container">
+                            <div id="pmb-site-checking" class="pmb-spinner pmb-hidden-initially"></div>
+                        </div>
+                        <span id="pmb-site-ok" class="pmb-hidden-initially">✅</span><span id="pmb-site-bad" class="pmb-hidden-initially">❌</span><span id="pmb-site-status"></span>
+                        <p class="description"><?php esc_html_e('URL of the WordPress site (self-hosted or on WordPress.com) you’d like to print. Leave blank to use this current site.', 'print-my-blog');?></p>
                     </td>
                 </tr>
             </tbody>
         </table>
         <?php }?>
 
-        <a href="" onclick="jQuery('.pmb-page-setup-options-advanced').toggle();return false;"><?php esc_html_e('Show Options', 'print-my-blog'); ?></a><br/><br/>
-        <div class="pmb-page-setup-options-advanced" style="display:none">
+        <details class="pmb-details">
+            <summary class="pmb-reveal-options" id="pmb-reveal-main-options"><?php esc_html_e('Show Options', 'print-my-blog'); ?></summary>
             <h1><?php esc_html_e('Options','print-my-blog' );?></h1>
-            <h2><?php esc_html_e('Content','print-my-blog' );?></h2>
+            <h2><?php esc_html_e('Post Selection','print-my-blog' );?></h2>
             <table class="form-table">
                 <tbody>
                 <tr>
-                    <th scope="row">
-                        <?php esc_html_e('Content to Print','print-my-blog' );?>
-                    </th>
+                    <th scope="row"><?php esc_html_e('Post Selection','event_espresso' );?></th>
                     <td>
-                        <label><input type="radio" name="post-type" value="post" checked="checked"><?php esc_html_e('Posts', 'print-my-blog');?></label>
+                        <label><input class="pmb-post-type" type="radio" name="post-type" value="post" checked="checked"><?php esc_html_e('Posts', 'print-my-blog');?></label>
                         <br>
-                        <label><input type="radio" name="post-type" value="page"><?php esc_html_e('Pages', 'print-my-blog');?></label>
+                        <label><input class="pmb-post-type" type="radio" name="post-type" value="page"><?php esc_html_e('Pages', 'print-my-blog');?></label>
                     </td>
-
                 </tr>
-                <tr>
-                    <th scope="row">
-                        <label for="comments"><?php esc_html_e('Include Comments','print-my-blog' );?></label>
-                    </th>
-                    <td>
-                        <input type="checkbox" name="comments" value="1">
-                        <p class="description"><?php esc_html_e('Whether to include the posts\'s comments.','print-my-blog' );?></p>
-                    </td>
+                </tbody>
+            </table>
+            <h2><?php esc_html_e('Filters', 'print-my-blog');?> <div style="display:inline-block" id="pmb-categories-spinner"><div class="pmb-spinner"></div></div></h2>
+            <table class="form-table">
+                <tbody id="pmb-dynamic-categories">
+                </tbody>
+            </table>
 
-                </tr>
-                <tr>
-                    <th scope="row">
-                        <label for="include-excerpts"><?php esc_html_e('Include Excerpts','print-my-blog' );?></label>
-                    </th>
-                    <td>
-                        <input type="checkbox" name="include-excerpts" value="1">
-                        <p class="description"><?php esc_html_e('Whether to include the posts’s excerpt before the rest of the content. Useful in case you put different content in there.','print-my-blog' );?></p>
-                    </td>
 
+                <h2><?php esc_html_e('Content','print-my-blog' );?></h2>
+            <table class="form-table">
+                <tbody>
+                <?php
+
+                ?>
+                <tr>
+                    <th scope="row"> <?php esc_html_e('Post Content to Print','print-my-blog' );?></th>
+                    <td>
+                    <?php
+                    foreach($print_options->postContentOptions() as $option_name => $option_details){
+                        ?>
+                        <label for="<?php echo $option_name;?>">
+                            <input type="checkbox" name="<?php echo $option_name;?>" id="<?php echo $option_name;?>"
+                                <?php
+                                if ($option_details['default']){
+                                ?> checked="checked"
+                            <?php
+                            }
+                            ?> value="1">
+                            <?php echo $option_details['label'];?></label><br>
+
+
+                    <?php
+                    }
+                    ?>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -144,10 +172,9 @@
                 </tbody>
             </table>
 
-            <a href="" onclick="jQuery('#pmb-troubleshooting-options').toggle();return false;"><?php esc_html_e('Show Troubleshooting Options', 'print-my-blog'); ?></a><br/><br/>
 
-            <div id="pmb-troubleshooting-options" style="display:none">
-                <h2><?php esc_html_e('Troubleshooting Options','print-my-blog' );?></h2>
+            <details class="pmb-details">
+                <summary class="pmb-reveal-options"><?php esc_html_e('Troubleshooting Options','print-my-blog' );?></summary>
                 <table class="form-table">
                     <tbody>
                     <tr>
@@ -156,7 +183,7 @@
                         </th>
                         <td>
                             <input name="rendering-wait" value="200"><?php esc_html_e('ms','print-my-blog' );?>
-                            <p class="description"><?php esc_html_e('Milliseconds to wait between rendering posts. If posts are rendered too quickly on the page, sometimes images won\'t load properly. ','print-my-blog' );?></p>
+                            <p class="description"><?php esc_html_e('Milliseconds to wait between rendering posts. If posts are rendered too quickly on the page, sometimes images won’t load properly. ','print-my-blog' );?></p>
                         </td>
                     </tr>
                     <tr>
@@ -171,9 +198,9 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
+            </details>
             <input type="hidden" name="<?php echo PMB_PRINTPAGE_SLUG;?>" value="1">
-        </div>
+        </details>
         <button class="button-primary"><?php esc_html_e('Prepare Print-Page','print-my-blog' );?></button>
     </form>
 </div>

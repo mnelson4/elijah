@@ -18,20 +18,30 @@ function PmbPrintPage(pmb_instance_vars, translations) {
     this.locale = pmb_instance_vars.locale;
     this.image_size = pmb_instance_vars.image_size;
     this.translations = translations;
-    this.include_excerpts = pmb_instance_vars.include_excerpts;
     this.columns = pmb_instance_vars.columns;
     this.post_type = pmb_instance_vars.post_type;
     this.total_posts = 0;
     this.posts = [];
     this.taxonomies = {};
     this.ordered_posts = [];
-    this.loadComments = pmb_instance_vars.comments;
     this.comments = [];
     this.total_comments = 0;
     this.ordered_comments = [];
     this.rendering_wait = pmb_instance_vars.rendering_wait;
     this.include_inline_js = pmb_instance_vars.include_inline_js;
     this.links = pmb_instance_vars.links;
+    this.showUrl = pmb_instance_vars.show_url;
+    this.showId = pmb_instance_vars.show_id;
+    this.showTitle = pmb_instance_vars.show_title;
+    this.showFeaturedImage = pmb_instance_vars.show_featured_image;
+    this.showDate = pmb_instance_vars.show_date;
+    this.showCategories = pmb_instance_vars.show_categories;
+	this.showExcerpt = pmb_instance_vars.show_excerpt;
+    this.showContent = pmb_instance_vars.show_content;
+	this.showComments = pmb_instance_vars.show_comments;
+	this.showDivider = pmb_instance_vars.show_divider;
+	this.filters = pmb_instance_vars.filters;
+	this.foogallery = pmb_instance_vars.foogallery;
     /**
      * @function
      */
@@ -62,11 +72,14 @@ function PmbPrintPage(pmb_instance_vars, translations) {
     this.getPostsCollectionQueryData = function () {
         var data = this.getCollectionQueryData();
         data.status = 'publish';
-        data._embed = true;
+        data._embed = 1;
         if(this.post_type === 'post') {
             data.orderby = 'date';
             data.order = 'asc';
         }
+		if(this.filters){
+			jQuery.extend(data, this.filters);
+		}
         return data;
     };
 
@@ -77,9 +90,10 @@ function PmbPrintPage(pmb_instance_vars, translations) {
 	};
 
 	this.getCollectionQueryData = function () {
-		var data = {
-			proxy_for: this.proxy_for,
-		};
+		let data = {};
+        if( this.proxy_for){
+			data.proxy_for = this.proxy_for;
+        }
 		return data;
 	};
 
@@ -92,7 +106,10 @@ function PmbPrintPage(pmb_instance_vars, translations) {
     this.beginLoading = function () {
         this.header.html(this.translations.loading_content);
         let collection = this.getCollection();
-        collection.fetch({data: this.getPostsCollectionQueryData(),
+        collection.fetch(
+            {
+                data: this.getPostsCollectionQueryData(),
+
         }).done((posts) => {
             this.storePostsAndMaybeFetchMore(posts, collection);
         });
@@ -125,7 +142,7 @@ function PmbPrintPage(pmb_instance_vars, translations) {
      * Begins loading comments if that was requested, otherwise skips right to sorting and rendering posts.
      */
     this.maybeStoreComments = function() {
-        if (this.loadComments) {
+        if (this.showComments) {
             this.beginLoadingComments();
             // once we are done loading comments, we'll sort and render posts etc.
         } else {
@@ -335,7 +352,7 @@ function PmbPrintPage(pmb_instance_vars, translations) {
     {
         // Don't wrap tiled gallery images- we have CSS to avoid page breaks in them
         // although currently, they don't display well because they need JS that doesn't get enqueued
-        var non_emojis = jQuery('img:not(.emoji, div.tiled-gallery img)');
+        var non_emojis = jQuery('img:not(.emoji, div.tiled-gallery img, img.fg-image)');
         if(this.image_size === 0){
             non_emojis.remove();
         } else{
@@ -355,6 +372,7 @@ function PmbPrintPage(pmb_instance_vars, translations) {
         jQuery('.pmb-posts h3').addClass('pmb-header');
         jQuery('.pmb-posts h4').addClass('pmb-header');
         jQuery('.pmb-posts h5').addClass('pmb-header');
+        // Remove inline styles added on image captions. They force a width in pixels which stinks with multiple columns.
         if(this.links === 'remove'){
 			jQuery('.pmb-posts a').contents().unwrap();
         }
@@ -364,6 +382,20 @@ function PmbPrintPage(pmb_instance_vars, translations) {
         jQuery('div.wp-video').css({'width': '','min-width':'', 'height': '', 'min-height': ''});
         // unhide the contents.
         jQuery('.pmb-posts').toggle();
+        if(this.foogallery) {
+            jQuery('img[data-src-fg]').each(function(arg1, arg2){
+               let el = jQuery(this);
+               el.attr('src', el.attr('data-src-fg'));
+               let src = el.attr('src');
+            });
+            setTimeout(
+                () =>{
+					this.posts_div.append('<script type="text/javascript" src="/wp-includes/js/masonry.min.js?ver=3.3.2"></script><script type="text/javascript" src="/wp-content/plugins/foogallery/extensions/default-templates/shared/js/foogallery.min.js"></script><link rel="stylesheet" type="text/css" href="/wp-content/plugins/foogallery/extensions/default-templates/shared/css/foogallery.min.css">');
+                },
+                this.rendering_wait
+            );
+
+		}
         jQuery(document).trigger('pmb_wrap_up');
     };
 
@@ -372,52 +404,76 @@ function PmbPrintPage(pmb_instance_vars, translations) {
      */
     this.addPostToPage = function (post) {
         var html_to_add = '<article id="post-' + post.id + '" class="post-' + post.id + ' post type-' + this.post_type + ' status-' + post.status + ' hentry pmb-post-article">'
-            + '<header class="pmb-post-header entry-header">'
-            + '<h1 class="entry-title">'
-            + post.title.rendered
-            + '</h1>'
-            + '</header>'
+            + '<header class="pmb-post-header entry-header">';
+        if(this.showTitle) {
+            html_to_add += '<h1 class="entry-title">'
+				+ post.title.rendered
+				+ '</h1>'
+        }
+        html_to_add += '</header>'
             + '<div class="entry-meta">';
-        if(this.post_type === 'post') {
+		if(this.showId) {
+			html_to_add += '<span class="post-id">' +this.translations.id + post.id + '</span> ';
+		}
+        if(this.showUrl) {
+            html_to_add += '<span class="url"><a href="'
+                + post.link
+                + '">'
+                + post.link
+                + '</a></span> ';
+        }
+        if(this.showDate) {
             html_to_add += '<span class="posted-on">'
                 +   this.getPublishedDate(post)
-                +   '</span>';
+                +   '</span> ';
         }
         if(this.post_type === 'page') {
             html_to_add += '<!-- id:' + post.id + ' , parent:' + post.parent + ', order:' + post.menu_order + '-->';
         }
-        html_to_add += this.addTaxonomies(post);
-        html_to_add += '</div>'
-            + '<div class="entry-content">'
-            + this.getFeaturedImageHtml(post);
-        if(this.include_excerpts) {
+        if(this.showCategories) {
+			html_to_add += this.addTaxonomies(post);
+		}
+		html_to_add += '</div>'
+			+ '<div class="entry-content">';
+		if(this.showFeaturedImage){
+            html_to_add += this.getFeaturedImageHtml(post);
+        }
+
+        if(this.showExcerpt) {
             html_to_add += '<div class="entry-excerpt">'
                 + post.excerpt.rendered
                 + '</div>';
         }
-        if(this.include_inline_js) {
-            html_to_add += post.content.rendered;
-        } else {
-            var parsed_nodes = jQuery.parseHTML(post.content.rendered);
-            if(parsed_nodes !== null) {
-                for (var i = 0; i < parsed_nodes.length; i++) {
-                    if (typeof parsed_nodes[i].outerHTML === 'string') {
-                        html_to_add += parsed_nodes[i].outerHTML;
-                    } else if (typeof parsed_nodes[i].wholeText === 'string') {
-                        html_to_add += parsed_nodes[i].wholeText;
-                    }
-                }
-            }
-        }
+        if(this.showContent) {
+			if (this.include_inline_js) {
+				html_to_add += post.content.rendered;
+			} else {
+				var parsed_nodes = jQuery.parseHTML(post.content.rendered);
+				if (parsed_nodes !== null) {
+					for (var i = 0; i < parsed_nodes.length; i++) {
+						if (typeof parsed_nodes[i].outerHTML === 'string') {
+							html_to_add += parsed_nodes[i].outerHTML;
+						} else if (typeof parsed_nodes[i].wholeText === 'string') {
+							html_to_add += parsed_nodes[i].wholeText;
+						}
+					}
+				}
+			}
+		}
         html_to_add += '</div>'
              + '</article>';
-        html_to_add += this.renderCommentsOf(post);
+		if(this.showComments){
+			html_to_add += this.renderCommentsOf(post);
+        }
+        if(this.showDivider){
+		    html_to_add += '<hr class="pmb-divider">';
+        }
         this.posts_div.append(html_to_add);
     };
 
     this.addTaxonomies = function(post) {
-        var html = '';
-        if(post._embedded['wp:term']) {
+        var html = ' ';
+        if('_embedded' in post && 'wp:term' in post._embedded) {
             for( taxonomy in post._embedded['wp:term']) {
                 var term_names = [];
                 var taxonomy_slug = '';
@@ -463,7 +519,7 @@ function PmbPrintPage(pmb_instance_vars, translations) {
      * @return string HTML for the featured image
      */
     this.getFeaturedImageHtml = function(post)
-    {   if( typeof post._embedded['wp:featuredmedia'] == "object"
+    {   if( '_embedded' in post && 'wp:featuredmedia' in post._embedded && typeof post._embedded['wp:featuredmedia'] == "object"
             && typeof post._embedded['wp:featuredmedia'][0] == "object"
             && typeof post._embedded['wp:featuredmedia'][0].media_details == "object") {
             var featured_media_url = null;
@@ -483,9 +539,6 @@ function PmbPrintPage(pmb_instance_vars, translations) {
 
     this.renderCommentsOf = function(post)
     {
-        if(! this.loadComments){
-            return '';
-        }
         let html = '';
         let has_comments = typeof post.comments !== 'undefined' && post.comments !== null && post.comments.length > 0;
         var comments_header_text = this.translations.comments;
@@ -581,29 +634,13 @@ function pmb_help_show(id){
 }
 
 var pmb = null;
+var original_backbone_sync;
 jQuery(document).ready(function () {
     wp.api.loadPromise.done( function() {
         setTimeout(
             function(){
 				pmb = new PmbPrintPage(
-					{
-						header_selector: '#pmb-in-progress-h1',
-						status_span_selector: '.pmb-status',
-						posts_count_span_selector: '.pmb-posts-count',
-						posts_div_selector: '.pmb-posts-body',
-						waiting_area_selector: '.pmb-posts-placeholder',
-						print_ready_selector: '.pmb-print-ready',
-						locale: pmb_print_data.data.locale,
-						image_size: pmb_print_data.data.image_size,
-						proxy_for: pmb_print_data.data.proxy_for,
-						include_excerpts: pmb_print_data.data.include_excerpts,
-						columns: pmb_print_data.data.columns,
-						post_type: pmb_print_data.data.post_type,
-						rendering_wait: pmb_print_data.data.rendering_wait,
-						include_inline_js: pmb_print_data.data.include_inline_js,
-                        links: pmb_print_data.data.links,
-						comments: pmb_print_data.data.comments
-					},
+					pmb_print_data.data,
 					pmb_print_data.i18n
 				);
 
@@ -613,6 +650,23 @@ jQuery(document).ready(function () {
             1000
         );
     });
+    // Override Backbone's jQuery AJAX calls to be tolerant of erroneous text before the start of the JSON.
+    original_backbone_sync = Backbone.sync;
+    Backbone.sync = function(method,model,options){
+        // Change the jQuery AJAX "converters" text-to-json method.
+		options.converters = {
+			'text json': function(result) {
+			    // Find the beginning of JSON object or array...
+				const start_of_json = Math.min(
+					result.indexOf('{'),
+					result.indexOf('[')
+				);
+				// ...and only send that, skip everything before it.
+				return jQuery.parseJSON(result.substring(start_of_json));
+			}
+		};
+        return original_backbone_sync(method,model,options);
+    };
 });
 
 
